@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>AI足球预测</title>
 <meta property="og:title" content="AI足球预测 - 智能赛事分析">
-<meta property="og:description" content="基于多源数据模型的智能足球预测">
+<meta property="og:description" content="基于多源数据模型的智能足球预测。⚠️ 仅供娱乐参考，不构成投注建议。">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3036/3036969.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -114,7 +114,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </head>
 <body>
 <div class="ct">
-<div class="hd"><h1>AI足球预测</h1><p>基于多源数据的智能赛事分析</p></div>
+<div class="hd"><h1>AI足球预测</h1><p>基于多源数据的智能赛事分析</p><div style="margin-top:8px;padding:6px 10px;background:#2a1a1a;border:1px solid #ef4444;border-radius:6px;font-size:10px;color:#f87171;line-height:1.4">⚠️ 免责声明：本工具仅供娱乐参考，不构成任何投注建议。预测结果基于数据分析，不保证准确性。请理性对待，切勿沉迷。</div></div>
 
 <div class="bt2">
 <h3>📊 2026美加墨世界杯回测（96场）</h3>
@@ -222,9 +222,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 <div class="ad-contact">上海若禅信息科技 · 合作共赢</div>
+<div style="margin-top:12px;padding:8px;background:#1a1a1a;border-radius:6px;font-size:9px;color:#666;line-height:1.4;text-align:center">
+⚠️ 本工具仅供娱乐参考，不构成投注建议 | 数据模型分析存在不确定性<br>请遵守当地法律法规，理性对待预测结果，切勿沉迷赌博
+</div>
 </div>
 
-<div class="ft">数据模型分析 · 仅供参考</div>
+<div class="ft">数据模型分析 · 仅供参考 · 不构成投注建议</div>
 </div>
 <div id="so" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:999;justify-content:center;align-items:center">
 <div style="background:#1e2340;border-radius:16px;padding:24px;margin:20px;max-width:320px;text-align:center">
@@ -351,6 +354,10 @@ if(isExtremeFav){
 
 bac.innerHTML=adviceHtml;
 ba.style.display="block";
+
+// 添加风险提示到购买建议
+var riskNote='<div style="margin-top:8px;padding-top:8px;border-top:1px solid #2a3f55;font-size:10px;color:#666;line-height:1.3">⚠️ 以上建议仅供娱乐参考，不构成投注建议。请理性对待，量力而行。</div>';
+bac.innerHTML+=riskNote;
 
 if(hh.f&&hh.d){
 document.getElementById("hd2").className="hd2 show";
@@ -563,23 +570,4 @@ for(var i=0;i<d.length;i++){if(!d[i].v){if(cnt===idx){d[i].v=true;d[i].hit=(hs>a
 localStorage.setItem(_gp,JSON.stringify(d));
 var v=JSON.parse(localStorage.getItem(_xa)||"[]");
 cnt=0;
-for(var i=0;i<v.length;i++){if(!v[i].done){if(cnt===idx){v[i].done=true;v[i].score={hs:hs,as:as};break}cnt++}}
-localStorage.setItem(_xa,JSON.stringify(v));
-_renderSt();_renderHi();
-}
-
-function _ch(){var el=document.getElementById("mf");el.className=el.className.indexOf("show")>=0?"mf":"mf show"}
-
-function _sh(){
-if(navigator.share){navigator.share({title:"AI足球预测",text:_last?_last.h+" vs "+_last.a+" → "+_last.r:"AI足球预测",url:location.href}).catch(function(){})}
-else if(/MicroMessenger/i.test(navigator.userAgent)){document.getElementById("so").style.display="flex"}
-else{var i=document.createElement("input");i.value=location.href;document.body.appendChild(i);i.select();document.execCommand("copy");document.body.removeChild(i);alert("链接已复制")}
-}
-if(/MicroMessenger/i.test(navigator.userAgent)){document.addEventListener("click",function(e){if(e.target.tagName==="BUTTON"||e.target.tagName==="A")return;document.getElementById("so").style.display="flex"})}
-
-_renderSt();_renderHi();
-setTimeout(_autoCheck,2000);
-setInterval(_autoCheck,600000);
-</script>
-</body>
-</html>
+for(var i=0;i<v.length;i++){if(!v[i].done){if(cnt===idx){v[i].done=true;v

@@ -110,9 +110,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .stbs{display:flex;gap:4px;margin-bottom:10px}
 .stb{flex:1;padding:6px;border:1px solid #2a2f45;border-radius:6px;background:#0d1117;color:#6b7280;font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
 .stb.on{background:#1e3a5f;color:#60a5fa;border-color:#60a5fa}
+
+/* 侧边大海报 - 电脑端 */
+.side-banner{display:none;position:fixed;top:50%;transform:translateY(-50%);width:200px;z-index:100}
+.side-banner-left{left:20px}
+.side-banner-right{right:20px}
+.side-card{border-radius:18px;padding:24px 18px;text-align:center;position:relative;overflow:hidden;margin-bottom:16px}
+.side-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.1;border-radius:18px}
+.side-ai{background:linear-gradient(160deg,#0f2818,#0a1a0f);border:1px solid #1a4a2a;box-shadow:0 8px 32px rgba(34,197,94,0.15)}
+.side-lock{background:linear-gradient(160deg,#2a1f0a,#1a1408);border:1px solid #4a3520;box-shadow:0 8px 32px rgba(245,158,11,0.15)}
+.side-icon{font-size:48px;margin-bottom:14px;display:block}
+.side-title{font-size:20px;font-weight:800;margin-bottom:8px;line-height:1.3}
+.side-ai .side-title{color:#4ade80}
+.side-lock .side-title{color:#f59e0b}
+.side-desc{font-size:13px;color:#9ca3af;line-height:1.6;margin-bottom:14px}
+.side-tag{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px}
+.side-ai .side-tag{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
+.side-lock .side-tag{background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
+.side-features{margin-top:14px;text-align:left;padding:0 4px}
+.side-features div{font-size:12px;color:#6b7280;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:6px}
+.side-features div:last-child{border-bottom:none}
+.side-features span{font-size:14px}
+.side-contact{margin-top:14px;font-size:11px;color:#555;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05)}
+/* 电脑端显示侧边海报 */
+@media(min-width:900px){
+.side-banner{display:block}
+}
+/* 电脑端主内容需要足够宽才能看到两侧海报 */
+@media(min-width:1300px){
+.ct{max-width:480px}
+}
 </style>
 </head>
 <body>
+<!-- 左侧大海报 - AI Token -->
+<div class="side-banner side-banner-left">
+<div class="side-card side-ai">
+<span class="side-icon">🤖</span>
+<div class="side-title">AI Token<br>找若禅</div>
+<div class="side-desc">专业AI算力服务<br>稳定高效 · 企业级解决方案</div>
+<div class="side-tag">立即咨询</div>
+<div class="side-features">
+<div><span>⚡</span> 高性能GPU集群</div>
+<div><span>🔒</span> 数据安全隔离</div>
+<div><span>💰</span> 灵活计费方案</div>
+<div><span>🛠️</span> 7×24技术支持</div>
+</div>
+<div class="side-contact">上海若禅信息科技</div>
+</div>
+</div>
+<!-- 右侧大海报 - 智能门锁 -->
+<div class="side-banner side-banner-right">
+<div class="side-card side-lock">
+<span class="side-icon">🔐</span>
+<div class="side-title">智能门锁<br>找若禅</div>
+<div class="side-desc">网约房专用 · 自主研发<br>安全可靠 · 智能管理</div>
+<div class="side-tag">合作共赢</div>
+<div class="side-features">
+<div><span>🏭</span> 自主主板研发</div>
+<div><span>🔑</span> 人证核验一体</div>
+<div><span>📱</span> 远程管理平台</div>
+<div><span>🔧</span> 五金代加工</div>
+</div>
+<div class="side-contact">上海若禅信息科技</div>
+</div>
+</div>
 <div class="ct">
 <div class="hd"><h1>AI足球预测</h1><p>基于多源数据的智能赛事分析</p><div style="margin-top:8px;padding:6px 10px;background:#2a1a1a;border:1px solid #ef4444;border-radius:6px;font-size:10px;color:#f87171;line-height:1.4">⚠️ 免责声明：本工具仅供娱乐参考，不构成任何投注建议。预测结果基于数据分析，不保证准确性。请理性对待，切勿沉迷。</div></div>
 
@@ -390,7 +452,72 @@ if(fg){if(fh>0.25){dir="h";lb=Math.abs(fh)}else if(fh<-0.25){dir="a";lb=Math.abs
 return{i:h.toFixed(2),n:fh.toFixed(2),f:fg,d:dir,l:lb?lb.toFixed(1):"0",t:tr};
 }
 
-function _saveP(h,a,r,hh,md){var d=JSON.parse(localStorage.getItem(_gp)||"[]");d.unshift({h:h,a:a,r:r,t:Date.now(),md:md,hh:hh?{f:hh.f,d:hh.d,l:hh.l}:null});if(d.length>100)d=d.slice(0,100);localStorage.setItem(_gp,JSON.stringify(d))}
+function _saveP(h,a,r,hh,md){var d=JSON.parse(localStorage.getItem(_gp)||"[]");d.unshift({h:h,a:a,r:r,t:Date.now(),md:md,hh:hh?{f:hh.f,d:hh.d,l:hh.l}:null});if(d.length>100)d=d.slice(0,100);localStorage.setItem(_gp,JSON.stringify(d));_saveToGitHub(h,a,r,md)}
+
+// GitHub数据收集
+var _GH_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // 替换为实际token
+var _GH_REPO="Ruochan2017/football-predictions";
+var _GH_FILE="predictions.json";
+
+function _saveToGitHub(h,a,r,md){
+  // 生成匿名用户ID（基于浏览器指纹）
+  var uid="u_"+btoa(navigator.userAgent+screen.width+screen.height).slice(0,12);
+  var prediction={
+    home:h,
+    away:a,
+    result:r,
+    matchDate:md,
+    predictTime:new Date().toISOString(),
+    userId:uid
+  };
+  
+  // 获取现有文件SHA
+  var url="https://api.github.com/repos/"+_GH_REPO+"/contents/"+_GH_FILE;
+  fetch(url,{
+    headers:{"Authorization":"token "+_GH_TOKEN,"Accept":"application/vnd.github.v3+json"}
+  }).then(function(resp){
+    if(resp.status===404){
+      // 文件不存在，创建新文件
+      return _createGitHubFile([prediction],null);
+    }else if(resp.ok){
+      return resp.json().then(function(data){
+        // 解码现有数据
+        var content=atob(data.content.replace(/\n/g,""));
+        var predictions=JSON.parse(content);
+        predictions.push(prediction);
+        // 只保留最近1000条
+        if(predictions.length>1000)predictions=predictions.slice(-1000);
+        return _createGitHubFile(predictions,data.sha);
+      });
+    }
+  }).catch(function(e){
+    console.log("GitHub save error:",e);
+  });
+}
+
+function _createGitHubFile(predictions,sha){
+  var url="https://api.github.com/repos/"+_GH_REPO+"/contents/"+_GH_FILE;
+  var content=btoa(JSON.stringify(predictions,null,2));
+  var body={
+    message:"Update predictions",
+    content:content,
+    branch:"main"
+  };
+  if(sha)body.sha=sha;
+  
+  return fetch(url,{
+    method:"PUT",
+    headers:{
+      "Authorization":"token "+_GH_TOKEN,
+      "Accept":"application/vnd.github.v3+json",
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(body)
+  }).then(function(resp){
+    if(resp.ok)console.log("Prediction saved to GitHub");
+    return resp;
+  });
+}
 function _savePend(h,a,r,md,lid){var v=JSON.parse(localStorage.getItem(_xa)||"[]");for(var i=0;i<v.length;i++){if(v[i].h===h&&v[i].a===a&&v[i].md===md&&!v[i].done)return}v.push({h:h,a:a,r:r,md:md,lid:lid,done:false,score:null});localStorage.setItem(_xa,JSON.stringify(v))}
 function _showAV(h,a,r,md){var el=document.getElementById("av");el.className="av show";document.getElementById("avd").textContent="等待比赛结束后自动获取比分验证";document.getElementById("avr").innerHTML='<span style="color:#6b7280;font-size:12px">比赛日期：'+md+' · 系统每10分钟检查比赛状态</span>'}
 
@@ -570,4 +697,23 @@ for(var i=0;i<d.length;i++){if(!d[i].v){if(cnt===idx){d[i].v=true;d[i].hit=(hs>a
 localStorage.setItem(_gp,JSON.stringify(d));
 var v=JSON.parse(localStorage.getItem(_xa)||"[]");
 cnt=0;
-for(var i=0;i<v.length;i++){if(!v[i].done){if(cnt===idx){v[i].done=true;v
+for(var i=0;i<v.length;i++){if(!v[i].done){if(cnt===idx){v[i].done=true;v[i].score={hs:hs,as:as};break}cnt++}}
+localStorage.setItem(_xa,JSON.stringify(v));
+_renderSt();_renderHi();
+}
+
+function _ch(){var el=document.getElementById("mf");el.className=el.className.indexOf("show")>=0?"mf":"mf show"}
+
+function _sh(){
+if(navigator.share){navigator.share({title:"AI足球预测",text:_last?_last.h+" vs "+_last.a+" → "+_last.r:"AI足球预测",url:location.href}).catch(function(){})}
+else if(/MicroMessenger/i.test(navigator.userAgent)){document.getElementById("so").style.display="flex"}
+else{var i=document.createElement("input");i.value=location.href;document.body.appendChild(i);i.select();document.execCommand("copy");document.body.removeChild(i);alert("链接已复制")}
+}
+if(/MicroMessenger/i.test(navigator.userAgent)){document.addEventListener("click",function(e){if(e.target.tagName==="BUTTON"||e.target.tagName==="A")return;document.getElementById("so").style.display="flex"})}
+
+_renderSt();_renderHi();
+setTimeout(_autoCheck,2000);
+setInterval(_autoCheck,600000);
+</script>
+</body>
+</html>

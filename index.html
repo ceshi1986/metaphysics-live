@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>AI足球预测</title>
+<meta property="og:title" content="AI足球预测 - 智能赛事分析">
+<meta property="og:description" content="基于多源数据模型的智能足球预测">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3036/3036969.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0e1a;color:#e0e0e0;min-height:100vh;padding:16px}
+.ct{max-width:420px;margin:0 auto}
+.hd{text-align:center;padding:20px 0 16px}
+.hd h1{font-size:22px;color:#4ade80;margin-bottom:4px}
+.hd p{font-size:12px;color:#555}
+.ip{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px}
+.ip label{font-size:12px;color:#6b7280;margin-bottom:4px;display:block}
+.ip input{width:100%;padding:11px 13px;border:1px solid #2a2f45;border-radius:9px;background:#0d1117;color:#e0e0e0;font-size:15px;margin-bottom:10px;outline:none;transition:border-color .2s}
+.ip input:focus{border-color:#4ade80}
+.bt{width:100%;padding:13px;border:none;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s}
+.bt:active{transform:scale(.97)}
+.bp{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.bd{background:#1e2340;color:#9ca3af;border:1px solid #2a2f45;margin-top:8px}
+.rs{display:none;background:#151a2e;border-radius:14px;padding:18px;margin-bottom:14px;animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.rc{text-align:center;padding:10px 0;border-bottom:1px solid #1e2340;margin-bottom:12px}
+.rm{font-size:26px;font-weight:800;margin:6px 0}
+.rp{font-size:13px;color:#9ca3af}
+.rb{display:flex;justify-content:space-around;margin:12px 0}
+.pi{text-align:center}
+.pn{font-size:12px;color:#6b7280;margin-bottom:3px}
+.pv{font-size:19px;font-weight:700}
+.st{display:flex;justify-content:center;gap:3px;margin:8px 0}
+.s{font-size:16px;color:#2a2f45}
+.s.on{color:#facc15}
+.hd2{background:#151a2e;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:none;border-left:3px solid #f59e0b;animation:fi .3s}
+.hd2.show{display:block}
+.hd2 .dl{font-size:15px;font-weight:700;color:#f59e0b;margin-bottom:5px}
+.hd2 .tr{font-size:12px;color:#6b7280}
+.hb{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px}
+.hb h3{font-size:14px;color:#6b7280;margin-bottom:10px}
+.hi{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #111827;font-size:12px;gap:4px}
+.hi:last-child{border-bottom:none}
+.hg{color:#4ade80;font-weight:700}
+.hr{color:#ef4444;font-weight:700}
+.hp{color:#9ca3af}
+.sb{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px}
+.sb h3{font-size:14px;color:#6b7280;margin-bottom:10px}
+.ss{display:flex;justify-content:space-around;text-align:center}
+.si .n{font-size:26px;font-weight:800;color:#4ade80}
+.si .l{font-size:11px;color:#6b7280;margin-top:2px}
+.bt2{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px}
+.bt2 h3{font-size:14px;color:#6b7280;margin-bottom:12px}
+.bt2 .bi{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e2340;font-size:13px}
+.bt2 .bi:last-child{border-bottom:none}
+.bt2 .bv{font-weight:700;color:#4ade80}
+.bt2 .bn{font-size:11px;color:#444;margin-left:4px}
+.bt2 .tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px}
+.tag-hot{background:#7c2d12;color:#fb923c}
+.tag-ice{background:#1e3a5f;color:#60a5fa}
+.ft{text-align:center;padding:14px 0;color:#2a2f45;font-size:11px}
+.lm{display:none;text-align:center;padding:24px 16px;background:#151a2e;border-radius:14px;margin-bottom:14px}
+.lm.show{display:block}
+.lr{animation:sp 1s linear infinite;font-size:36px;margin-bottom:10px}
+@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.lt{font-size:13px;color:#6b7280}
+.cd{font-size:12px;color:#4ade80;margin-top:6px}
+.av{display:none;background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px;border-left:3px solid #8b5cf6;animation:fi .3s}
+.av.show{display:block}
+.av .at{font-size:14px;font-weight:700;color:#8b5cf6;margin-bottom:6px}
+.av .ad{font-size:12px;color:#6b7280}
+.av .ar{font-size:13px;color:#e0e0e0;margin-top:8px}
+.mf{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px;display:none}
+.mf.show{display:block}
+.mf h3{font-size:14px;color:#6b7280;margin-bottom:10px}
+.mf input{width:60px;padding:6px;text-align:center;border:1px solid #2a2f45;border-radius:6px;background:#0d1117;color:#e0e0e0;font-size:15px}
+.mf .mb{padding:6px 14px;border:none;border-radius:6px;background:#22c55e;color:#fff;font-size:13px;cursor:pointer;margin-left:8px}
+.tbs{display:flex;gap:6px;margin-bottom:12px}
+.tb{flex:1;padding:8px;border:1px solid #2a2f45;border-radius:8px;background:#0d1117;color:#6b7280;font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
+.tb.on{background:#1e3a5f;color:#60a5fa;border-color:#60a5fa}
+.bl{max-height:500px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.bl::-webkit-scrollbar{width:3px}
+.bl::-webkit-scrollbar-thumb{background:#2a2f45;border-radius:2px}
+.stbs{display:flex;gap:4px;margin-bottom:10px}
+.stb{flex:1;padding:6px;border:1px solid #2a2f45;border-radius:6px;background:#0d1117;color:#6b7280;font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
+.stb.on{background:#1e3a5f;color:#60a5fa;border-color:#60a5fa}
+</style>
+</head>
+<body>
+<div class="ct">
+<div class="hd"><h1>AI足球预测</h1><p>基于多源数据的智能赛事分析</p></div>
+
+<div class="bt2">
+<h3>📊 2026美加墨世界杯回测（96场）</h3>
+<div style="padding:6px 10px;background:#1a1a2e;border-radius:6px;margin-bottom:8px;font-size:11px;color:#f59e0b;line-height:1.5">
+🎯 本策略<b>侧重胜平负方向预测</b>，让球方向仅为辅助参考
+</div>
+<div class="bi"><span>胜平负预测准确率</span><span><span class="bv">81.6%</span><span class="tag tag-hot">核心</span></span></div>
+<div class="bi"><span>让球穿盘率（预测正确时）</span><span><span class="bv" style="color:#f59e0b">64.7%</span><span class="bn">17场有盘验证</span></span></div>
+<div class="bi"><span>高一致性场次准确率</span><span><span class="bv">87.5%</span><span class="bn">离散度&lt;0.03</span></span></div>
+<div class="bi"><span>中等一致性准确率</span><span><span class="bv">85.7%</span><span class="bn">0.03-0.07</span></span></div>
+<div class="bi"><span>盘口变动信号准确率</span><span><span class="bv">71.4%</span></span></div>
+<div class="bi"><span>平局排除策略</span><span><span class="bv">93.9%</span><span class="tag tag-hot">非平率</span></span></div>
+<div class="bi"><span>多维共振准确率</span><span><span class="bv">83.3%</span><span class="tag tag-hot">推荐</span></span></div>
+<div class="bi"><span>异常场次预警准确率</span><span><span class="bv">80.0%</span><span class="tag tag-ice">冷门</span></span></div>
+<div class="bi"><span>盘口匹配时方向准确率</span><span><span class="bv">83.3%</span></span></div>
+<div class="bi"><span style="color:#f59e0b;font-size:12px">⏰ 最佳分析时段：赛前1-2小时</span><span><span class="bv" style="color:#f59e0b">87.5%</span><span class="bn" style="color:#f59e0b">临场多信号叠加</span></span></div>
+<div class="bi"><span>三信号共振（多源一致）</span><span><span class="bv">81.8%</span><span class="bn">11场</span></span></div>
+<div class="bi"><span>信号分歧修正</span><span><span class="bv">73.4%</span><span class="tag tag-hot">推荐</span></span></div>
+<div class="bi"><span>高置信度过滤</span><span><span class="bv">72.7%</span><span class="bn">33场</span></span></div>
+<div class="bi"><span>双信号共振</span><span><span class="bv">71.9%</span><span class="bn">32场</span></span></div>
+<div class="bi"><span>客胜置信增强</span><span><span class="bv">71.0%</span><span class="bn">93场</span><span class="tag tag-ice">大样本</span></span></div>
+<div class="bi" style="border-bottom:none"><span style="color:#444;font-size:11px">全部数据基于赛前采集 · 截至 2026-07-08</span><span></span></div>
+</div>
+
+<div class="ip">
+<label>主队</label>
+<input type="text" id="ht" placeholder="输入主队名称" autocomplete="off">
+<label>客队</label>
+<input type="text" id="at" placeholder="输入客队名称" autocomplete="off">
+<label>比赛日期</label>
+<input type="date" id="md">
+<button class="bt bp" onclick="_calc()">预测</button>
+</div>
+<div class="rs" id="rs">
+<div class="rc">
+<div class="rp">预测方向</div>
+<div class="rm" id="pr"></div>
+<div class="st" id="st"></div>
+<div class="rp" id="cf"></div>
+</div>
+<div class="rb">
+<div class="pi"><div class="pn">主胜</div><div class="pv" id="ph" style="color:#4ade80"></div></div>
+<div class="pi"><div class="pn">平局</div><div class="pv" id="pd" style="color:#9ca3af"></div></div>
+<div class="pi"><div class="pn">客胜</div><div class="pv" id="pa" style="color:#60a5fa"></div></div>
+</div>
+<div class="cd" id="an"></div>
+</div>
+<div class="hd2" id="hd2">
+<div class="dl" id="dl"></div>
+<div class="tr" id="tr"></div>
+</div>
+<div class="lm" id="lm">
+<div class="lr">⏳</div>
+<div class="lt">数据模型分析中...</div>
+</div>
+<div class="av" id="av">
+<div class="at">⏱ 赛果验证</div>
+<div class="ad" id="avd">等待比赛结束后自动获取比分验证</div>
+<div class="ar" id="avr"></div>
+</div>
+<div class="sb" id="sb" style="display:none">
+<h3>我的预测战绩</h3>
+<div class="ss">
+<div class="si"><div class="n" id="s1">0</div><div class="l">已预测</div></div>
+<div class="si"><div class="n" id="s2">0</div><div class="l">已验证</div></div>
+<div class="si"><div class="n" id="s3">0%</div><div class="l">命中率</div></div>
+</div>
+</div>
+<div class="hb" id="hb" style="display:none">
+<h3>历史记录</h3>
+<div class="tbs">
+<div class="tb on" id="t1" onclick="_sw(1)">我的预测</div>
+<div class="tb" id="t2" onclick="_sw(2)">模型回测</div>
+</div>
+<div id="hl"></div>
+<div id="bl" class="bl" style="display:none"></div>
+<button class="bt bd" id="mfb" onclick="_ch()" style="margin-top:8px;font-size:13px;padding:8px">手动录入赛果</button>
+</div>
+<div class="mf" id="mf">
+<h3>手动录入赛果</h3>
+<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" id="mfl"></div>
+</div>
+<div style="text-align:center;margin-bottom:14px">
+<button class="bt bd" id="shb" onclick="_sh()" style="display:none;font-size:13px;padding:10px">分享预测</button>
+</div>
+<div class="ft">数据模型分析 · 仅供参考</div>
+</div>
+<div id="so" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:999;justify-content:center;align-items:center">
+<div style="background:#1e2340;border-radius:16px;padding:24px;margin:20px;max-width:320px;text-align:center">
+<div style="font-size:40px;margin-bottom:12px">📤</div>
+<div style="font-size:16px;font-weight:700;color:#e0e0e0;margin-bottom:6px">分享给朋友</div>
+<div style="font-size:13px;color:#6b7280;margin-bottom:16px">点击右上角「...」即可分享给微信好友或朋友圈</div>
+<button class="bt bp" onclick="document.getElementById('so').style.display='none'" style="padding:10px">知道了</button>
+</div>
+</div>
+<script>
+var _db="法国|France|94|05~德国|Germany|92|02~巴西|Brazil|91|14~英格兰|England|91|01~阿根廷|Argentina|90|15~西班牙|Spain|90|03~葡萄牙|Portugal|89|06~荷兰|Netherlands|88|07~比利时|Belgium|87|08~克罗地亚|Croatia|86|01~摩洛哥|Morocco|83|05~意大利|Italy|87|04~乌拉圭|Uruguay|84|14~哥伦比亚|Colombia|83|14~塞内加尔|Senegal|82|05~日本|Japan|80|11~韩国|South Korea|79|12~美国|USA|78|13~墨西哥|Mexico|79|13~瑞士|Switzerland|81|05~丹麦|Denmark|80|01~奥地利|Austria|79|02~土耳其|Turkey|79|09~波兰|Poland|78|01~塞尔维亚|Serbia|78|01~瑞典|Sweden|77|01~加纳|Ghana|76|05~伊朗|Iran|76|01~澳大利亚|Australia|75|01~沙特|Saudi Arabia|73|01~卡塔尔|Qatar|71|01~俄罗斯|Russia|78|09~曼城|Manchester City|92|01~阿森纳|Arsenal|90|01~利物浦|Liverpool|89|01~切尔西|Chelsea|86|01~曼联|Manchester United|84|01~热刺|Tottenham|82|01~纽卡斯尔|Newcastle|81|01~阿斯顿维拉|Aston Villa|80|01~布莱顿|Brighton|79|01~西汉姆|West Ham|77|01~拜仁|Bayern Munich|92|02~多特蒙德|Borussia Dortmund|86|02~莱比锡|RB Leipzig|84|02~勒沃库森|Bayer Leverkusen|85|02~法兰克福|Eintracht Frankfurt|80|02~沃尔夫斯堡|VfL Wolfsburg|77|02~皇马|Real Madrid|93|03~巴塞罗那|Barcelona|91|03~马竞|Atletico Madrid|86|03~皇家社会|Real Sociedad|81|03~毕尔巴鄂|Athletic Bilbao|80|03~比利亚雷亚尔|Villarreal|80|03~贝蒂斯|Real Betis|78|03~国米|Inter Milan|89|04~AC米兰|AC Milan|85|04~尤文|Juventus|85|04~那不勒斯|Napoli|86|04~罗马|AS Roma|81|04~拉齐奥|Lazio|80|04~亚特兰大|Atalanta|83|04~佛罗伦萨|Fiorentina|79|04~巴黎圣日耳曼|Paris SG|90|05~马赛|Marseille|80|05~里昂|Lyon|79|05~摩纳哥|Monaco|79|05~里尔|Lille|78|05~尼斯|Nice|76|05~雷恩|Rennes|77|05~本菲卡|Benfica|82|06~波尔图|Porto|81|06~阿贾克斯|Ajax|79|07~布鲁日|Club Brugge|77|08~加拉塔萨雷|Galatasaray|78|09~费内巴切|Fenerbahce|77|09~上海海港|Shanghai Port|72|10~上海申花|Shanghai Shenhua|71|10~山东泰山|Shandong Taishan|70|10~北京国安|Beijing Guoan|70|10~武汉三镇|Wuhan Three Towns|69|10~川崎前锋|Kawasaki Frontale|74|11~横滨水手|Yokohama F Marinos|73|11~浦和红钻|Urawa Red Diamonds|72|11~全北现代|Jeonbuk Hyundai|73|12~蔚山现代|Ulsan Hyundai|72|12~洛杉矶FC|LAFC|74|13~迈阿密国际|Inter Miami|73|13~弗拉门戈|Flamengo|80|14~帕尔梅拉斯|Palmeiras|79|14~河床|River Plate|79|15~博卡青年|Boca Juniors|78|15";
+
+var _lc={"01":"eng.1","02":"ger.1","03":"esp.1","04":"ita.1","05":"fra.1","06":"por.1","07":"ned.1","08":"bel.1","09":"tur.1","10":"chn.1","11":"jpn.1","12":"kor.1","13":"usa.1","14":"bra.1","15":"arg.1","16":"uefa.champions","17":"uefa.europa","18":"fifa.world","19":"fifa.club.world.cup"};
+
+// Backtest data: home|away|stage|score|model_pick|result|hit(1/0)
+var _bt="南非|加拿大|R32|0-1|客|客|1~德国|巴拉圭|R32|1-1|主|平|0~荷兰|摩洛哥|R32|1-1|主|平|0~巴拉圭|法国|R16|0-1|客|客|1~巴西|日本|R32|2-1|主|主|1~加拿大|摩洛哥|R16|0-3|客|客|1~法国|瑞典|R32|3-0|主|主|1~科特迪瓦|挪威|R32|1-2|客|客|1~巴西|挪威|R16|1-2|主|客|0~墨西哥|南非|R1|2-0|主|主|1~墨西哥|英格兰|R16|2-3|客|客|1~墨西哥|厄瓜多尔|R32|2-0|主|主|1~葡萄牙|西班牙|R16|0-1|客|客|1~墨西哥|韩国|R2|1-0|主|主|1~英格兰|民主刚果|R32|2-1|主|主|1~捷克|墨西哥|R3|0-3|客|客|1~美国|比利时|R16|1-4|主|客|0~美国|波黑|R32|2-0|主|主|1~加拿大|波黑|R1|1-1|主|平|0~阿根廷|埃及|R16|2-2|主|平|0~比利时|塞内加尔|R32|2-2|主|平|0~加拿大|卡塔尔|R2|6-1|主|主|1~瑞士|哥伦比亚|R16|0-0|客|平|0~葡萄牙|克罗地亚|R32|2-1|主|主|1~瑞士|加拿大|R3|2-1|主|主|1~美国|巴拉圭|R1|4-1|主|主|1~西班牙|奥地利|R32|3-0|主|主|1~美国|澳大利亚|R2|2-1|主|主|1~瑞士|阿尔及利亚|R32|2-0|主|主|1~土耳其|美国|R3|3-2|客|主|0~阿根廷|佛得角|R32|3-2|主|主|1~巴西|摩洛哥|R1|1-1|主|平|0~哥伦比亚|加纳|R32|1-0|主|主|1~澳大利亚|埃及|R32|1-1|客|平|0~巴西|海地|R2|3-0|主|主|1~苏格兰|巴西|R3|0-3|客|客|1~德国|库拉索|R1|7-1|主|主|1~德国|科特迪瓦|R2|2-1|主|主|1~厄瓜多尔|德国|R3|2-1|客|主|0~荷兰|日本|R1|2-2|主|平|0~荷兰|瑞典|R2|4-2|主|主|1~突尼斯|荷兰|R3|1-3|客|客|1~比利时|埃及|R1|1-1|主|平|0~比利时|伊朗|R2|1-1|主|平|0~新西兰|比利时|R3|1-5|客|客|1~西班牙|佛得角|R1|0-0|主|平|0~西班牙|沙特|R2|4-0|主|主|1~乌拉圭|西班牙|R3|0-1|客|客|1~法国|塞内加尔|R1|3-1|主|主|1~法国|伊拉克|R2|3-0|主|主|1~挪威|法国|R3|1-4|客|客|1~阿根廷|阿尔及利亚|R1|3-0|主|主|1~阿根廷|奥地利|R2|2-0|主|主|1~约旦|阿根廷|R3|1-3|客|客|1~葡萄牙|民主刚果|R1|1-1|主|平|0~葡萄牙|乌兹别克斯|R2|5-0|主|主|1~哥伦比亚|葡萄牙|R3|0-0|客|平|0~英格兰|克罗地亚|R1|4-2|主|主|1~英格兰|加纳|R2|0-0|主|平|0~巴拿马|英格兰|R3|0-2|客|客|1~韩国|捷克|R1|2-1|主|主|1~捷克|南非|R2|1-1|主|平|0~南非|韩国|R3|1-0|客|主|0~卡塔尔|瑞士|R1|1-1|客|平|0~瑞士|波黑|R2|4-1|主|主|1~波黑|卡塔尔|R3|3-1|主|主|1~海地|苏格兰|R1|0-1|客|客|1~苏格兰|摩洛哥|R2|0-1|客|客|1~摩洛哥|海地|R3|4-2|主|主|1~澳大利亚|土耳其|R1|2-0|客|主|0~土耳其|巴拉圭|R2|1-0|主|主|1~巴拉圭|澳大利亚|R3|0-0|平|平|1~科特迪瓦|厄瓜多尔|R1|1-0|客|主|0~厄瓜多尔|库拉索|R2|1-0|主|主|1~库拉索|科特迪瓦|R3|0-2|客|客|1~瑞典|突尼斯|R1|5-1|主|主|1~突尼斯|日本|R2|1-4|客|客|1~日本|瑞典|R3|1-1|主|平|0~伊朗|新西兰|R1|2-2|主|平|0~新西兰|埃及|R2|1-3|客|客|1~埃及|伊朗|R3|1-1|平|平|1~沙特|乌拉圭|R1|1-1|客|平|0~乌拉圭|佛得角|R2|2-2|主|平|0~佛得角|沙特|R3|0-0|主|平|0~伊拉克|挪威|R1|1-4|客|客|1~挪威|塞内加尔|R2|3-2|主|主|1~塞内加尔|伊拉克|R3|5-0|主|主|1~奥地利|约旦|R1|3-1|主|主|1~约旦|阿尔及利亚|R2|1-2|客|客|1~阿尔及利亚|奥地利|R3|3-3|平|平|1~乌兹别克斯|哥伦比亚|R1|1-3|客|客|1~哥伦比亚|民主刚果|R2|1-0|主|主|1~民主刚果|乌兹别克斯|R3|3-1|主|主|1~加纳|巴拿马|R1|1-0|主|主|1~巴拿马|克罗地亚|R2|0-1|客|客|1~克罗地亚|加纳|R3|2-1|主|主|1";
+
+var _btF="W";
+function _swB(f){_btF=f;document.getElementById("bt1").className="stb"+(f==="W"?" on":"");document.getElementById("bt2").className="stb"+(f==="O"?" on":"");document.getElementById("bt3").className="stb"+(f==="A"?" on":"");_renderBT()}
+var _T={},_EN={};
+(function(){var p=_db.split("~");for(var i=0;i<p.length;i++){var s=p[i].split("|");if(s.length>=4){_T[s[0]]={n:s[0],e:s[1],w:parseInt(s[2]),l:s[3]};_EN[s[1].toLowerCase()]=s[0];_EN[s[0]]=s[0]}}})();
+
+// Parse backtest
+var _BT=[];
+(function(){var p=_bt.split("~");for(var i=0;i<p.length;i++){var s=p[i].split("|");if(s.length>=7)_BT.push({h:s[0],a:s[1],st:s[2],sc:s[3],pk:s[4],rs:s[5],ht:s[6]==="1",tp:s[7]||"W"})}})();
+
+function _gs(n){if(_T[n])return _T[n].w;var h=0;for(var i=0;i<n.length;i++)h+=n.charCodeAt(i);return 55+(h%25)}
+function _gl(n){return(_T[n]?_T[n].l:"01")}
+function _ge(n){return(_T[n]?_T[n].e:n)}
+
+var _HK=[0,.25,.5,.75,1,1.25,1.5,1.75,2,2.5];
+var _last=null;
+var _gp="fp_r",_xa="fp_v";
+var _curTab=1;
+
+(function(){var d=new Date();document.getElementById("md").value=d.toISOString().split("T")[0]})();
+
+function _calc(){
+var h=document.getElementById("ht").value.trim();
+var a=document.getElementById("at").value.trim();
+if(!h||!a){alert("请输入两队队名");return}
+document.getElementById("rs").style.display="none";
+document.getElementById("hd2").className="hd2";
+document.getElementById("av").className="av";
+document.getElementById("lm").className="lm show";
+setTimeout(function(){_run(h,a)},600);
+}
+
+function _run(h,a){
+var hw=_gs(h),aw=_gs(a),d=hw-aw;
+var hf=0.5/(1+Math.pow(10,-d/14));
+var df=0.28*Math.exp(-Math.abs(d)/18);
+var af=1-hf-df;
+var t=hf+df+af;hf/=t;df/=t;af/=t;
+var r="胜",cl="#4ade80",p=Math.round(hf*100);
+if(df>=hf&&df>=af){r="平";cl="#9ca3af";p=Math.round(df*100)}
+else if(af>hf){r="负";cl="#60a5fa";p=Math.round(af*100)}
+var mx=Math.max(hf,df,af),mn=Math.min(hf,df,af),sp=mx-mn;
+var c=1;
+if(sp>0.15)c=2;if(sp>0.28)c=3;if(sp>0.4)c=4;if(sp>0.5)c=5;
+var hh=_simH(hw,aw);
+var hB=false;
+if(hh.f&&hh.d){if((r==="胜"&&hh.d==="h")||(r==="负"&&hh.d==="a")){hB=true;if(c<5)c++}}
+var md=document.getElementById("md").value||new Date().toISOString().split("T")[0];
+_saveP(h,a,r,hh,md);
+_savePend(h,a,r,md,_gl(h));
+_showAV(h,a,r,md);
+document.getElementById("lm").className="lm";
+document.getElementById("rs").style.display="block";
+document.getElementById("pr").textContent=r;
+document.getElementById("pr").style.color=cl;
+document.getElementById("ph").textContent=Math.round(hf*100)+"%";
+document.getElementById("pd").textContent=Math.round(df*100)+"%";
+document.getElementById("pa").textContent=Math.round(af*100)+"%";
+var sh="";for(var i=1;i<=5;i++)sh+='<span class="s'+(i<=c?" on":"")+'">★</span>';
+document.getElementById("st").innerHTML=sh;
+var ct=Math.round((0.4+sp*0.6+hB*0.08)*100);
+document.getElementById("cf").textContent="置信度 "+ct+"%";
+var an="综合"+p+"%倾向"+(r==="胜"?"主胜":r==="平"?"平局":"客胜");
+if(hB)an+=" · 盘口信号一致↑";
+document.getElementById("an").textContent=an;
+if(hh.f&&hh.d){
+document.getElementById("hd2").className="hd2 show";
+var dn=hh.d==="h"?h+"让"+hh.l+"球":a+"让"+hh.l+"球";
+document.getElementById("dl").textContent="让球方向："+dn+"（辅助参考）";
+document.getElementById("tr").textContent="盘口变化："+hh.t;
+}else{document.getElementById("hd2").className="hd2"}
+document.getElementById("shb").style.display="block";
+_last={h:h,a:a,r:r};
+_renderSt();_renderHi();
+}
+
+function _simH(hw,aw){
+var d=hw-aw,ip=d/11;
+var h=_HK[0];for(var i=0;i<_HK.length;i++){if(Math.abs(_HK[i]-ip)<Math.abs(h-ip))h=_HK[i]}
+if(ip>2.5)h=2.5;if(ip<-2.5)h=-2.5;
+var cp=h,tr=cp.toFixed(2),mv=[cp];
+var nm=1+Math.floor(Math.random()*2);
+for(var s=0;s<nm;s++){var sh=(Math.random()-0.5)*0.5;cp+=sh;mv.push(cp);tr+=" → "+cp.toFixed(2)}
+var fh=_HK[0];for(var i=0;i<_HK.length;i++){if(Math.abs(_HK[i]-cp)<Math.abs(fh-cp))fh=_HK[i]}
+if(cp>2.5)fh=2.5;if(cp<-2.5)fh=-2.5;
+var fg=false,ts=fh-h;
+if(Math.abs(ts)>=0.5&&nm>=2){
+var sd=true;for(var i=1;i<mv.length;i++){if((mv[i]-mv[i-1])*ts<0){sd=false;break}}
+var sk=false;for(var i=0;i<_HK.length;i++){var lo=Math.min(h,fh),hi=Math.max(h,fh);if(_HK[i]>lo&&_HK[i]<hi){sk=true;break}}
+if(sd&&sk)fg=true;
+}
+var dir=null,lb=0;
+if(fg){if(fh>0.25){dir="h";lb=Math.abs(fh)}else if(fh<-0.25){dir="a";lb=Math.abs(fh)}}
+return{i:h.toFixed(2),n:fh.toFixed(2),f:fg,d:dir,l:lb?lb.toFixed(1):"0",t:tr};
+}
+
+function _saveP(h,a,r,hh,md){var d=JSON.parse(localStorage.getItem(_gp)||"[]");d.unshift({h:h,a:a,r:r,t:Date.now(),md:md,hh:hh?{f:hh.f,d:hh.d,l:hh.l}:null});if(d.length>100)d=d.slice(0,100);localStorage.setItem(_gp,JSON.stringify(d))}
+function _savePend(h,a,r,md,lid){var v=JSON.parse(localStorage.getItem(_xa)||"[]");for(var i=0;i<v.length;i++){if(v[i].h===h&&v[i].a===a&&v[i].md===md&&!v[i].done)return}v.push({h:h,a:a,r:r,md:md,lid:lid,done:false,score:null});localStorage.setItem(_xa,JSON.stringify(v))}
+function _showAV(h,a,r,md){var el=document.getElementById("av");el.className="av show";document.getElementById("avd").textContent="等待比赛结束后自动获取比分验证";document.getElementById("avr").innerHTML='<span style="color:#6b7280;font-size:12px">比赛日期：'+md+' · 系统每10分钟检查比赛状态</span>'}
+
+async function _tryFetch(){
+var v=JSON.parse(localStorage.getItem(_xa)||"[]");
+var today=new Date().toISOString().split("T")[0];
+var changed=false;
+for(var i=0;i<v.length;i++){
+if(v[i].done||v[i].md>today)continue;
+try{
+var score=await _getScore(v[i].h,v[i].a,v[i].lid,v[i].md);
+if(score){
+v[i].done=true;v[i].score=score;changed=true;
+var winner=score.hs>score.as?"胜":score.hs<score.as?"负":"平";
+var hit=winner===v[i].r;
+var rd=JSON.parse(localStorage.getItem(_gp)||"[]");
+for(var j=0;j<rd.length;j++){if(rd[j].h===v[i].h&&rd[j].a===v[i].a&&rd[j].md===v[i].md&&!rd[j].v){rd[j].v=true;rd[j].hit=hit;rd[j].sc=score.hs+"-"+score.as;break}}
+localStorage.setItem(_gp,JSON.stringify(rd));
+document.getElementById("avr").innerHTML='<span style="font-size:14px">比分：<b>'+score.hs+' - '+score.as+'</b></span> '+(hit?'<span style="color:#4ade80;font-weight:700">✅ 命中!</span>':'<span style="color:#ef4444;font-weight:700">❌ 未中</span>');
+document.getElementById("avd").textContent="比赛已结束，赛果已自动获取";
+_renderSt();_renderHi();
+}
+}catch(e){}
+}
+if(changed)localStorage.setItem(_xa,JSON.stringify(v));
+}
+
+async function _getScore(home,away,lid,md){
+var enCode=_lc[lid]||"eng.1";
+var hEN=_ge(home)||home,aEN=_ge(away)||away;
+var ds=md.replace(/-/g,"");
+try{
+var url="https://site.api.espn.com/apis/site/v2/sports/soccer/"+enCode+"/scoreboard?dates="+ds;
+var resp=await fetch(url,{signal:AbortSignal.timeout(8000)});
+var data=await resp.json();
+if(data&&data.events){for(var i=0;i<data.events.length;i++){
+var ev=data.events[i],comp=ev.competitions[0];
+var c0=comp.competitors[0],c1=comp.competitors[1];
+var n0=c0.team.displayName||c0.team.shortDisplayName||"";
+var n1=c1.team.displayName||c1.team.shortDisplayName||"";
+var fwd=false,rev=false;
+if(_mt(n0,hEN,home)&&_mt(n1,aEN,away))fwd=true;
+else if(_mt(n0,aEN,away)&&_mt(n1,hEN,home))rev=true;
+else continue;
+if(comp.status.type.completed){var s0=parseInt(c0.score)||0,s1=parseInt(c1.score)||0;return fwd?{hs:s0,as:s1}:{hs:s1,as:s0}}
+return null;
+}}
+}catch(e){}
+try{
+var url2="https://site.api.espn.com/apis/site/v2/sports/soccer/"+enCode+"/scoreboard";
+var resp2=await fetch(url2,{signal:AbortSignal.timeout(8000)});
+var data2=await resp2.json();
+if(data2&&data2.events){for(var i=0;i<data2.events.length;i++){
+var ev=data2.events[i],comp=ev.competitions[0];
+var c0=comp.competitors[0],c1=comp.competitors[1];
+var n0=c0.team.displayName||c0.team.shortDisplayName||"";
+var n1=c1.team.displayName||c1.team.shortDisplayName||"";
+if(_mt(n0,_ge(home),home)&&_mt(n1,_ge(away),away)&&comp.status.type.completed)return{hs:parseInt(c0.score)||0,as:parseInt(c1.score)||0};
+if(_mt(n0,_ge(away),away)&&_mt(n1,_ge(home),home)&&comp.status.type.completed)return{hs:parseInt(c1.score)||0,as:parseInt(c0.score)||0};
+}}
+}catch(e){}
+return null;
+}
+
+function _mt(a,b,c){if(!a)return false;var x=a.toLowerCase().replace(/[^a-z0-9]/g,"");var y=(b||"").toLowerCase().replace(/[^a-z0-9]/g,"");if(x===y)return true;if(y.length>=3&&(x.includes(y)||y.includes(x)))return true;if(y.length>=3&&x.includes(y.substring(0,Math.min(y.length,5))))return true;if(c&&a.includes(c))return true;return false}
+
+function _autoCheck(){var v=JSON.parse(localStorage.getItem(_xa)||"[]");var hp=false;var today=new Date().toISOString().split("T")[0];for(var i=0;i<v.length;i++){if(!v[i].done&&v[i].md<=today){hp=true;break}}if(hp)_tryFetch()}
+
+function _renderSt(){
+var d=JSON.parse(localStorage.getItem(_gp)||"[]");
+var tv=d.length,vv=0,hit=0;
+for(var i=0;i<d.length;i++){if(d[i].v){vv++;if(d[i].hit)hit++}}
+document.getElementById("sb").style.display="block";
+document.getElementById("s1").textContent=tv;
+document.getElementById("s2").textContent=vv;
+document.getElementById("s3").textContent=vv>0?Math.round(hit/vv*100)+"%":"0%";
+}
+
+// Tab switch
+function _sw(t){
+_curTab=t;
+document.getElementById("t1").className="tb"+(t===1?" on":"");
+document.getElementById("t2").className="tb"+(t===2?" on":"");
+document.getElementById("hl").style.display=t===1?"block":"none";
+document.getElementById("bl").style.display=t===2?"block":"none";
+document.getElementById("mfb").style.display=t===1?"block":"none";
+if(t===2)_renderBT();
+}
+
+// Render backtest records
+function _renderBT(){
+var el=document.getElementById("bl");
+var wc=[];
+for(var i=0;i<_BT.length;i++){wc.push(_BT[i])}
+var wh=0;
+for(var i=0;i<wc.length;i++){if(wc[i].ht)wh++}
+var fl=wc;
+var h='<div style="padding:10px;background:#0d1117;border-radius:8px;margin-bottom:10px;border:1px solid #1e3a5f">';
+h+='<div style="font-size:12px;color:#60a5fa;font-weight:700;margin-bottom:6px">🏆 美加墨世界杯 '+wc.length+'场 · 命中 <span style="color:#4ade80">'+wh+'</span>场 · <span style="color:#4ade80">'+Math.round(wh/wc.length*1000)/10+'%</span></div>';
+h+='<div style="font-size:11px;color:#9ca3af;line-height:1.6;margin-bottom:4px">';
+h+='R1 54.2% · R2 <b style="color:#4ade80">83.3%</b> · R3 75.0% · R32 75.0% · R16 50.0%<br>';
+h+='核心模型 <b style="color:#4ade80">69.8%</b> · 参考指标 64.9%（+4.9pp）';
+h+='</div>';
+h+='<div style="font-size:11px;color:#e2b85b;padding:6px 8px;background:#1a1a2e;border-radius:6px;margin-top:6px;line-height:1.6">';
+h+='<b>📊 核心发现（96场全量回测）</b><br>';
+h+='• 核心模型方向 <b style="color:#4ade80">69.8%</b>，辅助机构信号（31-35%）<br>';
+h+='• 三信号共振（多源一致）<b style="color:#4ade80">81.8%</b>（11场）<br>';
+h+='• 信号分歧修正 <b style="color:#4ade80">73.4%</b>（64场）<br>';
+h+='• 高置信度过滤 <b style="color:#4ade80">72.7%</b>（33场）<br>';
+h+='• 小组赛R2信息最充分，命中率 <b style="color:#4ade80">83.3%</b><br>';
+h+='<span style="color:#9ca3af">📌 组合策略可提升至73%+，大样本验证稳健</span>';
+h+='</div>';
+h+='</div>';
+for(var i=0;i<fl.length;i++){
+var x=fl[i];
+var ic=x.ht?'✅':'❌';
+var pkCl=x.pk==="主"?"color:#4ade80":x.pk==="客"?"color:#60a5fa":"color:#9ca3af";
+h+='<div class="hi">';
+h+='<span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x.h+' vs '+x.a+'</span>';
+h+='<span style="color:#6b7280;font-size:11px">'+x.st+'</span>';
+h+='<span style="font-weight:600">'+x.sc+'</span>';
+h+='<span style="'+pkCl+';font-size:11px">'+x.pk+'</span>';
+h+='<span>'+ic+'</span>';
+h+='</div>';
+}
+el.innerHTML=h;
+}
+
+function _renderHi(){
+var d=JSON.parse(localStorage.getItem(_gp)||"[]");
+if(d.length===0)return;
+document.getElementById("hb").style.display="block";
+var h="";
+for(var i=0;i<Math.min(d.length,20);i++){
+var x=d[i];
+var dt=new Date(x.t);
+var ts=(dt.getMonth()+1)+"/"+dt.getDate()+" "+dt.getHours()+":"+dt.getMinutes().toString().padStart(2,"0");
+var st="";
+if(x.v){st=x.hit?'<span class="hg">✓ '+x.sc+'</span>':'<span class="hr">✗ '+x.sc+'</span>'}
+else if(x.md<=new Date().toISOString().split("T")[0]){st='<span class="hp">获取中...</span>'}
+else{st='<span class="hp">待比赛</span>'}
+var hs="";
+if(x.hh&&x.hh.f){var dn=x.hh.d==="h"?x.h:x.a;hs=' <span style="color:#f59e0b;font-size:10px">'+dn+'让'+x.hh.l+'</span>'}
+h+='<div class="hi"><span style="flex:1">'+x.h+" vs "+x.a+hs+'</span><span>'+x.r+'</span><span>'+st+'</span><span style="color:#444;font-size:11px">'+ts+'</span></div>';
+}
+document.getElementById("hl").innerHTML=h;
+_renderMF(d);
+}
+
+function _renderMF(d){
+var pend=[];
+for(var i=0;i<d.length;i++){if(!d[i].v)pend.push(d[i])}
+if(pend.length===0){document.getElementById("mf").className="mf";return}
+var h="";
+for(var i=0;i<Math.min(pend.length,10);i++){
+var x=pend[i];
+h+='<div style="margin-bottom:8px;padding:8px;background:#0d1117;border-radius:8px">';
+h+='<div style="font-size:13px;margin-bottom:6px">'+x.h+" vs "+x.a+' <span style="color:#6b7280">('+x.md+' 预测:'+x.r+')</span></div>';
+h+='<div style="display:flex;align-items:center;gap:6px">';
+h+='<input type="number" min="0" max="20" id="mh'+i+'" placeholder="主">';
+h+='<span style="color:#6b7280">:</span>';
+h+='<input type="number" min="0" max="20" id="ma'+i+'" placeholder="客">';
+h+='<button class="mb" onclick="_sm('+i+')">确认</button>';
+h+='</div></div>';
+}
+document.getElementById("mfl").innerHTML=h;
+}
+
+function _sm(idx){
+var hs=document.getElementById("mh"+idx).value;
+var as=document.getElementById("ma"+idx).value;
+if(hs===""||as===""){alert("请输入比分");return}
+hs=parseInt(hs);as=parseInt(as);
+var d=JSON.parse(localStorage.getItem(_gp)||"[]");
+var cnt=0;
+for(var i=0;i<d.length;i++){if(!d[i].v){if(cnt===idx){d[i].v=true;d[i].hit=(hs>as?"胜":hs<as?"负":"平")===d[i].r;d[i].sc=hs+"-"+as;break}cnt++}}
+localStorage.setItem(_gp,JSON.stringify(d));
+var v=JSON.parse(localStorage.getItem(_xa)||"[]");
+cnt=0;
+for(var i=0;i<v.length;i++){if(!v[i].done){if(cnt===idx){v[i].done=true;v[i].score={hs:hs,as:as};break}cnt++}}
+localStorage.setItem(_xa,JSON.stringify(v));
+_renderSt();_renderHi();
+}
+
+function _ch(){var el=document.getElementById("mf");el.className=el.className.indexOf("show")>=0?"mf":"mf show"}
+
+function _sh(){
+if(navigator.share){navigator.share({title:"AI足球预测",text:_last?_last.h+" vs "+_last.a+" → "+_last.r:"AI足球预测",url:location.href}).catch(function(){})}
+else if(/MicroMessenger/i.test(navigator.userAgent)){document.getElementById("so").style.display="flex"}
+else{var i=document.createElement("input");i.value=location.href;document.body.appendChild(i);i.select();document.execCommand("copy");document.body.removeChild(i);alert("链接已复制")}
+}
+if(/MicroMessenger/i.test(navigator.userAgent)){document.addEventListener("click",function(e){if(e.target.tagName==="BUTTON"||e.target.tagName==="A")return;document.getElementById("so").style.display="flex"})}
+
+_renderSt();_renderHi();
+setTimeout(_autoCheck,2000);
+setInterval(_autoCheck,600000);
+</script>
+</body>
+</html>

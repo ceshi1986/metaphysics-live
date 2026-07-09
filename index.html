@@ -111,6 +111,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .stb{flex:1;padding:6px;border:1px solid #2a2f45;border-radius:6px;background:#0d1117;color:#6b7280;font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
 .stb.on{background:#1e3a5f;color:#60a5fa;border-color:#60a5fa}
 
+/* 赛程列表样式 */
+.sl{background:#151a2e;border-radius:14px;padding:16px;margin-bottom:14px}
+.sl-title{font-size:14px;color:#6b7280;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sl-title .refresh-btn{font-size:12px;color:#4ade80;cursor:pointer;background:none;border:none;padding:4px 8px}
+.sl-title .refresh-btn:active{opacity:.6}
+.sl-loading{text-align:center;padding:24px 0;color:#6b7280;font-size:13px}
+.sl-loading .spinner{display:inline-block;width:20px;height:20px;border:2px solid #2a2f45;border-top-color:#4ade80;border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:middle}
+.sl-error{text-align:center;padding:16px;color:#ef4444;font-size:12px}
+.sl-empty{text-align:center;padding:20px;color:#6b7280;font-size:13px}
+.date-group{margin-bottom:14px}
+.date-group:last-child{margin-bottom:0}
+.date-label{font-size:12px;font-weight:700;color:#4ade80;padding:6px 0;margin-bottom:6px;border-bottom:1px solid #1e2340;display:flex;align-items:center;gap:6px}
+.date-label .date-count{font-size:10px;color:#6b7280;font-weight:400;background:#1e2340;padding:1px 6px;border-radius:4px}
+.match-card{display:flex;align-items:center;padding:10px 12px;margin-bottom:6px;background:#0d1117;border-radius:10px;cursor:pointer;transition:all .15s;border:1px solid transparent;gap:10px}
+.match-card:active{transform:scale(.98);border-color:#4ade80;background:#0f1a15}
+.match-card:last-child{margin-bottom:0}
+.match-league{font-size:9px;color:#4ade80;background:#0f2818;padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;font-weight:600;max-width:70px;overflow:hidden;text-overflow:ellipsis}
+.match-body{flex:1;min-width:0}
+.match-teams{font-size:14px;font-weight:700;color:#e0e0e0;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.match-teams .vs{color:#6b7280;font-weight:400;margin:0 4px}
+.match-meta{font-size:11px;color:#6b7280;margin-top:2px;display:flex;align-items:center;gap:6px}
+.match-meta .match-time{color:#f59e0b;font-weight:600}
+.match-meta .match-status{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:600}
+.match-status.live{background:#7c2d12;color:#fb923c}
+.match-status.scheduled{background:#1e3a5f;color:#60a5fa}
+.match-status.finished{background:#1a2a1a;color:#4ade80}
+.match-arrow{color:#2a2f45;font-size:16px;flex-shrink:0}
+
+/* 联赛筛选标签 */
+.league-filter{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.lf-tag{padding:4px 8px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;background:#0d1117;color:#6b7280;border:1px solid #2a2f45;transition:all .15s;white-space:nowrap}
+.lf-tag.on{background:#1e3a5f;color:#60a5fa;border-color:#60a5fa}
+.lf-tag:active{opacity:.7}
+
+/* 手动输入折叠区域 */
+.manual-fold{margin-bottom:14px}
+.manual-toggle{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:#151a2e;border-radius:10px;color:#6b7280;font-size:12px;cursor:pointer;border:1px dashed #2a2f45;transition:all .15s}
+.manual-toggle:active{opacity:.7}
+.manual-toggle .arrow{transition:transform .2s;font-size:10px}
+.manual-toggle .arrow.open{transform:rotate(180deg)}
+.manual-body{display:none;background:#151a2e;border-radius:0 0 14px 14px;padding:16px;border:1px dashed #2a2f45;border-top:none}
+.manual-body.show{display:block;animation:fi .2s}
+.manual-body label{font-size:12px;color:#6b7280;margin-bottom:4px;display:block}
+.manual-body input{width:100%;padding:11px 13px;border:1px solid #2a2f45;border-radius:9px;background:#0d1117;color:#e0e0e0;font-size:15px;margin-bottom:10px;outline:none;transition:border-color .2s}
+.manual-body input:focus{border-color:#4ade80}
+
 /* 侧边大海报 - 电脑端 */
 .side-banner{display:none;position:fixed;top:50%;transform:translateY(-50%);width:180px;z-index:100}
 .side-banner-left{left:20px}
@@ -130,14 +176,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .side-features div{font-size:12px;color:#6b7280;padding:3px 0;display:flex;align-items:center;gap:6px}
 .side-features span{font-size:14px}
 .side-contact{margin-top:12px;font-size:10px;color:#555;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05)}
-/* 电脑端显示侧边海报 */
-@media(min-width:800px){
-.side-banner{display:block}
-}
-/* 电脑端主内容收窄给海报留空间 */
-@media(min-width:800px){
-.ct{max-width:380px}
-}
+@media(min-width:800px){.side-banner{display:block}}
+@media(min-width:800px){.ct{max-width:380px}}
 </style>
 </head>
 <body>
@@ -199,7 +239,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="bi" style="border-bottom:none"><span style="color:#444;font-size:11px">全部数据基于赛前采集 · 截至 2026-07-08</span><span></span></div>
 </div>
 
-<div class="ip">
+<!-- 赛程列表区域 -->
+<div class="sl" id="sl">
+<div class="sl-title">
+<span>⚽ 近期赛程</span>
+<button class="refresh-btn" onclick="_loadSchedule()">🔄 刷新</button>
+</div>
+<div class="league-filter" id="lf"></div>
+<div id="sl-body">
+<div class="sl-loading"><span class="spinner"></span>加载赛程中...</div>
+</div>
+</div>
+
+<!-- 手动输入折叠区域 -->
+<div class="manual-fold">
+<div class="manual-toggle" onclick="_toggleManual()">
+<span>✏️ 手动输入队名</span>
+<span class="arrow" id="manual-arrow">▼</span>
+</div>
+<div class="manual-body" id="manual-body">
 <label>主队</label>
 <input type="text" id="ht" placeholder="输入主队名称" autocomplete="off">
 <label>客队</label>
@@ -208,6 +266,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <input type="date" id="md">
 <button class="bt bp" onclick="_calc()">预测</button>
 </div>
+</div>
+
 <div class="rs" id="rs">
 <div class="rc">
 <div class="rp">预测方向</div>
@@ -324,6 +384,30 @@ var _db="法国|France|94|05~德国|Germany|92|02~巴西|Brazil|91|14~英格兰|
 
 var _lc={"01":"eng.1","02":"ger.1","03":"esp.1","04":"ita.1","05":"fra.1","06":"por.1","07":"ned.1","08":"bel.1","09":"tur.1","10":"chn.1","11":"jpn.1","12":"kor.1","13":"usa.1","14":"bra.1","15":"arg.1","16":"uefa.champions","17":"uefa.europa","18":"fifa.world","19":"fifa.club.world.cup"};
 
+// 联赛配置：ESPN联赛代码 -> 中文名/简称/排序权重
+var _LEAGUES={
+  "eng.1":{name:"英超",short:"英超",weight:10},
+  "esp.1":{name:"西甲",short:"西甲",weight:9},
+  "ger.1":{name:"德甲",short:"德甲",weight:8},
+  "ita.1":{name:"意甲",short:"意甲",weight:7},
+  "fra.1":{name:"法甲",short:"法甲",weight:6},
+  "uefa.champions":{name:"欧冠",short:"欧冠",weight:12},
+  "uefa.europa":{name:"欧联",short:"欧联",weight:11},
+  "fifa.world":{name:"世界杯",short:"世界杯",weight:15},
+  "fifa.club.world.cup":{name:"世俱杯",short:"世俱杯",weight:14},
+  "por.1":{name:"葡超",short:"葡超",weight:5},
+  "ned.1":{name:"荷甲",short:"荷甲",weight:5},
+  "bra.1":{name:"巴甲",short:"巴甲",weight:4},
+  "arg.1":{name:"阿甲",short:"阿甲",weight:4},
+  "chn.1":{name:"中超",short:"中超",weight:3},
+  "jpn.1":{name:"日职",short:"日职",weight:3},
+  "kor.1":{name:"韩K",short:"韩K",weight:3}
+};
+
+// 全局赛程数据
+var _allMatches=[];
+var _activeFilter="all";
+
 // Backtest data: home|away|stage|score|model_pick|result|hit(1/0)
 var _bt="南非|加拿大|R32|0-1|客|客|1~德国|巴拉圭|R32|1-1|主|平|0~荷兰|摩洛哥|R32|1-1|主|平|0~巴拉圭|法国|R16|0-1|客|客|1~巴西|日本|R32|2-1|主|主|1~加拿大|摩洛哥|R16|0-3|客|客|1~法国|瑞典|R32|3-0|主|主|1~科特迪瓦|挪威|R32|1-2|客|客|1~巴西|挪威|R16|1-2|主|客|0~墨西哥|南非|R1|2-0|主|主|1~墨西哥|英格兰|R16|2-3|客|客|1~墨西哥|厄瓜多尔|R32|2-0|主|主|1~葡萄牙|西班牙|R16|0-1|客|客|1~墨西哥|韩国|R2|1-0|主|主|1~英格兰|民主刚果|R32|2-1|主|主|1~捷克|墨西哥|R3|0-3|客|客|1~美国|比利时|R16|1-4|主|客|0~美国|波黑|R32|2-0|主|主|1~加拿大|波黑|R1|1-1|主|平|0~阿根廷|埃及|R16|2-2|主|平|0~比利时|塞内加尔|R32|2-2|主|平|0~加拿大|卡塔尔|R2|6-1|主|主|1~瑞士|哥伦比亚|R16|0-0|客|平|0~葡萄牙|克罗地亚|R32|2-1|主|主|1~瑞士|加拿大|R3|2-1|主|主|1~美国|巴拉圭|R1|4-1|主|主|1~西班牙|奥地利|R32|3-0|主|主|1~美国|澳大利亚|R2|2-1|主|主|1~瑞士|阿尔及利亚|R32|2-0|主|主|1~土耳其|美国|R3|3-2|客|主|0~阿根廷|佛得角|R32|3-2|主|主|1~巴西|摩洛哥|R1|1-1|主|平|0~哥伦比亚|加纳|R32|1-0|主|主|1~澳大利亚|埃及|R32|1-1|客|平|0~巴西|海地|R2|3-0|主|主|1~苏格兰|巴西|R3|0-3|客|客|1~德国|库拉索|R1|7-1|主|主|1~德国|科特迪瓦|R2|2-1|主|主|1~厄瓜多尔|德国|R3|2-1|客|主|0~荷兰|日本|R1|2-2|主|平|0~荷兰|瑞典|R2|4-2|主|主|1~突尼斯|荷兰|R3|1-3|客|客|1~比利时|埃及|R1|1-1|主|平|0~比利时|伊朗|R2|1-1|主|平|0~新西兰|比利时|R3|1-5|客|客|1~西班牙|佛得角|R1|0-0|主|平|0~西班牙|沙特|R2|4-0|主|主|1~乌拉圭|西班牙|R3|0-1|客|客|1~法国|塞内加尔|R1|3-1|主|主|1~法国|伊拉克|R2|3-0|主|主|1~挪威|法国|R3|1-4|客|客|1~阿根廷|阿尔及利亚|R1|3-0|主|主|1~阿根廷|奥地利|R2|2-0|主|主|1~约旦|阿根廷|R3|1-3|客|客|1~葡萄牙|民主刚果|R1|1-1|主|平|0~葡萄牙|乌兹别克斯|R2|5-0|主|主|1~哥伦比亚|葡萄牙|R3|0-0|客|平|0~英格兰|克罗地亚|R1|4-2|主|主|1~英格兰|加纳|R2|0-0|主|平|0~巴拿马|英格兰|R3|0-2|客|客|1~韩国|捷克|R1|2-1|主|主|1~捷克|南非|R2|1-1|主|平|0~南非|韩国|R3|1-0|客|主|0~卡塔尔|瑞士|R1|1-1|客|平|0~瑞士|波黑|R2|4-1|主|主|1~波黑|卡塔尔|R3|3-1|主|主|1~海地|苏格兰|R1|0-1|客|客|1~苏格兰|摩洛哥|R2|0-1|客|客|1~摩洛哥|海地|R3|4-2|主|主|1~澳大利亚|土耳其|R1|2-0|客|主|0~土耳其|巴拉圭|R2|1-0|主|主|1~巴拉圭|澳大利亚|R3|0-0|平|平|1~科特迪瓦|厄瓜多尔|R1|1-0|客|主|0~厄瓜多尔|库拉索|R2|1-0|主|主|1~库拉索|科特迪瓦|R3|0-2|客|客|1~瑞典|突尼斯|R1|5-1|主|主|1~突尼斯|日本|R2|1-4|客|客|1~日本|瑞典|R3|1-1|主|平|0~伊朗|新西兰|R1|2-2|主|平|0~新西兰|埃及|R2|1-3|客|客|1~埃及|伊朗|R3|1-1|平|平|1~沙特|乌拉圭|R1|1-1|客|平|0~乌拉圭|佛得角|R2|2-2|主|平|0~佛得角|沙特|R3|0-0|主|平|0~伊拉克|挪威|R1|1-4|客|客|1~挪威|塞内加尔|R2|3-2|主|主|1~塞内加尔|伊拉克|R3|5-0|主|主|1~奥地利|约旦|R1|3-1|主|主|1~约旦|阿尔及利亚|R2|1-2|客|客|1~阿尔及利亚|奥地利|R3|3-3|平|平|1~乌兹别克斯|哥伦比亚|R1|1-3|客|客|1~哥伦比亚|民主刚果|R2|1-0|主|主|1~民主刚果|乌兹别克斯|R3|3-1|主|主|1~加纳|巴拿马|R1|1-0|主|主|1~巴拿马|克罗地亚|R2|0-1|客|客|1~克罗地亚|加纳|R3|2-1|主|主|1";
 
@@ -345,6 +429,313 @@ var _last=null;
 var _gp="fp_r",_xa="fp_v";
 var _curTab=1;
 
+// ========== 赛程加载 ==========
+
+// ESPN team name -> 本地队名映射
+function _mapTeam(displayName){
+  if(!displayName) return displayName;
+  // 先精确匹配英文名
+  var lower=displayName.toLowerCase().replace(/[^a-z0-9]/g,"");
+  if(_EN[lower]) return _EN[lower];
+  // 精确匹配原始名
+  if(_EN[displayName]) return _EN[displayName];
+  // 模糊匹配
+  for(var key in _EN){
+    var kl=key.replace(/[^a-z0-9]/g,"");
+    if(kl.length>=3&&(lower.includes(kl)||kl.includes(lower))){
+      return _EN[key];
+    }
+  }
+  // 返回原始名
+  return displayName;
+}
+
+// 获取ESPN联赛代码对应的中文联赛名
+function _getLeagueName(leagueCode){
+  if(_LEAGUES[leagueCode]) return _LEAGUES[leagueCode].name;
+  return leagueCode;
+}
+function _getLeagueShort(leagueCode){
+  if(_LEAGUES[leagueCode]) return _LEAGUES[leagueCode].short;
+  return leagueCode;
+}
+
+// 格式化比赛时间（UTC转本地时间）
+function _formatMatchTime(dateStr){
+  var d=new Date(dateStr);
+  var h=d.getHours().toString().padStart(2,"0");
+  var m=d.getMinutes().toString().padStart(2,"0");
+  return h+":"+m;
+}
+
+// 格式化日期标签
+function _formatDateLabel(dateStr){
+  var d=new Date(dateStr+"T00:00:00");
+  var today=new Date();today.setHours(0,0,0,0);
+  var diff=Math.round((d-today)/(1000*60*60*24));
+  var weekDay=["周日","周一","周二","周三","周四","周五","周六"][d.getDay()];
+  var monthDay=(d.getMonth()+1)+"/"+d.getDate();
+  if(diff===0) return "今天 "+monthDay+" "+weekDay;
+  if(diff===1) return "明天 "+monthDay+" "+weekDay;
+  if(diff===2) return "后天 "+monthDay+" "+weekDay;
+  return monthDay+" "+weekDay;
+}
+
+// 获取未来7天的日期字符串数组（YYYYMMDD格式）
+function _getNext7Days(){
+  var dates=[];
+  var today=new Date();
+  for(var i=0;i<7;i++){
+    var d=new Date(today);
+    d.setDate(d.getDate()+i);
+    var y=d.getFullYear();
+    var m=(d.getMonth()+1).toString().padStart(2,"0");
+    var day=d.getDate().toString().padStart(2,"0");
+    dates.push(y+m+day);
+  }
+  return dates;
+}
+
+// 获取未来7天的日期-显示映射（YYYYMMDD -> YYYY-MM-DD）
+function _dateToISO(yyyymmdd){
+  return yyyymmdd.substring(0,4)+"-"+yyyymmdd.substring(4,6)+"-"+yyyymmdd.substring(6,8);
+}
+
+// 加载赛程
+async function _loadSchedule(){
+  var el=document.getElementById("sl-body");
+  el.innerHTML='<div class="sl-loading"><span class="spinner"></span>加载赛程中...</div>';
+  
+  var dates=_getNext7Days();
+  // 要查询的联赛列表
+  var leagueCodes=["fifa.world","uefa.champions","uefa.europa","eng.1","esp.1","ger.1","ita.1","fra.1","por.1","ned.1","bra.1","arg.1","chn.1","jpn.1","kor.1"];
+  
+  var allMatches=[];
+  var seenIds={};
+  var errors=0;
+  var totalReqs=0;
+  
+  // 批量请求：每个联赛 x 每个日期
+  var promises=[];
+  for(var li=0;li<leagueCodes.length;li++){
+    for(var di=0;di<dates.length;di++){
+      (function(leagueCode,dateStr){
+        totalReqs++;
+        var url="https://site.api.espn.com/apis/site/v2/sports/soccer/"+leagueCode+"/scoreboard?dates="+dateStr;
+        promises.push(
+          fetch(url,{signal:AbortSignal.timeout(6000)})
+          .then(function(r){return r.json()})
+          .then(function(data){
+            if(data&&data.events){
+              for(var i=0;i<data.events.length;i++){
+                var ev=data.events[i];
+                if(seenIds[ev.id]) continue;
+                seenIds[ev.id]=true;
+                var comp=ev.competitions[0];
+                var c0=comp.competitors[0];
+                var c1=comp.competitors[1];
+                // ESPN: competitors[0]是主队(Home)
+                var isHome0=c0.homeAway==="home";
+                var homeTeam=isHome0?c0:c1;
+                var awayTeam=isHome0?c1:c0;
+                var homeName=_mapTeam(homeTeam.team.displayName||homeTeam.team.shortDisplayName||"");
+                var awayName=_mapTeam(awayTeam.team.displayName||awayTeam.team.shortDisplayName||"");
+                var statusType=comp.status.type.name;
+                var statusLabel="";
+                var statusClass="scheduled";
+                if(statusType==="STATUS_IN_PROGRESS"||statusType==="STATUS_HALFTIME"||statusType==="STATUS_SECOND_HALF"||statusType==="STATUS_FIRST_HALF"){
+                  statusLabel="进行中";
+                  statusClass="live";
+                }else if(statusType==="STATUS_FINAL"||comp.status.type.completed){
+                  statusLabel="已结束";
+                  statusClass="finished";
+                }else{
+                  statusLabel=_formatMatchTime(ev.date);
+                  statusClass="scheduled";
+                }
+                allMatches.push({
+                  id:ev.id,
+                  home:homeName,
+                  away:awayName,
+                  homeEN:homeTeam.team.displayName||"",
+                  awayEN:awayTeam.team.displayName||"",
+                  date:ev.date,
+                  dateISO:_dateToISO(dateStr),
+                  league:leagueCode,
+                  leagueName:_getLeagueName(leagueCode),
+                  leagueShort:_getLeagueShort(leagueCode),
+                  status:statusLabel,
+                  statusClass:statusClass,
+                  completed:comp.status.type.completed||false,
+                  homeScore:parseInt(homeTeam.score)||0,
+                  awayScore:parseInt(awayTeam.score)||0,
+                  weight:_LEAGUES[leagueCode]?_LEAGUES[leagueCode].weight:0
+                });
+              }
+            }
+          })
+          .catch(function(e){
+            errors++;
+            console.log("Fetch error for",leagueCode,dateStr,e);
+          })
+        );
+      })(leagueCodes[li],dates[di]);
+    }
+  }
+  
+  await Promise.all(promises);
+  
+  // 按联赛权重排序，同级按时间排序
+  allMatches.sort(function(a,b){
+    if(b.weight!==a.weight) return b.weight-a.weight;
+    return new Date(a.date)-new Date(b.date);
+  });
+  
+  _allMatches=allMatches;
+  
+  if(allMatches.length===0){
+    if(errors>0 && errors>=totalReqs-2){
+      // 大部分请求失败，降级到手动输入
+      el.innerHTML='<div class="sl-error">⚠️ 赛程加载失败，请使用下方手动输入</div>';
+      // 自动展开手动输入
+      _toggleManual(true);
+    }else{
+      el.innerHTML='<div class="sl-empty">📅 近7天暂无赛程安排<br><span style="font-size:11px;color:#444">请使用下方手动输入</span></div>';
+      _toggleManual(true);
+    }
+    return;
+  }
+  
+  // 渲染联赛筛选
+  _renderLeagueFilter(allMatches);
+  // 渲染赛程列表
+  _renderSchedule(allMatches);
+}
+
+// 渲染联赛筛选标签
+function _renderLeagueFilter(matches){
+  var leagues={};
+  for(var i=0;i<matches.length;i++){
+    var lk=matches[i].league;
+    if(!leagues[lk]) leagues[lk]={short:matches[i].leagueShort,count:0,weight:matches[i].weight};
+    leagues[lk].count++;
+  }
+  // 按权重排序
+  var sorted=Object.keys(leagues).sort(function(a,b){return leagues[b].weight-leagues[a].weight});
+  
+  var h='<span class="lf-tag'+(_activeFilter==="all"?" on":"")+'" onclick="_filterLeague(\'all\')">全部</span>';
+  for(var i=0;i<sorted.length;i++){
+    var lk=sorted[i];
+    var info=leagues[lk];
+    h+='<span class="lf-tag'+(_activeFilter===lk?" on":"")+'" onclick="_filterLeague(\''+lk+'\')">'+info.short+' '+info.count+'</span>';
+  }
+  document.getElementById("lf").innerHTML=h;
+}
+
+// 筛选联赛
+function _filterLeague(league){
+  _activeFilter=league;
+  var filtered=_activeFilter==="all"?_allMatches:_allMatches.filter(function(m){return m.league===league});
+  _renderSchedule(filtered);
+  // 更新筛选标签样式
+  var tags=document.querySelectorAll(".lf-tag");
+  tags.forEach(function(t){
+    var code=t.getAttribute("onclick").match(/'([^']+)'/);
+    if(code){
+      t.className="lf-tag"+(code[1]===_activeFilter?" on":"");
+    }
+  });
+}
+
+// 渲染赛程列表
+function _renderSchedule(matches){
+  if(matches.length===0){
+    document.getElementById("sl-body").innerHTML='<div class="sl-empty">该联赛暂无赛程</div>';
+    return;
+  }
+  
+  // 按日期分组
+  var groups={};
+  var groupOrder=[];
+  for(var i=0;i<matches.length;i++){
+    var m=matches[i];
+    if(!groups[m.dateISO]){
+      groups[m.dateISO]=[];
+      groupOrder.push(m.dateISO);
+    }
+    groups[m.dateISO].push(m);
+  }
+  groupOrder.sort();
+  
+  var h="";
+  for(var gi=0;gi<groupOrder.length;gi++){
+    var dateKey=groupOrder[gi];
+    var list=groups[dateKey];
+    h+='<div class="date-group">';
+    h+='<div class="date-label">📅 '+_formatDateLabel(dateKey)+' <span class="date-count">'+list.length+'场</span></div>';
+    for(var mi=0;mi<list.length;mi++){
+      var m=list[mi];
+      var scoreInfo="";
+      if(m.completed){
+        scoreInfo='<span style="color:#4ade80;font-weight:700;margin-left:6px">'+m.homeScore+'-'+m.awayScore+'</span>';
+      }
+      h+='<div class="match-card" onclick="_pickMatch(\''+_esc(m.home)+'\',\''+_esc(m.away)+'\',\''+m.dateISO+'\')">';
+      h+='<span class="match-league">'+m.leagueShort+'</span>';
+      h+='<div class="match-body">';
+      h+='<div class="match-teams">'+_esc(m.home)+'<span class="vs">vs</span>'+_esc(m.away)+scoreInfo+'</div>';
+      h+='<div class="match-meta">';
+      if(m.statusClass==="live"){
+        h+='<span class="match-status live">🔴 进行中</span>';
+      }else if(m.completed){
+        h+='<span class="match-status finished">已结束</span>';
+      }else{
+        h+='<span class="match-time">🕐 '+m.status+'</span>';
+      }
+      h+='</div>';
+      h+='</div>';
+      h+='<span class="match-arrow">›</span>';
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  
+  document.getElementById("sl-body").innerHTML=h;
+}
+
+// 转义单引号，用于onclick参数
+function _esc(s){
+  return s.replace(/'/g,"\\'").replace(/"/g,"&quot;");
+}
+
+// 点击选择比赛
+function _pickMatch(home,away,dateISO){
+  // 设置隐藏的输入框值
+  document.getElementById("ht").value=home;
+  document.getElementById("at").value=away;
+  document.getElementById("md").value=dateISO;
+  // 滚动到预测区域并触发预测
+  _calc();
+  // 滚动到结果区域
+  setTimeout(function(){
+    document.getElementById("rs").scrollIntoView({behavior:"smooth",block:"center"});
+  },300);
+}
+
+// 手动输入折叠切换
+function _toggleManual(forceOpen){
+  var body=document.getElementById("manual-body");
+  var arrow=document.getElementById("manual-arrow");
+  if(forceOpen===true||body.className.indexOf("show")<0){
+    body.className="manual-body show";
+    arrow.className="arrow open";
+  }else{
+    body.className="manual-body";
+    arrow.className="arrow";
+  }
+}
+
+// ========== 预测逻辑 ==========
+
 (function(){var d=new Date();document.getElementById("md").value=d.toISOString().split("T")[0]})();
 
 function _calc(){
@@ -352,6 +743,58 @@ var h=document.getElementById("ht").value.trim();
 var a=document.getElementById("at").value.trim();
 var md=document.getElementById("md").value;
 if(!h||!a){alert("请输入两队队名");return}
+
+// 智能校验：在赛程数据中匹配这两支球队
+if(_allMatches&&_allMatches.length>0){
+  // 查找包含这两支球队的比赛（不区分主客顺序）
+  var found=null;
+  for(var i=0;i<_allMatches.length;i++){
+    var m=_allMatches[i];
+    if((m.home===h&&m.away===a)||(m.home===a&&m.away===h)){
+      found=m; break;
+    }
+  }
+  // 如果没找到完全匹配，尝试模糊匹配球队名
+  if(!found){
+    for(var i=0;i<_allMatches.length;i++){
+      var m=_allMatches[i];
+      var hMatch=m.home.indexOf(h)>=0||h.indexOf(m.home)>=0||m.homeEN.toLowerCase().indexOf(h.toLowerCase())>=0||h.toLowerCase().indexOf(m.homeEN.toLowerCase())>=0;
+      var aMatch=m.away.indexOf(a)>=0||a.indexOf(m.away)>=0||m.awayEN.toLowerCase().indexOf(a.toLowerCase())>=0||a.toLowerCase().indexOf(m.awayEN.toLowerCase())>=0;
+      if(hMatch&&aMatch){found=m;break}
+    }
+  }
+  if(!found){
+    // 也没模糊匹配到：检查球队是否在赛程中出现过（单独匹配）
+    var hFound=false,aFound=false;
+    for(var i=0;i<_allMatches.length;i++){
+      var m=_allMatches[i];
+      if(m.home===h||m.away===h) hFound=true;
+      if(m.home===a||m.away===a) aFound=true;
+    }
+    if(!hFound&&!aFound){
+      alert("⚠️ 未找到这两支球队的近期赛程，请检查队名拼写");return;
+    }
+    if(hFound&&!aFound){
+      alert("⚠️ 找到「"+h+"」的赛程，但未找到「"+a+"」的近期比赛，请检查队名拼写");return;
+    }
+    if(!hFound&&aFound){
+      alert("⚠️ 找到「"+a+"」的赛程，但未找到「"+h+"」的近期比赛，请检查队名拼写");return;
+    }
+    // 两队都有赛程但近期没有对阵
+    alert("⚠️ 近期暂无这两支球队的对阵安排，预测结果仅供参考");
+  }else{
+    // 找到了对阵，检查主客顺序
+    if(found.home!==h||found.away!==a){
+      // 顺序反了，自动修正
+      if(confirm("实际比赛中「"+found.home+"」是主队、「"+found.away+"」是客队，已自动调整顺序。是否继续？")){
+        document.getElementById("ht").value=found.home;
+        document.getElementById("at").value=found.away;
+        h=found.home; a=found.away;
+      }else{return}
+    }
+  }
+}
+
 // 日期校验：只允许今天和未来7天内的比赛
 if(!md){alert("请选择比赛日期");return}
 var today=new Date();today.setHours(0,0,0,0);
@@ -398,6 +841,7 @@ var ct=Math.round((0.4+sp*0.6+hB*0.08)*100);
 document.getElementById("cf").textContent="置信度 "+ct+"%";
 var an="综合"+p+"%倾向"+(r==="胜"?"主胜":r==="平"?"平局":"客胜");
 if(hB)an+=" · 盘口信号一致↑";
+
 document.getElementById("an").textContent=an;
 
 // 购买建议逻辑
@@ -416,17 +860,14 @@ var isMediumFav=simOdds>1.7&&simOdds<=2.2; // 中等优势
 var isUncertain=simOdds>2.2; // 不确定
 
 if(isExtremeFav){
-  // 极端热门 - 警告放弃或防冷
   adviceHtml='<div class="ba-skip">⚠️ 建议放弃购买</div>';
   adviceHtml+='<div>赔率过低（约'+simOdds.toFixed(2)+'），虽然胜率高达'+Math.round(maxProb*100)+'%，但此类比赛平局概率异常偏高（约15-20%），投注价值极低。</div>';
   adviceHtml+='<div class="ba-detail">数据支撑：回测中赔率≤1.2的比赛，平局率是正常比赛的2倍以上</div>';
 }else if(isStrongFav&&probDiff>0.35){
-  // 强队+高置信度 - 推荐单选
   adviceHtml='<div class="ba-recommend">✅ 值得单选</div>';
   adviceHtml+='<div>强队优势明显（赔率约'+simOdds.toFixed(2)+'），模型置信度高（'+Math.round(probDiff*100)+'%差距），命中率约83-87%。</div>';
   adviceHtml+='<div class="ba-detail">数据支撑：澳门Kelly<返还率信号命中率83.3%，赔率≤1.7+Kelly信号87%</div>';
 }else if(isStrongFav||isMediumFav){
-  // 中等优势或强队但置信度不够 - 建议防冷双选
   adviceHtml='<div class="ba-warn">🛡️ 建议双选防冷</div>';
   adviceHtml+='<div>优势不够绝对（赔率约'+simOdds.toFixed(2)+'），建议覆盖第二选项防冷门。';
   if(df>hf&&df>af){
@@ -436,7 +877,6 @@ if(isExtremeFav){
   }
   adviceHtml+='<div class="ba-detail">数据支撑：此类比赛冷门率约25-30%，双选可显著提升命中率</div>';
 }else{
-  // 不确定 - 建议放弃
   adviceHtml='<div class="ba-skip">⚠️ 建议放弃购买</div>';
   adviceHtml+='<div>比赛结果不确定性高（赔率约'+simOdds.toFixed(2)+'），任何结果都有可能，投注风险过大。</div>';
   adviceHtml+='<div class="ba-detail">数据支撑：赔率>2.2的比赛，预测准确率降至60%以下</div>';
@@ -499,7 +939,6 @@ function _saveGHT(){
 
 function _saveToGitHub(h,a,r,md){
   if(!_GH_TOKEN)return console.log("GitHub token not configured");
-  // 生成匿名用户ID（基于浏览器指纹）
   var uid="u_"+btoa(navigator.userAgent+screen.width+screen.height).slice(0,12);
   var prediction={
     home:h,
@@ -510,21 +949,17 @@ function _saveToGitHub(h,a,r,md){
     userId:uid
   };
   
-  // 获取现有文件SHA
   var url="https://api.github.com/repos/"+_GH_REPO+"/contents/"+_GH_FILE;
   fetch(url,{
     headers:{"Authorization":"token "+_GH_TOKEN,"Accept":"application/vnd.github.v3+json"}
   }).then(function(resp){
     if(resp.status===404){
-      // 文件不存在，创建新文件
       return _createGitHubFile([prediction],null);
     }else if(resp.ok){
       return resp.json().then(function(data){
-        // 解码现有数据
         var content=atob(data.content.replace(/\n/g,""));
         var predictions=JSON.parse(content);
         predictions.push(prediction);
-        // 只保留最近1000条
         if(predictions.length>1000)predictions=predictions.slice(-1000);
         return _createGitHubFile(predictions,data.sha);
       });
@@ -576,7 +1011,6 @@ function _submitFB(){
   
   document.getElementById("fb-msg").innerHTML='<span style="color:#6b7280">提交中...</span>';
   
-  // 保存到GitHub
   if(_GH_TOKEN){
     var url="https://api.github.com/repos/"+_GH_REPO+"/contents/"+_GH_FB_FILE;
     fetch(url,{headers:{"Authorization":"token "+_GH_TOKEN,"Accept":"application/vnd.github.v3+json"}})
@@ -598,7 +1032,6 @@ function _submitFB(){
     })
     .catch(function(e){
       console.log("Feedback save error:",e);
-      // 即使GitHub失败，也保存到本地
       var local=JSON.parse(localStorage.getItem("fb_local")||"[]");
       local.push(feedback);
       localStorage.setItem("fb_local",JSON.stringify(local));
@@ -608,7 +1041,6 @@ function _submitFB(){
       setTimeout(function(){document.getElementById("fb-msg").textContent=""},3000);
     });
   }else{
-    // 没有token，保存到本地
     var local=JSON.parse(localStorage.getItem("fb_local")||"[]");
     local.push(feedback);
     localStorage.setItem("fb_local",JSON.stringify(local));
@@ -760,15 +1192,12 @@ el.innerHTML=h;
 }
 
 function _renderHi(){
-// 从GitHub读取所有用户预测数据
 _loadGitHubPredictions(function(allPredictions){
 if(allPredictions.length===0){
-// 如果没有GitHub数据，使用本地数据
 var d=JSON.parse(localStorage.getItem(_gp)||"[]");
 if(d.length===0)return;
 _renderHiLocal(d);
 }else{
-// 使用GitHub数据（去重）
 _renderHiLocal(allPredictions);
 }
 });
@@ -787,7 +1216,6 @@ return resp.json();
 if(!data||!data.content){callback([]);return}
 var content=atob(data.content.replace(/\n/g,""));
 var predictions=JSON.parse(content);
-// 按比赛去重（两队名称排序+比赛日期，避免主客互换重复）
 var unique={};
 for(var i=0;i<predictions.length;i++){
 var p=predictions[i];
@@ -797,7 +1225,6 @@ if(!unique[key]){
 unique[key]={h:p.home,a:p.away,r:p.result,t:new Date(p.predictTime).getTime(),md:p.matchDate,v:false};
 }
 }
-// 转换为数组并按时间倒序
 var arr=[];
 for(var k in unique){arr.push(unique[k])}
 arr.sort(function(a,b){return b.t-a.t});
@@ -812,7 +1239,6 @@ callback([]);
 function _renderHiLocal(d){
 document.getElementById("hb").style.display="block";
 document.getElementById("sb").style.display="block";
-// 统计准确率
 var total=d.length;
 var verified=0;
 var hits=0;
@@ -886,6 +1312,9 @@ if(/MicroMessenger/i.test(navigator.userAgent)){document.addEventListener("click
 _renderSt();_renderHi();
 setTimeout(_autoCheck,2000);
 setInterval(_autoCheck,600000);
+
+// 页面加载时自动拉取赛程
+_loadSchedule();
 </script>
 </body>
 </html>

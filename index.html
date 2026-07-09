@@ -230,6 +230,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ai-acc-row .v.down{color:#ef4444}
 .ai-acc-row .v.flat{color:#9ca3af}
 .ai-acc-note{font-size:10px;color:#444;margin-top:8px;text-align:center}
+
+.upcoming-box{background:linear-gradient(135deg,#1a2332,#151a2e);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #2a3f55;border-left:3px solid #f59e0b}
+.upcoming-title{font-size:15px;font-weight:700;color:#f59e0b;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.upcoming-sub{font-size:11px;color:#6b7280;font-weight:400}
+.upcoming-card{background:#0d1117;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #1e2340}
+.upcoming-card:last-child{margin-bottom:0}
+.upcoming-match{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.upcoming-teams{font-size:14px;font-weight:700;color:#e0e0e0}
+.upcoming-countdown{font-size:11px;color:#f59e0b;background:#1a1a00;padding:2px 8px;border-radius:4px;font-weight:700}
+.upcoming-pred{display:flex;justify-content:space-between;align-items:center}
+.upcoming-pick{font-size:14px;font-weight:700}
+.upcoming-pick.single{color:#4ade80}
+.upcoming-pick.double{color:#60a5fa}
+.upcoming-info{font-size:11px;color:#6b7280}
+.upcoming-skip{font-size:11px;color:#ef4444;margin-left:6px}
+.upcoming-league{font-size:10px;color:#555;background:#1a1a2e;padding:1px 6px;border-radius:3px}
+
 </style>
 </head>
 <body>
@@ -301,6 +318,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div id="sl-body">
 <div class="sl-loading"><span class="spinner"></span>加载赛程中...</div>
 </div>
+</div>
+
+<!-- 即将开赛 -->
+<div class="upcoming-box" id="upcoming-box" style="display:none">
+<div class="upcoming-title">⏰ 即将开赛 <span class="upcoming-sub" id="upcoming-sub"></span></div>
+<div id="upcoming-body"></div>
 </div>
 
 <!-- AI推荐准确率面板 -->
@@ -777,6 +800,180 @@ var _ESPN_CN={
 "Strømsgodset":"斯托姆加斯特","Sarpsborg 08":"萨尔普斯堡",
 "Sandefjord Fotball":"桑德菲杰","Sandefjord":"桑德菲杰",
 "Tromsø IL":"特罗姆瑟","Tromsø":"特罗姆瑟",
+// 补充映射
+"Algeria":"阿尔及利亚",
+"Argentina":"阿根廷",
+"Austria":"奥地利",
+"Belgium":"比利时",
+"Bosnia-Herzegovina":"波黑",
+"Bosnia-Herz":"波黑",
+"Brazil":"巴西",
+"Canada":"加拿大",
+"Colombia":"哥伦比亚",
+"Congo DR":"刚果民主共和国",
+"Croatia":"克罗地亚",
+"Curaçao":"库拉索",
+"Czechia":"捷克",
+"Ecuador":"厄瓜多尔",
+"Egypt":"埃及",
+"England":"英格兰",
+"France":"法国",
+"Germany":"德国",
+"Ghana":"加纳",
+"Ivory Coast":"科特迪瓦",
+"Mexico":"墨西哥",
+"Morocco":"摩洛哥",
+"Netherlands":"荷兰",
+"Norway":"挪威",
+"Paraguay":"巴拉圭",
+"Portugal":"葡萄牙",
+"Scotland":"苏格兰",
+"Senegal":"塞内加尔",
+"Spain":"西班牙",
+"Sweden":"瑞典",
+"Switzerland":"瑞士",
+"Tunisia":"突尼斯",
+"Türkiye":"土耳其",
+"United States":"美国",
+"USA":"美国",
+"Uruguay":"乌拉圭",
+"Bodo/Glimt":"博德闪耀",
+"F.C. København":"哥本哈根",
+"København":"哥本哈根",
+"FK Qarabag":"卡拉巴赫",
+"Kairat Almaty":"阿拉木图凯拉特",
+"Pafos":"帕福斯",
+"Slavia Prague":"布拉格斯拉维亚",
+"Union St.-Gilloise":"圣吉罗斯联合",
+"FC Basel":"巴塞尔",
+"FCSB":"布加勒斯特星",
+"Ferencvaros":"费伦茨瓦罗斯",
+"Maccabi Tel-Aviv":"特拉维夫马卡比",
+"PAOK Salonika":"塞萨洛尼基PAOK",
+"PAOK":"塞萨洛尼基PAOK",
+"Panathinaikos":"帕纳辛纳科斯",
+"RB Salzburg":"萨尔茨堡红牛",
+"Racing Genk":"亨克",
+"SK Brann":"布兰",
+"Viktoria Plzen":"比尔森胜利",
+"Young Boys":"伯尔尼年轻人",
+"Athletico-PR":"巴拉那竞技",
+"Atlético-MG":"米内罗竞技",
+"Bahia":"巴伊亚",
+"Chapecoense":"沙佩科恩斯",
+"Coritiba":"科里蒂巴",
+"Cruzeiro":"克鲁塞罗",
+"Internacional":"巴西国际",
+"Mirassol":"米拉索尔",
+"Red Bull Bragantino":"布拉甘蒂诺红牛",
+"Bragantino":"布拉甘蒂诺红牛",
+"Remo":"雷莫",
+"Vasco da Gama":"瓦斯科达伽马",
+"Vasco":"瓦斯科达伽马",
+"Vitória":"维多利亚",
+"Aldosivi":"阿尔多希维",
+"Argentinos Juniors":"阿根廷青年人",
+"Argentinos ":"阿根廷青年人",
+"Atlético Tucumán":"图库曼竞技",
+"Atl Tucumán":"图库曼竞技",
+"Banfield":"班菲尔德",
+"Barracas Central":"巴拉卡斯中央",
+"Barracas":"巴拉卡斯中央",
+"Belgrano (Córdoba)":"贝尔格拉诺",
+"Belgrano ":"贝尔格拉诺",
+"Central Córdoba (Santiago del Estero)":"圣地亚哥中央科尔多瓦",
+"C. Córdoba (SE)":"圣地亚哥中央科尔多瓦",
+"Defensa y Justicia":"国防与司法",
+"Def. y Jus.":"国防与司法",
+"Deportivo Riestra":"里耶斯特拉体育",
+"Riestra":"里耶斯特拉体育",
+"Estudiantes de La Plata":"拉普拉塔大学生",
+"Estudiantes":"拉普拉塔大学生",
+"Estudiantes de Río Cuarto":"里奥夸尔托大学生",
+"Estudiantes RC":"里奥夸尔托大学生",
+"Gimnasia (Mendoza)":"门多萨体操",
+"Gimnasia (M)":"门多萨体操",
+"Gimnasia La Plata":"拉普拉塔体操",
+"Gimnasia LP":"拉普拉塔体操",
+"Huracán":"飓风",
+"Huracán ":"飓风",
+"Independiente Rivadavia":"里瓦达维亚独立",
+"Ind. Rivadavia":"里瓦达维亚独立",
+"Instituto (Córdoba)":"科尔多瓦学院",
+"Instituto":"科尔多瓦学院",
+"Lanús":"拉努斯",
+"Lanús ":"拉努斯",
+"Newell's Old Boys":"纽维尔老男孩",
+"Newell's":"纽维尔老男孩",
+"Platense":"普拉滕斯",
+"Rosario Central":"罗萨里奥中央",
+"San Lorenzo":"圣洛伦索",
+"San Lorenzo ":"圣洛伦索",
+"Sarmiento (Junín)":"萨米恩托",
+"Sarmiento (J)":"萨米恩托",
+"Talleres (Córdoba)":"塔列雷斯",
+"Talleres ":"塔列雷斯",
+"Tigre":"蒂格雷",
+"Unión (Santa Fe)":"圣菲联合",
+"Unión (SF)":"圣菲联合",
+"Vélez Sarsfield":"萨斯菲尔德",
+"Vélez ":"萨斯菲尔德",
+"BK Häcken":"赫根",
+"Degerfors IF":"代格福什",
+"Degerfors":"代格福什",
+"GAIS":"盖斯",
+"IK Sirius":"西里乌斯",
+"Sirius":"西里乌斯",
+"Örgryte IS":"奥尔格里特",
+"ORGRYTEIS":"奥尔格里特",
+"Aalesund":"奥勒松",
+"Hamarkameratene":"汉坎",
+"IK Start":"斯塔特",
+"KFUM Oslo":"奥斯陆KFUM",
+"KFUM":"奥斯陆KFUM",
+"Kristiansund BK":"克里斯蒂安松",
+"Kristiansund":"克里斯蒂安松",
+"Lillestrom":"利勒斯特罗姆",
+"Sarpsborg FK":"萨尔普斯堡",
+"Tromso":"特罗姆瑟",
+"Vålerenga":"瓦勒伦加",
+"Valerenga":"瓦勒伦加",
+"Cercle Brugge KSV":"色格拉布鲁日",
+"KVC Westerlo":"韦斯特洛",
+"Westerlo":"韦斯特洛",
+"Lommel SK":"洛默尔",
+"OH Leuven":"奥赫鲁汶",
+"RAAL La Louvière":"拉卢维耶尔",
+"La Louvière":"拉卢维耶尔",
+"Royal Charleroi SC":"皇家沙勒罗瓦",
+"Royal Charleroi":"皇家沙勒罗瓦",
+"Sint-Truidense":"圣图尔登",
+"Waasland-Beveren":"华斯兰德贝弗伦",
+"Zulte-Waregem":"祖尔特瓦雷海姆",
+"Austria Lustenau":"奥地利卢斯特瑙",
+"Austria Vienna":"奥地利维也纳",
+"Vienna":"奥地利维也纳",
+"Grazer AK":"格拉茨AK",
+"Grazer":"格拉茨AK",
+"Rapid Vienna":"维也纳快速",
+"SC Rheindorf Altach":"莱茵多夫阿尔塔赫",
+"SC Rheindorf":"莱茵多夫阿尔塔赫",
+"SV Josko Ried":"里德",
+"WSG Swarovski Tirol":"WSG蒂罗尔",
+"Swarovski Tirol":"WSG蒂罗尔",
+"Wolfsberger":"沃尔夫斯贝格",
+"Caykur Rizespor":"里泽斯堡",
+"Eyupspor":"埃于普体育",
+"Fatih Karagümrük":"卡拉古鲁克",
+"Karagümrük":"卡拉古鲁克",
+"Genclerbirligi":"根克勒比利吉",
+"Genclerbirli":"根克勒比利吉",
+"Goztepe":"格兹特佩",
+"Istanbul Basaksehir":"伊斯坦布尔巴萨克赛尔",
+"Istanbul BB":"伊斯坦布尔巴萨克赛尔",
+"Kasimpasa":"卡斯帕萨",
+"Kocaelispor":"科贾埃利体育",
+"Samsunspor":"萨姆松体育",
 // 世界杯/国家队
 "DRC Congo":"民主刚果","DR Congo":"民主刚果",
 "Republic of Ireland":"爱尔兰","Ireland":"爱尔兰","Northern Ireland":"北爱尔兰",
@@ -1806,8 +2003,84 @@ function _doGenAIRec(){
   _updateAccPanel();
   // 触发验证
   _verifyAIRecs();
+  _renderUpcoming();
 }
 
+
+// 即将开赛区域：显示90分钟内开赛的比赛预测
+function _renderUpcoming(){
+  var box=document.getElementById("upcoming-box");
+  var body=document.getElementById("upcoming-body");
+  var sub=document.getElementById("upcoming-sub");
+  
+  if(!_allMatches||_allMatches.length===0){
+    box.style.display="none";
+    return;
+  }
+  
+  var now=new Date();
+  var cutoff=new Date(now.getTime()+90*60*1000); // 90分钟后
+  
+  // 筛选90分钟内开赛的未开赛比赛
+  var upcoming=_allMatches.filter(function(m){
+    if(m.statusClass!=="scheduled") return false;
+    var mt=new Date(m.date);
+    return mt>=now&&mt<=cutoff;
+  });
+  
+  if(upcoming.length===0){
+    box.style.display="none";
+    return;
+  }
+  
+  // 按开赛时间排序
+  upcoming.sort(function(a,b){return new Date(a.date)-new Date(b.date)});
+  
+  sub.textContent="未来90分钟 · "+upcoming.length+"场";
+  
+  // 获取AI推荐数据
+  var recs=JSON.parse(localStorage.getItem("ai_recommendations")||"[]");
+  var recMap={};
+  for(var i=0;i<recs.length;i++){
+    if(recs[i].matchId) recMap[recs[i].matchId]=recs[i];
+  }
+  
+  var h="";
+  for(var i=0;i<upcoming.length;i++){
+    var m=upcoming[i];
+    var rec=recMap[m.id];
+    var mt=new Date(m.date);
+    var diffMin=Math.round((mt-now)/(60*1000));
+    var countdown="";
+    if(diffMin<=0) countdown="即将开始";
+    else if(diffMin<60) countdown=diffMin+"分钟后开赛";
+    else countdown=Math.floor(diffMin/60)+"小时"+diffMin%60+"分钟后";
+    
+    h+='<div class="upcoming-card">';
+    h+='<div class="upcoming-match">';
+    h+='<span class="upcoming-teams">'+m.home+' <span style="color:#555;font-weight:400">对阵</span> '+m.away+'</span>';
+    h+='<span class="upcoming-countdown">'+countdown+'</span>';
+    h+='</div>';
+    h+='<div class="upcoming-pred">';
+    
+    if(rec){
+      var predClass=rec.type==="single"?"single":"double";
+      var predText=rec.type==="single"?rec.prediction:rec.prediction+"（双选）";
+      var skipTag=rec.skip?'<span class="upcoming-skip">（不建议购买）</span>':'';
+      h+='<span class="upcoming-pick '+predClass+'">🎯 '+predText+skipTag+'</span>';
+      h+='<span class="upcoming-info">置信度'+rec.confidence+'%</span>';
+    }else{
+      h+='<span class="upcoming-pick" style="color:#6b7280">预测生成中...</span>';
+    }
+    
+    h+='<span class="upcoming-league">'+m.leagueShort+'</span>';
+    h+='</div>';
+    h+='</div>';
+  }
+  
+  body.innerHTML=h;
+  box.style.display="block";
+}
 // AI判断逻辑
 function _aiJudge(m,hf,df,af){
   var probs=[{r:"胜",p:hf},{r:"平",p:df},{r:"负",p:af}];
@@ -1972,6 +2245,7 @@ async function _verifyAIRecs(){
     _updateAccPanel();
     // 如果推荐面板正在显示，重新渲染
     _renderAIRec(recs);
+    _renderUpcoming();
   }
 }
 
@@ -2057,12 +2331,16 @@ function _updateAccPanel(){
 setTimeout(function(){
   _genAIRec();
   _updateAccPanel();
+  _renderUpcoming();
 },3000);
 
 // 每10分钟自动验证
 setInterval(function(){
   _verifyAIRecs();
 },600000);
+
+// 每2分钟刷新即将开赛区域
+setInterval(function(){_renderUpcoming()},120000);
 </script>
 </body>
 </html>

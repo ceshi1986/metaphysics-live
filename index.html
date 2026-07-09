@@ -156,6 +156,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .manual-body label{font-size:12px;color:#6b7280;margin-bottom:4px;display:block}
 .manual-body input{width:100%;padding:11px 13px;border:1px solid #2a2f45;border-radius:9px;background:#0d1117;color:#e0e0e0;font-size:15px;margin-bottom:10px;outline:none;transition:border-color .2s}
 .manual-body input:focus{border-color:#4ade80}
+/* 手动预测输入区 - 醒目版 */
+.manual-predict-section{background:linear-gradient(135deg,#1a2332,#1e2a3e);border-radius:16px;padding:20px;margin-bottom:14px;border:2px solid #4ade80;box-shadow:0 0 20px rgba(74,222,128,.15)}
+.mps-title{font-size:18px;font-weight:700;color:#4ade80;margin-bottom:4px}
+.mps-desc{font-size:12px;color:#6b7280;margin-bottom:16px}
+.mps-form{display:flex;flex-direction:column;gap:12px}
+.mps-row{display:flex;align-items:flex-end;gap:12px}
+.mps-field{flex:1}
+.mps-field label{font-size:12px;color:#6b7280;margin-bottom:4px;display:block}
+.mps-field input{width:100%;padding:12px 14px;border:1px solid #2a2f45;border-radius:10px;background:#0d1117;color:#e0e0e0;font-size:15px;outline:none;transition:border-color .2s}
+.mps-field input:focus{border-color:#4ade80}
+.mps-vs{font-size:20px;font-weight:900;color:#f59e0b;padding:0 8px 12px}
+.mps-btn{padding:12px 28px;background:linear-gradient(135deg,#4ade80,#22c55e);border:none;border-radius:10px;color:#0d1117;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.mps-btn:active{transform:scale(0.97);opacity:.85}
+.manual-entry-link{font-size:12px;color:#60a5fa;cursor:pointer;text-decoration:underline}
+.manual-entry-link:hover{color:#93c5fd}
 
 /* 侧边大海报 - 电脑端 */
 .side-banner{display:none;position:fixed;top:50%;transform:translateY(-50%);width:180px;z-index:100}
@@ -308,6 +323,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="bi" style="border-bottom:none"><span style="color:#444;font-size:11px">全部数据基于赛前采集 · 截至 2026-07-08</span><span></span></div>
 </div>
 
+
+<!-- 手动预测输入区 - 醒目版 -->
+<div class="manual-predict-section" id="manual-predict-section">
+<div class="mps-title">🎯 手动预测</div>
+<div class="mps-desc">输入两队名称，获取AI预测分析</div>
+<div class="mps-form">
+<div class="mps-row">
+<div class="mps-field">
+<label>主队</label>
+<input type="text" id="ht" placeholder="输入主队名称" autocomplete="off">
+</div>
+<div class="mps-vs">VS</div>
+<div class="mps-field">
+<label>客队</label>
+<input type="text" id="at" placeholder="输入客队名称" autocomplete="off">
+</div>
+</div>
+<div class="mps-row">
+<div class="mps-field">
+<label>比赛日期</label>
+<input type="date" id="md">
+</div>
+<button class="mps-btn" onclick="_calc()">🔮 预测</button>
+</div>
+</div>
+<div style="text-align:right;margin-top:8px">
+<span class="manual-entry-link" onclick="document.getElementById('mf').scrollIntoView({behavior:'smooth'})">📝 录入赛果</span>
+</div>
+</div>
+
 <!-- 赛程列表区域 -->
 <div class="sl" id="sl">
 <div class="sl-title">
@@ -353,22 +398,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<!-- 手动输入折叠区域 -->
-<div class="manual-fold">
-<div class="manual-toggle" onclick="_toggleManual()">
-<span>✏️ 手动输入队名</span>
-<span class="arrow" id="manual-arrow">▼</span>
-</div>
-<div class="manual-body" id="manual-body">
-<label>主队</label>
-<input type="text" id="ht" placeholder="输入主队名称" autocomplete="off">
-<label>客队</label>
-<input type="text" id="at" placeholder="输入客队名称" autocomplete="off">
-<label>比赛日期</label>
-<input type="date" id="md">
-<button class="bt bp" onclick="_calc()">预测</button>
-</div>
-</div>
 
 <div class="rs" id="rs">
 <div class="rc">
@@ -1177,12 +1206,12 @@ async function _loadSchedule(){
   if(allMatches.length===0){
     if(errors>0 && errors>=totalReqs-2){
       // 大部分请求失败，降级到手动输入
-      el.innerHTML='<div class="sl-error">⚠️ 赛程加载失败，请使用下方手动输入</div>';
-      // 自动展开手动输入
-      _toggleManual(true);
+      el.innerHTML='<div class="sl-error">⚠️ 赛程加载失败，请使用上方手动输入</div>';
+      // 滚动到手动预测区
+      document.getElementById('manual-predict-section')&&document.getElementById('manual-predict-section').scrollIntoView({behavior:'smooth'});
     }else{
-      el.innerHTML='<div class="sl-empty">📅 近7天暂无赛程安排<br><span style="font-size:11px;color:#444">请使用下方手动输入</span></div>';
-      _toggleManual(true);
+      el.innerHTML='<div class="sl-empty">📅 近7天暂无赛程安排<br><span style="font-size:11px;color:#444">请使用上方手动输入</span></div>';
+      document.getElementById('manual-predict-section')&&document.getElementById('manual-predict-section').scrollIntoView({behavior:'smooth'});
     }
     return;
   }

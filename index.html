@@ -87,6 +87,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 .toast.show{opacity:1}
 .refresh-btn{position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(59,130,246,.4);z-index:100;display:flex;align-items:center;justify-content:center}
 .refresh-btn:active{transform:scale(.9)}
+
+/* AI Section */
+#aiResultContent h3{font-size:15px;font-weight:700;color:#a78bfa;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+#aiResultContent h3:first-child{margin-top:0}
+#aiResultContent p{margin:6px 0;color:var(--text)}
+#aiResultContent strong{color:var(--accent2)}
+#aiResultContent ul,#aiResultContent ol{margin:6px 0;padding-left:20px}
+#aiResultContent li{margin:4px 0;line-height:1.8}
+#aiResultContent code{background:rgba(139,92,246,0.15);padding:2px 6px;border-radius:4px;font-size:12px;color:#a78bfa}
+#aiResultContent blockquote{border-left:3px solid #7c3aed;padding:8px 12px;margin:8px 0;background:rgba(139,92,246,0.05);border-radius:0 6px 6px 0;color:var(--text2);font-style:italic}
+.ai-verdict{padding:12px;border-radius:8px;margin:10px 0;font-weight:600;font-size:14px}
+.ai-verdict-buy{background:rgba(231,76,60,.1);border-left:3px solid var(--up);color:var(--up)}
+.ai-verdict-sell{background:rgba(39,174,96,.1);border-left:3px solid var(--down);color:var(--down)}
+.ai-verdict-hold{background:rgba(59,130,246,.1);border-left:3px solid var(--accent2);color:var(--accent2)}
 </style>
 </head>
 <body>
@@ -133,6 +147,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
 </div>
 </div>
 <div id="strategyResult"></div>
+
+<!-- AI投资顾问 -->
+<div id="aiSection" class="card" style="display:none;border:1px solid rgba(139,92,246,0.3);background:linear-gradient(135deg,var(--card) 0%,rgba(139,92,246,0.05) 100%)">
+  <div class="card-title" style="color:#a78bfa">🤖 AI投资顾问 <span style="font-size:11px;color:var(--text2);font-weight:400">· 价值投机策略</span></div>
+  
+  <div id="aiKeyArea">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+      💡 AI分析基于「价值投机」框架，结合大盘择时、赛道选择、个股决策三层体系，给出趋势判断与操作建议。需要配置API Key才能使用。
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+      <select id="aiProvider" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:13px;outline:none;min-width:130px">
+        <option value="deepseek">DeepSeek</option>
+        <option value="volcengine">火山引擎</option>
+        <option value="custom">自定义API</option>
+      </select>
+      <input id="aiKeyInput" type="password" placeholder="输入API Key" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
+    </div>
+    <div id="customApiArea" style="display:none;margin-bottom:10px">
+      <input id="customApiUrl" type="text" placeholder="自定义API地址，如 https://your-api.com/v1/chat/completions" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;margin-bottom:8px">
+      <input id="customModel" type="text" placeholder="模型名称，如 gpt-4o-mini" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="background:#7c3aed;flex:1" onclick="saveAiKey()">保存Key并开始分析</button>
+    </div>
+  </div>
+
+  <div id="aiReadyArea" style="display:none">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:8px;height:8px;background:#22c55e;border-radius:50%"></div>
+      <span style="font-size:12px;color:var(--text2)">AI已就绪 · <span id="aiProviderLabel">DeepSeek</span></span>
+      <button onclick="showAiKeyConfig()" style="background:none;border:none;color:var(--accent2);font-size:12px;cursor:pointer;margin-left:auto">修改Key</button>
+    </div>
+    <button id="aiAnalyzeBtn" class="btn" style="width:100%;background:linear-gradient(135deg,#7c3aed,#3b82f6);padding:12px;font-size:14px;font-weight:600" onclick="runAiAnalysis()">🤖 AI深度分析</button>
+  </div>
+
+  <div id="aiLoading" style="display:none;text-align:center;padding:30px">
+    <div style="font-size:14px;color:#a78bfa;margin-bottom:12px">🤖 AI正在深度分析中...</div>
+    <div style="font-size:12px;color:var(--text2)">基于价值投机框架，结合行情数据与策略评分</div>
+    <div class="loading" style="padding:16px"></div>
+  </div>
+
+  <div id="aiResult" style="display:none">
+    <div id="aiResultContent" style="font-size:13px;line-height:1.9;color:var(--text)"></div>
+    <div style="margin-top:12px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;font-size:11px;color:var(--text2);line-height:1.6">
+      ⚠️ AI分析仅供参考，不构成投资建议。投资有风险，入市需谨慎。
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- 投资组合 -->
@@ -271,7 +333,7 @@ function fetchSinaQuote(code){
     const proxyUrl=`https://qt.gtimg.cn/q=${code}`;
     
     // We'll use a CORS proxy for Sina
-    const corsProxy='https://api.allorigins.win/raw?url=';
+    const corsProxy='https://proxy.cors.sh/';
     const targetUrl=encodeURIComponent(`https://hq.sinajs.cn/list=${code}`);
     
     fetch(corsProxy+targetUrl)
@@ -336,41 +398,45 @@ function fetchQuote(code){
 }
 
 async function fetchViaProxy(code){
-  try{
-    // Try Tencent through proxy
-    const res=await fetch(`https://qt.gtimg.cn/q=${code}`);
-    const text=await res.text();
-    const match=text.match(/="(.+)"/);
-    if(!match||!match[1]) return null;
-    const p=match[1].split('~');
-    if(p.length<50) return null;
-    return {
-      name:p[1],
-      code:p[2],
-      price:parseFloat(p[3]),
-      prevClose:parseFloat(p[4]),
-      open:parseFloat(p[5]),
-      volume:parseFloat(p[6])*100,
-      amount:parseFloat(p[37])*10000,
-      high:parseFloat(p[33]),
-      low:parseFloat(p[34]),
-      change:parseFloat(p[31]),
-      changePct:parseFloat(p[32]),
-      turnover:parseFloat(p[38])||0,
-      pe:parseFloat(p[39])||0,
-      marketCap:parseFloat(p[45])||0,
-      time:p[30]
-    };
-  }catch(e){
+  // Primary: proxy.cors.sh (verified working)
+  const proxies=[
+    url=>'https://proxy.cors.sh/'+encodeURIComponent(url),
+    url=>'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    url=>'https://corsproxy.io/?'+encodeURIComponent(url)
+  ];
+  const targetUrl='https://qt.gtimg.cn/q='+code;
+  for(const mkProxy of proxies){
     try{
-      // Fallback: Sina through CORS proxy
-      const corsUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(`https://hq.sinajs.cn/list=${code}`);
-      const res2=await fetch(corsUrl);
-      const text2=await res2.text();
-      const m2=text2.match(/="(.+)"/);
-      if(!m2||!m2[1]) return null;
-      const parts=m2[1].split(',');
-      if(parts.length<32) return null;
+      const res=await fetch(mkProxy(targetUrl),{headers:{'x-cors-api-key':'temp'}});
+      if(!res.ok) continue;
+      const text=await res.text();
+      const match=text.match(/="(.+)"/);
+      if(!match||!match[1]) continue;
+      const p=match[1].split('~');
+      if(p.length<50) continue;
+      return {
+        name:p[1],code:p[2],
+        price:parseFloat(p[3]),prevClose:parseFloat(p[4]),
+        open:parseFloat(p[5]),volume:parseFloat(p[6])*100,
+        amount:parseFloat(p[37])*10000,
+        high:parseFloat(p[33]),low:parseFloat(p[34]),
+        change:parseFloat(p[31]),changePct:parseFloat(p[32]),
+        turnover:parseFloat(p[38])||0,pe:parseFloat(p[39])||0,
+        marketCap:parseFloat(p[45])||0,time:p[30]
+      };
+    }catch(e){continue}
+  }
+  // Final fallback: Sina through proxy
+  const sinaTarget='https://hq.sinajs.cn/list='+code;
+  for(const mkProxy of proxies){
+    try{
+      const res=await fetch(mkProxy(sinaTarget),{headers:{'x-cors-api-key':'temp'}});
+      if(!res.ok) continue;
+      const text=await res.text();
+      const m=text.match(/="(.+)"/);
+      if(!m||!m[1]) continue;
+      const parts=m[1].split(',');
+      if(parts.length<32) continue;
       const price=parseFloat(parts[3]),prev=parseFloat(parts[2]);
       return {
         name:parts[0],code:code,
@@ -382,8 +448,9 @@ async function fetchViaProxy(code){
         turnover:0,pe:0,marketCap:0,
         date:parts[30],time:parts[31]
       };
-    }catch(e2){return null}
+    }catch(e){continue}
   }
+  return null;
 }
 
 function renderQuote(data){
@@ -650,6 +717,432 @@ function refreshAll(){
 
 // Init
 renderPortfolio();
+
+
+// ===== AI Investment Advisor =====
+const AI_SYSTEM_PROMPT = `你是一位资深A股投资顾问，核心理念是"价值投机"——在正确方向上的投机。
+
+## 三层决策体系
+1. 大盘择时 → 现在能不能做？决定仓位上限
+2. 赛道选择 → 做什么方向？决定产业链布局
+3. 个股选择 → 买哪个？决定具体标的和买卖时点
+
+## 核心原则
+- 大盘环境不安全时，不重仓；方向不对时，不选股
+- 下跌趋势绝对不买（MA20>MA60>MA120才算多头排列）
+- 感觉不对就卖（保住利润比追求更多利润更重要）
+- 资金使用效率最大化：趋势在就拿着，效率下降就走
+
+## 选股三要素
+1. 趋势方向（最重要）：未来1-3年确定性高的产业趋势
+2. 龙头企业：同赛道只买龙头，市值/营收前3
+3. 主力资金活跃：板块成交额持续放大，资金净流入
+
+## 止损体系（分级）
+- 高手级：-3%（入场极精准）
+- 标准级：-10%（容错空间合理）
+- 强趋势票：-15%（给趋势留呼吸空间）
+- 到价无条件执行，不抱幻想
+
+## 操作SOP
+Step1: 趋势扫描→哪些产业处于上升周期
+Step2: 板块筛选→确定性高的方向中，资金流入最强的板块
+Step3: 个股确认→龙头均线多头排列+放量突破+机构增持
+Step4: 择时入场→等右侧信号，分批建仓（50%→30%→20%）
+Step5: 持仓管理→每日检查趋势和资金，每周复盘基本面
+Step6: 离场→止损条件触发就卖，趋势未破不止盈
+
+## 大盘仓位控制
+- 趋势向上→80-100%
+- 震荡→50-60%
+- 趋势向下→20%以下或空仓`;
+
+let lastStrategyData = null; // Store last analysis data for AI
+
+// Initialize AI section visibility
+function initAiSection(){
+  const section = document.getElementById('aiSection');
+  section.style.display = 'block';
+  const savedKey = localStorage.getItem('ai_api_key');
+  const savedProvider = localStorage.getItem('ai_provider') || 'deepseek';
+  if(savedKey){
+    document.getElementById('aiKeyArea').style.display = 'none';
+    document.getElementById('aiReadyArea').style.display = 'block';
+    const labels = {deepseek:'DeepSeek', volcengine:'火山引擎', custom:'自定义API'};
+    document.getElementById('aiProviderLabel').textContent = labels[savedProvider] || savedProvider;
+  }
+  document.getElementById('aiProvider').value = savedProvider;
+  document.getElementById('aiProvider').addEventListener('change', function(){
+    document.getElementById('customApiArea').style.display = this.value === 'custom' ? 'block' : 'none';
+  });
+}
+
+function saveAiKey(){
+  const key = document.getElementById('aiKeyInput').value.trim();
+  const provider = document.getElementById('aiProvider').value;
+  if(!key){showToast('请输入API Key');return}
+  if(provider === 'custom'){
+    const url = document.getElementById('customApiUrl').value.trim();
+    const model = document.getElementById('customModel').value.trim();
+    if(!url || !model){showToast('请填写API地址和模型名称');return}
+    localStorage.setItem('ai_custom_url', url);
+    localStorage.setItem('ai_custom_model', model);
+  }
+  localStorage.setItem('ai_api_key', key);
+  localStorage.setItem('ai_provider', provider);
+  const labels = {deepseek:'DeepSeek', volcengine:'火山引擎', custom:'自定义API'};
+  document.getElementById('aiProviderLabel').textContent = labels[provider] || provider;
+  document.getElementById('aiKeyArea').style.display = 'none';
+  document.getElementById('aiReadyArea').style.display = 'block';
+  showToast('✅ AI配置已保存');
+}
+
+function showAiKeyConfig(){
+  document.getElementById('aiKeyArea').style.display = 'block';
+  document.getElementById('aiReadyArea').style.display = 'none';
+  document.getElementById('aiKeyInput').value = localStorage.getItem('ai_api_key') || '';
+  document.getElementById('aiProvider').value = localStorage.getItem('ai_provider') || 'deepseek';
+  const savedUrl = localStorage.getItem('ai_custom_url') || '';
+  const savedModel = localStorage.getItem('ai_custom_model') || '';
+  document.getElementById('customApiUrl').value = savedUrl;
+  document.getElementById('customModel').value = savedModel;
+  document.getElementById('customApiArea').style.display = document.getElementById('aiProvider').value === 'custom' ? 'block' : 'none';
+}
+
+function getAiApiConfig(){
+  const provider = localStorage.getItem('ai_provider') || 'deepseek';
+  const key = localStorage.getItem('ai_api_key');
+  if(!key) return null;
+  let apiUrl, model;
+  if(provider === 'deepseek'){
+    apiUrl = 'https://api.deepseek.com/v1/chat/completions';
+    model = 'deepseek-chat';
+  } else if(provider === 'volcengine'){
+    apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+    model = 'doubao-pro-32k';
+  } else {
+    apiUrl = localStorage.getItem('ai_custom_url') || '';
+    model = localStorage.getItem('ai_custom_model') || '';
+  }
+  return {apiUrl, model, key};
+}
+
+async function runAiAnalysis(){
+  const config = getAiApiConfig();
+  if(!config || !config.apiUrl){showToast('请先配置AI API');showAiKeyConfig();return}
+  
+  // Get stock data from last strategy analysis
+  const stockInput = document.getElementById('strategyInput').value.trim();
+  const code = resolveStockInput(stockInput);
+  if(!code){showToast('请先在策略分析中查询股票');return}
+
+  // Show loading
+  document.getElementById('aiAnalyzeBtn').style.display = 'none';
+  document.getElementById('aiLoading').style.display = 'block';
+  document.getElementById('aiResult').style.display = 'none';
+
+  // Fetch fresh data
+  try {
+    const data = await fetchViaProxy(code);
+    if(!data){
+      showToast('无法获取行情数据');
+      document.getElementById('aiLoading').style.display = 'none';
+      document.getElementById('aiAnalyzeBtn').style.display = 'block';
+      return;
+    }
+
+    const price = data.price || 0;
+    const cp = data.changePct || 0;
+    const amplitude = data.prevClose ? ((data.high - data.low) / data.prevClose * 100) : 0;
+    const pos = PORTFOLIO.state.positions.find(p => p.code === code);
+    const costPrice = pos ? pos.costPrice : null;
+    const pnlPct = costPrice ? ((price - costPrice) / costPrice * 100) : null;
+
+    // Build user prompt
+    let userData = `## 当前股票数据
+- 股票：${data.name}（${code}）
+- 当前价格：¥${price.toFixed(2)}
+- 涨跌幅：${cp > 0 ? '+' : ''}${cp.toFixed(2)}%
+- 今开：¥${data.open.toFixed(2)} | 昨收：¥${data.prevClose.toFixed(2)}
+- 最高：¥${data.high.toFixed(2)} | 最低：¥${data.low.toFixed(2)}
+- 振幅：${amplitude.toFixed(2)}%
+- 成交量：${(data.volume / 10000).toFixed(0)}万股
+- 成交额：${(data.amount / 100000000).toFixed(2)}亿元
+- 换手率：${(data.turnover || 0).toFixed(2)}%
+- 市盈率：${data.pe || '--'}`;
+
+    if(pos) {
+      userData += `\n\n## 持仓信息
+- 成本价：¥${costPrice.toFixed(2)}
+- 当前盈亏：${pnlPct > 0 ? '+' : ''}${pnlPct.toFixed(2)}%
+- 持仓数量：${pos.shares}股`;
+    }
+
+    userData += `\n\n## 量化策略评分
+${lastStrategyData ? lastStrategyData.summary : '暂无评分数据'}`;
+
+    userData += `\n\n请基于你的价值投机框架，对这只股票进行全面分析。请按以下结构输出：
+
+### 📊 趋势判断
+（分析当前趋势状态，是否处于上升/下降/震荡，结合价格和成交量判断）
+
+### 🎯 仓位建议
+（基于大盘环境和个股趋势，建议仓位比例，以及分批建仓方案）
+
+### 📏 止损与止盈
+（给出明确的止损价位和止盈策略）
+
+### 💡 操作建议
+（通俗易懂的操作建议，像在跟投资人说话一样，要有明确的方向性判断）
+
+### ⚡ 关键风险提示
+（需要关注的风险因素）
+
+注意：分析要接地气，像投资人在跟朋友聊天一样，不要太学术化。结论要明确，不要模棱两可。`;
+
+    // Call AI API
+    const response = await fetch(config.apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + config.key
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          {role: 'system', content: AI_SYSTEM_PROMPT},
+          {role: 'user', content: userData}
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+        stream: false
+      })
+    });
+
+    if(!response.ok){
+      const errText = await response.text();
+      throw new Error('API返回错误: ' + response.status + ' ' + errText.substring(0, 200));
+    }
+
+    const result = await response.json();
+    const aiText = result.choices?.[0]?.message?.content || '未能获取AI分析结果';
+
+    // Render result
+    document.getElementById('aiLoading').style.display = 'none';
+    document.getElementById('aiResult').style.display = 'block';
+    document.getElementById('aiAnalyzeBtn').style.display = 'block';
+    document.getElementById('aiResultContent').innerHTML = renderMarkdown(aiText);
+
+  } catch(err){
+    document.getElementById('aiLoading').style.display = 'none';
+    document.getElementById('aiResult').style.display = 'block';
+    document.getElementById('aiAnalyzeBtn').style.display = 'block';
+    document.getElementById('aiResultContent').innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:12px">😔</div>
+        <div style="color:var(--up);font-size:14px;margin-bottom:8px">AI分析请求失败</div>
+        <div style="color:var(--text2);font-size:12px;line-height:1.6">${err.message}</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text2)">
+          请检查：API Key是否正确、网络连接是否正常、API额度是否充足
+        </div>
+      </div>`;
+  }
+}
+
+// Simple markdown renderer
+function renderMarkdown(text){
+  let html = text
+    // Code blocks
+    .replace(/```([\s\S]*?)```/g, '<pre style="background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto;font-size:12px;margin:8px 0">$1</pre>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Blockquote
+    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+    // Unordered list
+    .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>')
+    // Ordered list
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    // Line breaks
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+  
+  // Wrap consecutive <li> in <ul>
+  html = html.replace(/(<li>.*?<\/li>)(?![\s\S]*?<li>)/gs, '<ul>$1</ul>');
+  html = html.replace(/(<li>[\s\S]*?<\/li>)+/g, function(match){
+    return '<ul>' + match + '</ul>';
+  });
+  
+  // Clean up empty paragraphs
+  html = '<p>' + html + '</p>';
+  html = html.replace(/<p><\/p>/g, '');
+  html = html.replace(/<p>(<h3>)/g, '$1');
+  html = html.replace(/(<\/h3>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<ul>)/g, '$1');
+  html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<pre)/g, '$1');
+  html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<blockquote>)/g, '$1');
+  html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+  
+  return html;
+}
+
+// Hook into analyzeStock to capture strategy data and show AI section
+const _origAnalyzeStock = analyzeStock;
+analyzeStock = function(){
+  const input = document.getElementById('strategyInput').value.trim();
+  if(!input){showToast('请输入股票代码或名称');return}
+  const code = resolveStockInput(input);
+  if(!code){showToast('无法识别，请重新输入');return}
+  document.getElementById('strategyResult').innerHTML = '<div class="loading">正在分析 ' + input + ' 策略</div>';
+  document.getElementById('aiSection').style.display = 'block';
+  
+  const pos = PORTFOLIO.state.positions.find(p => p.code === code);
+  
+  fetchViaProxy(code).then(data => {
+    if(!data){
+      document.getElementById('strategyResult').innerHTML = '<div class="empty">无法获取数据，请稍后重试</div>';
+      return;
+    }
+    const price = data.price || 0;
+    const cp = data.changePct || 0;
+    const costPrice = pos ? pos.costPrice : price;
+    const amplitude = data.prevClose ? ((data.high - data.low) / data.prevClose * 100) : 0;
+    
+    let trend = '中性', trendClass = 'trend-neutral', trendIcon = '⚖️';
+    if(cp > 2){trend = '强势上涨';trendClass = 'trend-up';trendIcon = '🔥'}
+    else if(cp > 0){trend = '小幅上涨';trendClass = 'trend-up';trendIcon = '📈'}
+    else if(cp < -2){trend = '大幅下跌';trendClass = 'trend-down';trendIcon = '📉'}
+    else if(cp < 0){trend = '小幅回调';trendClass = 'trend-down';trendIcon = '📉'}
+    
+    let volAnalysis = '成交量适中', volClass = 'trend-neutral';
+    if(data.amount > 500000000){volAnalysis = '放量（成交额>5亿）';volClass = 'trend-up'}
+    else if(data.amount > 100000000){volAnalysis = '成交活跃'}
+    else if(data.amount < 50000000){volAnalysis = '缩量（成交额<5千万）';volClass = 'trend-down'}
+    
+    let flow = '资金平衡', flowClass = 'trend-neutral', flowIcon = '⚖️';
+    if(cp > 1 && amplitude > 3){flow = '主力资金流入';flowClass = 'trend-up';flowIcon = '💰'}
+    else if(cp < -1 && amplitude > 3){flow = '主力资金流出';flowClass = 'trend-down';flowIcon = '💸'}
+    else if(cp > 0.5){flow = '资金小幅流入';flowClass = 'trend-up';flowIcon = '↗️'}
+    else if(cp < -0.5){flow = '资金小幅流出';flowClass = 'trend-down';flowIcon = '↘️'}
+    
+    const base = pos ? costPrice : price;
+    const stopLoss1 = (base * 0.90).toFixed(2);
+    const stopLoss15 = (base * 0.85).toFixed(2);
+    const stopLoss3 = (base * 0.97).toFixed(2);
+    
+    let advice = '', adviceClass = '';
+    const pnlPct = pos ? ((price - costPrice) / costPrice * 100) : 0;
+    if(pos && pnlPct < -10){advice = '⚠️ 已触发止损线，建议立即止损出局';adviceClass = 'advice-sell'}
+    else if(pos && pnlPct > 15){advice = '🎯 已达止盈目标，建议分批止盈（先出50%锁定利润）';adviceClass = 'advice-sell'}
+    else if(pos && pnlPct > 5){advice = '📊 持仓盈利中，可继续持有，上移止损位至成本价';adviceClass = 'advice-hold'}
+    else if(pos && pnlPct > -3){advice = '📊 持仓波动正常，维持观望，严格执行止损纪律';adviceClass = 'advice-hold'}
+    else if(cp > 3 && amplitude > 4){advice = '🔥 强势信号，可考虑短线介入，严格设置-3%止损';adviceClass = 'advice-buy'}
+    else if(cp > 0){advice = '📈 走势偏强，建议观察量能配合情况，等待回踩确认后介入';adviceClass = 'advice-hold'}
+    else{advice = '📉 走势偏弱，建议观望，等待企稳信号再考虑入场';adviceClass = 'advice-sell'}
+    
+    let score = 50, scoreItems = [];
+    if(cp > 2){score += 15;scoreItems.push('涨幅>2% (+15)')}
+    else if(cp > 0){score += 8;scoreItems.push('小幅上涨 (+8)')}
+    else if(cp > -2){score -= 5;scoreItems.push('小幅下跌 (-5)')}
+    else{score -= 15;scoreItems.push('跌幅>2% (-15)')}
+    if(data.amount > 500000000){score += 10;scoreItems.push('放量 (+10)')}
+    else if(data.amount < 50000000){score -= 8;scoreItems.push('缩量 (-8)')}
+    if(amplitude > 5){score += 5;scoreItems.push('大振幅 (+5)')}
+    if(cp > 0 && data.turnover > 3){score += 8;scoreItems.push('换手活跃 (+8)')}
+    if(pos){
+      if(pnlPct > 0){score += 5;scoreItems.push('持仓盈利 (+5)')}
+      else if(pnlPct < -5){score -= 10;scoreItems.push('持仓亏损 (-10)')}
+    }
+    score = Math.max(0, Math.min(100, score));
+    let scoreLabel = '观望', scoreColor = 'var(--text2)';
+    if(score >= 70){scoreLabel = '🔥 积极';scoreColor = 'var(--up)'}
+    else if(score >= 50){scoreLabel = '📈 偏多';scoreColor = 'var(--accent2)'}
+    else if(score >= 30){scoreLabel = '⚖️ 中性';scoreColor = 'var(--text2)'}
+    else{scoreLabel = '📉 偏空';scoreColor = 'var(--down)'}
+    
+    // Save strategy data for AI
+    lastStrategyData = {
+      name: data.name,
+      code: code,
+      price: price,
+      changePct: cp,
+      amplitude: amplitude.toFixed(2),
+      volume: data.volume,
+      amount: data.amount,
+      turnover: data.turnover,
+      pe: data.pe,
+      score: score,
+      scoreLabel: scoreLabel,
+      trend: trend,
+      flow: flow,
+      summary: `股票：${data.name}（${code}）| 价格：¥${price.toFixed(2)} | 涨跌幅：${cp > 0 ? '+' : ''}${cp.toFixed(2)}% | 振幅：${amplitude.toFixed(2)}% | 成交额：${(data.amount/100000000).toFixed(2)}亿 | 换手率：${(data.turnover||0).toFixed(2)}% | 趋势：${trend} | 资金：${flow} | 量化评分：${score}/100（${scoreLabel}）| 评分明细：${scoreItems.join('，')}`
+    };
+    
+    document.getElementById('strategyResult').innerHTML = `
+    <div class="card">
+      <div class="quote-header">
+        <div>
+          <div class="quote-name">${data.name || '未知'} <span class="badge badge-sector">${code.replace('sh','').replace('sz','').replace('bj','')}</span></div>
+          <div class="quote-code">${data.name ? '' : ''}${code}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="quote-price ${colorClass(cp)}">${fmt(price)}</div>
+          <div class="quote-change ${colorClass(cp)}">${sign(data.change || cp)}${fmt(data.change || cp)} (${sign(cp)}${fmt(cp)}%)</div>
+        </div>
+      </div>
+      
+      <div class="strategy-section">
+        <div class="strategy-label">📊 趋势判断</div>
+        <span class="trend-tag ${trendClass}">${trendIcon} ${trend}</span>
+        <span class="trend-tag ${volClass}">${volAnalysis}</span>
+        <span class="trend-tag ${flowClass}">${flowIcon} ${flow}</span>
+      </div>
+      
+      <div class="strategy-section">
+        <div class="strategy-label">🎯 综合评分</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
+          <div style="font-size:28px;font-weight:800;color:${scoreColor}">${score}</div>
+          <div style="font-size:14px;color:${scoreColor};font-weight:600">${scoreLabel}</div>
+          <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden">
+            <div style="width:${score}%;height:100%;background:${scoreColor};border-radius:4px;transition:width .5s"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.8">${scoreItems.join(' | ')}</div>
+      </div>
+      
+      <div class="strategy-section">
+        <div class="strategy-label">📏 止损位（基准价: ¥${fmt(base)}）</div>
+        <div class="stop-levels">
+          <div class="stop-row"><span class="stop-label">🟡 预警止损 -3%</span><span class="stop-price">¥${stopLoss3}</span></div>
+          <div class="stop-row"><span class="stop-label">🟠 标准止损 -10%</span><span class="stop-price">¥${stopLoss1}</span></div>
+          <div class="stop-row"><span class="stop-label">🔴 极限止损 -15%</span><span class="stop-price">¥${stopLoss15}</span></div>
+        </div>
+      </div>
+      
+      <div class="profit-rule">
+        💰 <strong>止盈规则：</strong><br>
+        ① 涨幅达 +5% → 上移止损至成本价<br>
+        ② 涨幅达 +10% → 止盈50%仓位<br>
+        ③ 涨幅达 +15% → 再止盈30%仓位<br>
+        ④ 剩余20%仓位跟踪止盈（回撤5%平仓）
+      </div>
+      
+      <div class="analysis-advice ${adviceClass}">${advice}</div>
+    </div>`;
+  });
+};
+
+// Initialize AI section on page load
+setTimeout(initAiSection, 100);
+
 </script>
 </body>
 </html>

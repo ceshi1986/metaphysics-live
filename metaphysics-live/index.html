@@ -1750,8 +1750,8 @@ const AI_COST_PER_CALL = 1;
 function getAIAuth() {
   try {
     const auth = JSON.parse(localStorage.getItem('metaphysics_ai_auth') || '{}');
-    return { key: auth.key||'', valid: auth.valid||false, remaining: auth.remaining||0, used: auth.used||0 };
-  } catch(e) { return {key:'',valid:false,remaining:0,used:0}; }
+    return { key: auth.key||'', valid: auth.valid||false, remaining: auth.remaining||0, consumed: auth.consumed||0 };
+  } catch(e) { return {key:'',valid:false,remaining:0,consumed:0}; }
 }
 
 function saveAIAuth(auth) {
@@ -1774,7 +1774,7 @@ function openAIUpgrade() {
         <div style="font-size:48px;margin-bottom:16px;">✨</div>
         <div style="font-size:18px;font-weight:600;color:#4caf50;margin-bottom:12px;">AI分析已激活</div>
         <div style="color:var(--text-dim);margin-bottom:8px;">剩余额度：${formatTokens(auth.remaining)} tokens</div>
-        <div style="color:var(--text-dim);margin-bottom:8px;">已消耗：${auth.used}次</div>
+        <div style="color:var(--text-dim);margin-bottom:8px;">已消耗：${formatTokens(auth.consumed||0)} tokens</div>
         
         <button onclick="logoutAIKey()" style="margin-top:16px;padding:8px 20px;background:rgba(255,82,82,.2);border:1px solid rgba(255,82,82,.3);color:#ff5252;border-radius:8px;cursor:pointer;font-size:13px;">退出登录</button>
       </div>
@@ -2167,7 +2167,7 @@ async function callAIAnalysis(systemPrompt, userPrompt, mode='full') {
   // 完整模式：更新本地key余额
   if(json.mode === 'full' && json.token_remaining !== undefined) {
     const auth = getAIAuth();
-    saveAIAuth({ ...auth, remaining: json.token_remaining, used: (auth.used||0) + 1 });
+    saveAIAuth({ ...auth, remaining: json.token_remaining, consumed: (auth.consumed||0) + (json.tokens_used||0) });
   }
   
   return json.analysis || json.content || null;

@@ -1758,6 +1758,12 @@ function saveAIAuth(auth) {
   localStorage.setItem('metaphysics_ai_auth', JSON.stringify(auth));
 }
 
+function formatTokens(num) {
+  if (num >= 10000) return Math.floor(num / 10000) + '万';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+  return num.toString();
+}
+
 function openAIUpgrade() {
   const auth = getAIAuth();
   if(auth.valid && auth.remaining > 0) {
@@ -1767,7 +1773,7 @@ function openAIUpgrade() {
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:48px;margin-bottom:16px;">✨</div>
         <div style="font-size:18px;font-weight:600;color:#4caf50;margin-bottom:12px;">AI分析已激活</div>
-        <div style="color:var(--text-dim);margin-bottom:8px;">剩余额度：约${Math.floor(auth.remaining/2000)}次深度分析</div>
+        <div style="color:var(--text-dim);margin-bottom:8px;">剩余额度：${formatTokens(auth.remaining)} tokens</div>
         <div style="color:var(--text-dim);margin-bottom:8px;">已使用：${auth.used}次</div>
         
         <button onclick="logoutAIKey()" style="margin-top:16px;padding:8px 20px;background:rgba(255,82,82,.2);border:1px solid rgba(255,82,82,.3);color:#ff5252;border-radius:8px;cursor:pointer;font-size:13px;">退出登录</button>

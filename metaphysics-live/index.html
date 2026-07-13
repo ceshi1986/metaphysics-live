@@ -3819,7 +3819,7 @@ function updateStepGuide() {
     // 深度分析：需要男女双方星座都选
     const male = document.querySelector('#zodiacGridMale .zodiac-btn.selected');
     const female = document.querySelector('#zodiacGridFemale .zodiac-btn.selected');
-    zodiacDone = !!(male && female);
+    zodiacDone = !!(male || female);
     btnsContainer = document.querySelector('#deepMode .version-btns');
   } else {
     // 快速问答：至少选一方星座

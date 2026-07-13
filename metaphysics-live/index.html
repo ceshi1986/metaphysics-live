@@ -1812,7 +1812,7 @@ async function submitAIKey() {
       msg.style.color = '#4caf50';
       setTimeout(() => { openAIUpgrade(); updateAIButton(); }, 1500);
     } else {
-      msg.textContent = '❌ ' + (data.message||'Key无效或已过期');
+      msg.textContent = '❌ ' + (data.error||'Key无效或已过期');
       msg.style.color = '#ff5252';
     }
   } catch(e) {

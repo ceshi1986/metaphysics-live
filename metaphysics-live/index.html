@@ -1800,6 +1800,7 @@ function openAIUpgrade() {
     document.getElementById('aiKeyMsg').textContent = '';
   }
   document.getElementById('aiUpgradeModal').style.display = 'flex';
+  if(typeof switchAITab==='function')switchAITab('buy');
 }
 
 function closeAIUpgrade() {
@@ -3814,7 +3815,7 @@ loadFeedbacks();
         </div>
         <div style="color:var(--text-dim);font-size:13px;line-height:1.6">
           💡 每个Key可使用约1000次分析，有效期30天<br>
-          📝 如需购买Key，请联系主播
+          📝 如需购买Key，请<button onclick="switchAITab('buy')" style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;border:none;padding:4px 14px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-left:4px;vertical-align:middle">联系客服</button>
         </div>
       </div>
       <div style="margin-bottom:16px">

@@ -47,6 +47,10 @@ background:#fff;
 border-radius:50%;
 animation:twinkle 3s infinite;
 }
+@keyframes pulse{
+  0%,100%{box-shadow:0 4px 20px rgba(255,107,157,.5);transform:scale(1)}
+  50%{box-shadow:0 4px 30px rgba(255,107,157,.8);transform:scale(1.05)}
+}
 @keyframes twinkle{
 0%,100%{opacity:.3}
 50%{opacity:1}
@@ -1111,7 +1115,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button class="tab-btn active" data-mode="deep">深度分析</button>
 <button class="tab-btn" data-mode="quick">快速问答</button>
 </nav>
-<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,rgba(155,109,255,.3),rgba(255,107,157,.3));border:1px solid rgba(155,109,255,.5);color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px);box-shadow:0 4px 12px rgba(155,109,255,.3);transition:all .3s;margin-right:12px" title="升级为AI大模型分析">✨ 升级AI分析</button>
+<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,#ff6b9d,#c44dff);border:2px solid #ff6b9d;color:#fff;padding:10px 20px;border-radius:25px;cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 4px 20px rgba(255,107,157,.5);transition:all .3s;margin-right:12px;animation:pulse 2s infinite" title="升级为AI大模型分析">🔓 点击解锁更高级版本（AI深度解析）</button>
 <button class="sidebar-toggle" id="toggleArchive" style="margin-right:8px">📁 咨询档案</button>
 <button class="sidebar-toggle" id="toggleSidebar">📋 历史记录</button>
 </header>
@@ -1829,7 +1833,7 @@ function updateAIButton() {
     btn.style.background = 'linear-gradient(135deg,rgba(76,175,80,.3),rgba(139,233,157,.3))';
     btn.style.borderColor = 'rgba(76,175,80,.5)';
   } else {
-    btn.innerHTML = '✨ 升级AI分析';
+    btn.innerHTML = '🔓 点击解锁更高级版本（AI深度解析）';
     btn.style.background = 'linear-gradient(135deg,rgba(155,109,255,.3),rgba(255,107,157,.3))';
     btn.style.borderColor = 'rgba(155,109,255,.5)';
   }
@@ -3782,7 +3786,7 @@ loadFeedbacks();
     <div id="aiKeyInput" style="display:block">
       <div style="background:rgba(155,109,255,.1);border:1px solid rgba(155,109,255,.2);border-radius:12px;padding:16px;margin-bottom:20px">
         <div style="color:var(--text-light);font-size:14px;line-height:1.6;margin-bottom:12px">
-          🎯 <strong>升级AI分析</strong>后，将获得由AI大模型生成的深度个性化分析报告，替代模板化内容。
+           <strong>点击解锁更高级版本（AI深度解析）</strong>后，将获得由AI大模型生成的深度个性化分析报告，替代模板化内容。
         </div>
         <div style="color:var(--text-dim);font-size:13px;line-height:1.6">
           💡 每个Key可使用约1000次分析，有效期30天<br>

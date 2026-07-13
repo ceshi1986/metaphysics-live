@@ -1767,7 +1767,7 @@ function openAIUpgrade() {
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:48px;margin-bottom:16px;">✨</div>
         <div style="font-size:18px;font-weight:600;color:#4caf50;margin-bottom:12px;">AI分析已激活</div>
-        <div style="color:var(--text-dim);margin-bottom:8px;">剩余次数：${auth.remaining}次</div>
+        <div style="color:var(--text-dim);margin-bottom:8px;">剩余额度：约${Math.floor(auth.remaining/2000)}次深度分析</div>
         <div style="color:var(--text-dim);margin-bottom:8px;">已使用：${auth.used}次</div>
         
         <button onclick="logoutAIKey()" style="margin-top:16px;padding:8px 20px;background:rgba(255,82,82,.2);border:1px solid rgba(255,82,82,.3);color:#ff5252;border-radius:8px;cursor:pointer;font-size:13px;">退出登录</button>

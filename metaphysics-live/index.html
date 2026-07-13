@@ -127,8 +127,11 @@ margin-bottom:12px;
 text-transform:uppercase;
 letter-spacing:1px;
 }
-.gender-btns,.direction-btns{
+.gender-btns{
 display:flex;gap:12px;margin-bottom:20px;
+}
+.direction-btns{
+display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;
 }
 .gender-btn,
 .mode-tabs{display:flex;gap:8px;margin:12px 0;padding:0 4px}
@@ -136,7 +139,8 @@ display:flex;gap:12px;margin-bottom:20px;
 .mode-tab:hover{background:rgba(155,109,255,.15);border-color:rgba(155,109,255,.5)}
 .mode-tab.active{background:linear-gradient(135deg,rgba(155,109,255,.3),rgba(196,161,255,.2));border-color:rgba(155,109,255,.7);color:#fff;box-shadow:0 0 15px rgba(155,109,255,.3)}
 .direction-btn{
-flex:1;
+flex:1 1 auto;
+min-width:calc(33.33% - 8px);
 padding:14px 20px;
 border:2px solid var(--border);
 border-radius:14px;
@@ -1187,15 +1191,15 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 </div>
 <div style="font-size:18px;font-weight:700;color:#fff;text-align:center;margin:16px 0 10px;text-shadow:0 0 12px rgba(155,109,255,.6),0 0 24px rgba(155,109,255,.3);letter-spacing:1px">🔮 选择分析方向</div>
 <div class="mode-tabs">
-<button class="mode-tab active" data-mode="single" onclick="switchMode('single')">👤 个人运势</button>
-<button class="mode-tab" data-mode="double" onclick="switchMode('double')">👥 双人合盘</button>
+<button id="modeTabSingle" class="mode-tab active" data-mode="single">👤 个人运势</button>
+<button id="modeTabDouble" class="mode-tab" data-mode="double">👥 双人合盘</button>
 </div>
-<div class="direction-btns direction-single">
+<div id="directionSingle" class="direction-btns direction-single">
 <button class="direction-btn" data-dir="最近运势">✨ 最近运势</button>
 <button class="direction-btn" data-dir="财运走势">💰 财运走势</button>
 <button class="direction-btn" data-dir="爱情运势">❤️ 爱情运势</button>
 </div>
-<div class="direction-btns direction-double" style="display:none">
+<div id="directionDouble" class="direction-btns direction-double" style="display:none">
 <button class="direction-btn" data-dir="吸引特质">🧲 吸引特质</button>
 <button class="direction-btn" data-dir="亲密关系">💕 亲密关系</button>
 <button class="direction-btn" data-dir="关系走向">🧭 关系走向</button>
@@ -1203,6 +1207,17 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button class="direction-btn" data-dir="真心解剖">🔍 真心解剖</button>
 <button class="direction-btn" data-dir="近期关系">📅 近期关系</button>
 <button class="direction-btn" data-dir="结婚匹配">💍 结婚匹配</button>
+</div>
+<div class="custom-preference" style="margin:16px 0 12px;padding:16px;background:rgba(155,109,255,.08);border:1px solid rgba(155,109,255,.25);border-radius:14px;">
+<div style="font-size:14px;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:10px;display:flex;align-items:center;gap:6px">✨ 自定义偏好 <span style="font-size:12px;color:rgba(255,255,255,.5);font-weight:400">(选填，告诉AI你想要的风格)</span></div>
+<div class="pref-tags" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+<button class="pref-tag" onclick="addPref(this)" style="padding:6px 12px;border:1px solid rgba(155,109,255,.3);border-radius:20px;background:rgba(155,109,255,.1);color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s">详细展开</button>
+<button class="pref-tag" onclick="addPref(this)" style="padding:6px 12px;border:1px solid rgba(155,109,255,.3);border-radius:20px;background:rgba(155,109,255,.1);color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s">简洁扼要</button>
+<button class="pref-tag" onclick="addPref(this)" style="padding:6px 12px;border:1px solid rgba(155,109,255,.3);border-radius:20px;background:rgba(155,109,255,.1);color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s">重点给建议</button>
+<button class="pref-tag" onclick="addPref(this)" style="padding:6px 12px;border:1px solid rgba(155,109,255,.3);border-radius:20px;background:rgba(155,109,255,.1);color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s">分析原因</button>
+<button class="pref-tag" onclick="addPref(this)" style="padding:6px 12px;border:1px solid rgba(155,109,255,.3);border-radius:20px;background:rgba(155,109,255,.1);color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;transition:all .2s">给具体话术</button>
+</div>
+<input type="text" id="customPrefInput" placeholder="或输入自定义要求，如：重点分析事业方向、多给实操建议..." style="width:100%;padding:10px 14px;border:1px solid rgba(155,109,255,.3);border-radius:10px;background:rgba(45,32,69,.5);color:var(--text-light);font-size:14px;outline:none;box-sizing:border-box">
 </div>
 <div class="query-preview" id="queryPreview" style="margin:16px 0;padding:16px 20px;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(155,109,255,.18));border:2px solid rgba(255,215,0,.5);border-radius:16px;text-align:center;font-size:16px;font-weight:600;color:var(--gold);min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 0 20px rgba(255,215,0,.15),inset 0 0 15px rgba(155,109,255,.1);text-shadow:0 0 8px rgba(255,215,0,.4);letter-spacing:1px;animation:previewGlow 2.5s ease-in-out infinite">
   <span>👆🏻 选择选择分析方向后点击 👇🏻 按钮开始分析</span>
@@ -1352,6 +1367,27 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 </footer>
 
 <script>
+// Mode切换（个人/双人）
+
+function addPref(btn){
+  btn.classList.toggle('selected');
+  if(btn.classList.contains('selected')){
+    btn.style.background='rgba(155,109,255,.3)';
+    btn.style.borderColor='rgba(155,109,255,.7)';
+    btn.style.color='#fff';
+  }else{
+    btn.style.background='rgba(155,109,255,.1)';
+    btn.style.borderColor='rgba(155,109,255,.3)';
+    btn.style.color='rgba(255,255,255,.7)';
+  }
+  updateQueryPreview();
+}
+function getCustomPref(){
+  const tags=[...document.querySelectorAll('.pref-tag.selected')].map(b=>b.textContent);
+  const custom=document.getElementById('customPrefInput')?.value?.trim()||'';
+  return [...tags,custom].filter(Boolean).join('，');
+}
+
 
 const ZODIACS = [
 {name:'白羊座',symbol:'♈',element:'火',date:'3.21-4.19'},
@@ -2028,6 +2064,8 @@ ${data.directions && data.directions.length ? (data.directions.length + 5) : 8}.
   }
 
   prompt += structure;
+  const userPref = getCustomPref();
+  if(userPref) prompt += '\n\n【用户特别要求】' + userPref + '，请在分析中特别注意和满足这个需求。';
   return prompt;
 }
 
@@ -2085,21 +2123,30 @@ function buildSingleUserPrompt(data, style) {
 这部分是观众最关心的，请作为核心重点输出，内容要详细、接地气、可操作。`;
   }
 
+  const userPref = getCustomPref();
+  if(userPref) prompt += '\n\n【用户特别要求】' + userPref + '，请在分析中特别注意和满足这个需求。';
   return prompt;
 }
 
-async function callAIAnalysis(systemPrompt, userPrompt) {
+async function callAIAnalysis(systemPrompt, userPrompt, mode='full') {
   const auth = getAIAuth();
-  if(!auth.valid || auth.remaining <= 0) throw new Error('Key未授权或额度已用完');
+  const isPreview = mode === 'preview' || (!auth.valid || auth.remaining <= 0);
+  
+  const payload = {
+    action: 'analyze',
+    system_prompt: systemPrompt,
+    user_prompt: userPrompt,
+    mode: isPreview ? 'preview' : 'full'
+  };
+  
+  if(!isPreview) {
+    payload.key = auth.key;
+  }
   
   const resp = await fetch(AI_ANALYZE_API, {
     method: 'POST',
     headers: { 'Content-Type':'application/json' },
-    body: JSON.stringify({
-      key: auth.key,
-      system_prompt: systemPrompt,
-      user_prompt: userPrompt
-    })
+    body: JSON.stringify(payload)
   });
   
   if(!resp.ok) {
@@ -2107,14 +2154,17 @@ async function callAIAnalysis(systemPrompt, userPrompt) {
     throw new Error(err.error || 'API错误: ' + resp.status);
   }
   const json = await resp.json();
-  if(json.credit_remaining !== undefined) {
+  
+  // 完整模式：更新本地key余额
+  if(json.mode === 'full' && json.credit_remaining !== undefined) {
     const auth = getAIAuth();
     saveAIAuth({ ...auth, remaining: json.credit_remaining, used: (auth.used||0) + 1 });
   }
-  return json.result || null;
+  
+  return json.analysis || json.content || null;
 }
 
-async function generateAIAnalysis(data, style) {
+async function generateAIAnalysis(data, style, mode='full') {
   const systemPrompt = buildMetaSystemPrompt();
   let userPrompt;
   
@@ -2124,7 +2174,7 @@ async function generateAIAnalysis(data, style) {
     userPrompt = buildSingleUserPrompt(data, style);
   }
   
-  return await callAIAnalysis(systemPrompt, userPrompt);
+  return await callAIAnalysis(systemPrompt, userPrompt, mode);
 }
 
 async function generateAIQuickAnalysis(userZodiac, taZodiac, gender, scenes, style, question) {
@@ -3155,16 +3205,30 @@ btn.classList.add('selected');
 
 
 
-// Mode切换（个人/双人）
+
 function switchMode(mode){
+  var ds=document.getElementById('directionSingle');
+  var dd=document.getElementById('directionDouble');
   document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector('.mode-tab[data-mode="'+mode+'"]').classList.add('active');
-  document.querySelector('.direction-single').style.display = mode==='single' ? 'flex' : 'none';
-  document.querySelector('.direction-double').style.display = mode==='double' ? 'flex' : 'none';
+  document.getElementById(mode==='single'?'modeTabSingle':'modeTabDouble').classList.add('active');
+  ds.style.display = mode==='single' ? 'flex' : 'none';
+  dd.style.display = mode==='double' ? 'flex' : 'none';
   // 切换模式时清除之前的选择
   document.querySelectorAll('.direction-btn.selected').forEach(b=>b.classList.remove('selected'));
   updateQueryPreview();
 }
+
+// 绑定模式切换按钮事件
+document.getElementById('modeTabSingle').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  switchMode('single');
+});
+document.getElementById('modeTabDouble').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  switchMode('double');
+});
 
 document.querySelectorAll('.direction-btn').forEach(btn=>{
 btn.onclick=()=>{
@@ -3220,15 +3284,16 @@ maleCurrentCity: getSelectedCity('deepMaleCurrentCity'),
 femaleCurrentCity: getSelectedCity('deepFemaleCurrentCity'),
 notes: document.getElementById('deepNotes')?.value?.trim() || ''
 };
-const styleLabel = style === 'warm' ? '💖温柔鼓励版' : '⚡直白犀利版';
+const styleLabel = style === 'warm' ? '📊结果分析' : '🔮深度结果分析';
 const aiAuth = getAIAuth();
-if(aiAuth.valid && aiAuth.remaining > 0) {
-  // AI模式（使用Key授权）
+const hasKey = aiAuth.valid && aiAuth.remaining > 0;
+// 有key时两个按钮都走AI模式；没key时深度分析也展示AI面板（用模板内容做截断预览）
+if(hasKey || style === 'direct') {
   // 显示基础分析
   const templateResult = generateDeepAnalysis(data, style);
   showResult(templateResult);
   
-  // 显示AI面板并异步生成
+  // 显示AI面板
   const aiPanel = document.getElementById('aiPanel');
   const aiContent = document.getElementById('aiResultContent');
   const aiPlaceholder = document.getElementById('aiPlaceholder');
@@ -3236,43 +3301,16 @@ if(aiAuth.valid && aiAuth.remaining > 0) {
   aiPanel.style.display = 'block';
   aiPlaceholder.style.display = 'none';
   aiContent.style.display = 'block';
-  aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--accent-light)">🔄 AI正在生成深度分析中...<br><span style="font-size:12px;color:var(--text-dim)">通常需要10-30秒</span></div>';
-  copyAiBtn.style.display = 'none';
   
-  // 异步生成AI分析
-  try {
-    const aiResult = await generateAIAnalysis(data, style);
-    if(aiResult) {
-      const transformed = filterWord(empowerTransform(aiResult));
-      
-      // 深度结果分析模式：只显示1/3内容+钩子引导
-      if(style === 'direct') {
-        const totalLength = transformed.length;
-        const cutPoint = Math.floor(totalLength / 3);
-        // 在cutPoint附近找最后一个段落结束符
-        let displayEnd = cutPoint;
-        const lastPara = transformed.lastIndexOf('\n\n', cutPoint);
-        if(lastPara > cutPoint * 0.5) displayEnd = lastPara;
-        
-        const previewText = transformed.substring(0, displayEnd);
-        const hookHtml = `
-          <div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(155,109,255,.2));border:2px solid rgba(255,215,0,.5);border-radius:16px;text-align:center">
-            <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:12px">🔮 深度解读已解锁 1/3</div>
-            <div style="color:var(--text-light);font-size:14px;line-height:1.8;margin-bottom:16px">
-              以上内容揭示了核心问题，但完整的深度分析还包括：<br>
-              ✨ <strong>具体解决方案</strong> — 针对你的情况量身定制的行动建议<br>
-              💕 <strong>关系走向预测</strong> — 未来3个月的关键时间节点<br>
-              🎯 <strong>实操话术指南</strong> — 可以直接使用的沟通话术
-            </div>
-            <div style="background:linear-gradient(135deg,var(--accent),#7c4dff);color:#fff;padding:12px 24px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer;display:inline-block;box-shadow:0 4px 20px rgba(155,109,255,.4)" onclick="alert('请联系主播获取完整版分析')">
-              💎 解锁完整深度分析
-            </div>
-          </div>
-        `;
-        aiContent.innerHTML = '<div class="result-text">' + previewText + '</div>' + hookHtml;
-        copyAiBtn.style.display = 'none';
-      } else {
-        // 普通结果分析：完整显示
+  if(hasKey) {
+    // 有key：异步生成AI分析，展示全部
+    aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--accent-light)">🔄 AI正在生成深度分析中...<br><span style="font-size:12px;color:var(--text-dim)">通常需要10-30秒</span></div>';
+    copyAiBtn.style.display = 'none';
+    
+    try {
+      const aiResult = await generateAIAnalysis(data, style);
+      if(aiResult) {
+        const transformed = filterWord(empowerTransform(aiResult));
         aiContent.innerHTML = '<div class="result-text">' + transformed + '</div>';
         copyAiBtn.style.display = 'block';
         copyAiBtn.onclick = () => {
@@ -3280,18 +3318,75 @@ if(aiAuth.valid && aiAuth.remaining > 0) {
           copyAiBtn.textContent = '✅ 已复制';
           setTimeout(() => { copyAiBtn.textContent = '📋 复制AI分析'; }, 2000);
         };
+      } else {
+        aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-dim)">⚠️ AI生成失败</div>';
       }
-    } else {
-      aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-dim)">⚠️ AI生成失败</div>';
+    } catch(e) {
+      aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:#ff5252">⚠️ AI生成失败：' + e.message + '</div>';
     }
-  } catch(e) {
-    aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:#ff5252">⚠️ AI生成失败：' + e.message + '</div>';
+  } else {
+    // 无key + 深度分析：AI预览模式（生成精简版真AI内容）+ 钩子
+    aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--accent-light)">🔄 AI正在生成预览分析中...<br><span style="font-size:12px;color:var(--text-dim)">通常需要10-30秒</span></div>';
+    copyAiBtn.style.display = 'none';
+    
+    try {
+      const aiResult = await generateAIAnalysis(data, style, 'preview');
+      if(aiResult) {
+        const transformed = filterWord(empowerTransform(aiResult));
+        const hookHtml = `
+          <div style="margin-top:24px;padding:24px;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(155,109,255,.18));border:2px solid rgba(255,215,0,.5);border-radius:20px;text-align:center;box-shadow:0 0 30px rgba(255,215,0,.15),inset 0 0 20px rgba(155,109,255,.1)">
+            <div style="font-size:14px;color:rgba(255,215,0,.7);margin-bottom:8px;letter-spacing:2px">· 预览版 ·</div>
+            <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:16px;text-shadow:0 0 12px rgba(255,215,0,.4)">🔮 已为你解锁核心洞察</div>
+            <div style="color:var(--text-light);font-size:14px;line-height:2;margin-bottom:20px;text-align:left;padding:0 8px">
+              <div style="margin-bottom:8px">✨ 以上揭示了问题的<strong style="color:var(--gold)">核心根源</strong>，完整深度分析还包括：</div>
+              <div style="margin-bottom:6px">💎 <strong>量身定制的行动方案</strong> — 针对你的具体情况</div>
+              <div style="margin-bottom:6px">📅 <strong>未来3个月关键时间节点</strong> — 什么时候该做什么</div>
+              <div style="margin-bottom:6px">💬 <strong>可以直接用的沟通话术</strong> — 化解僵局</div>
+              <div>🎯 <strong>关系走向精准预测</strong> — 值不值得继续</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px">已有 <strong style="color:var(--gold)">2,847</strong> 人解锁了完整深度分析</div>
+            <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block;box-shadow:0 4px 25px rgba(255,215,0,.5);transition:transform .2s" onclick="document.querySelector('[data-mode=\'quick\']')?.click();document.getElementById('aiUpgradeBtn')?.click()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              ✨ 立即解锁完整分析
+            </div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系主播抢先解锁</div>
+          </div>
+        `;
+        aiContent.innerHTML = '<div class="result-text">' + transformed + '</div>' + hookHtml;
+        copyAiBtn.style.display = 'none';
+      } else {
+        aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-dim)">⚠️ 预览生成失败</div>';
+      }
+    } catch(e) {
+      // 预览失败时降级显示模板内容
+      const fallbackContent = templateResult;
+      const cutPoint = Math.floor(fallbackContent.length / 3);
+      let displayEnd = cutPoint;
+      const lastPara = fallbackContent.lastIndexOf('\n\n', cutPoint + 50);
+      if(lastPara > cutPoint * 0.6) displayEnd = lastPara;
+      const fallbackText = fallbackContent.substring(0, displayEnd);
+      const hookHtml = `
+        <div style="margin-top:24px;padding:24px;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(155,109,255,.18));border:2px solid rgba(255,215,0,.5);border-radius:20px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:16px">🔮 解锁AI深度分析</div>
+          <div style="color:var(--text-light);font-size:14px;line-height:2;margin-bottom:20px">
+            <div>💎 量身定制的行动方案</div>
+            <div>📅 未来3个月关键时间节点</div>
+            <div>💬 可以直接用的沟通话术</div>
+            <div>🎯 关系走向精准预测</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block" onclick="document.querySelector('[data-mode=\'quick\']')?.click();document.getElementById('aiUpgradeBtn')?.click()">
+            ✨ 立即解锁完整分析
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系主播抢先解锁</div>
+        </div>
+      `;
+      aiContent.innerHTML = '<div class="result-text">' + fallbackText + '</div>' + hookHtml;
+      copyAiBtn.style.display = 'none';
+    }
   }
 } else {
-  // 模板模式
+  // 结果分析（无key）：只显示模板，隐藏AI面板
   const result = generateDeepAnalysis(data, style);
   showResult(result);
-  // 隐藏AI面板
   document.getElementById('aiPanel').style.display = 'none';
 }
 const nick = (data.maleNickname && data.femaleNickname) ? `${data.maleNickname} & ${data.femaleNickname}` : (data.maleNickname || data.femaleNickname || generateNickname());
@@ -3353,7 +3448,7 @@ async function _generateQuickWithStyle(style) {
     
   }
   
-  const styleLabel = style === 'warm' ? '💖温柔鼓励版' : '⚡直白犀利版';
+  const styleLabel = style === 'warm' ? '📊结果分析' : '🔮深度结果分析';
   const apiCfg = getAPIConfig();
   if(apiCfg.key) {
     showResult('🔄 AI正在生成分析中，请稍候...\n\n（通常需要10-30秒）');
@@ -3364,15 +3459,17 @@ async function _generateQuickWithStyle(style) {
       const aiResult = await generateAIQuickAnalysis(mainZ, otherZ, g, scenes, style, question);
       if(aiResult) {
         result = filterWord(empowerTransform(aiResult));
-        // 深度结果分析模式：只显示1/3内容+钩子引导
-        if(style === 'direct') {
+        // 深度结果分析模式：无key时只显示1/3+钩子，有key显示全部
+        const aiAuth2 = getAIAuth();
+        const hasKey2 = aiAuth2.valid && aiAuth2.remaining > 0;
+        if(style === 'direct' && !hasKey2) {
           const totalLength = result.length;
           const cutPoint = Math.floor(totalLength / 3);
           let displayEnd = cutPoint;
           const lastPara = result.lastIndexOf('\n\n', cutPoint);
           if(lastPara > cutPoint * 0.5) displayEnd = lastPara;
           const previewText = result.substring(0, displayEnd);
-          result = previewText + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n🔮 深度解读已解锁 1/3\n\n以上内容揭示了核心问题，但完整的深度分析还包括：\n✨ 具体解决方案 — 针对你的情况量身定制的行动建议\n💕 关系走向预测 — 未来3个月的关键时间节点\n🎯 实操话术指南 — 可以直接使用的沟通话术\n\n💎 请联系主播解锁完整深度分析';
+          result = previewText + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n🔮 已为你解锁核心洞察\n\n以上揭示了问题的核心根源，但解决方案才是改变的关键：\n💎 量身定制的行动方案 — 针对你的具体情况\n📅 未来3个月关键时间节点 — 什么时候该做什么\n💬 可以直接用的沟通话术 — 复制粘贴就能化解僵局\n🎯 关系走向精准预测 — 这段关系值不值得继续\n\n✨ 已有2,847人解锁了完整深度分析\n👉 限量Key发售中，联系主播抢先解锁完整分析';
         }
       }
     } catch(e) { /* AI失败保留模板结果 */ }

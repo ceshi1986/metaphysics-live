@@ -1269,6 +1269,21 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
     <div class="zodiac-grid" id="zodiacGrid3"></div>
   </div>
 </div>
+<div style="font-size:18px;font-weight:700;color:#fff;text-align:center;margin:16px 0 10px;text-shadow:0 0 12px rgba(155,109,255,.6),0 0 24px rgba(155,109,255,.3);letter-spacing:1px">🔮 选择分析方向</div>
+<div id="quickDirectionSingle" class="direction-btns direction-single">
+<button class="direction-btn" data-dir="最近运势">✨ 最近运势</button>
+<button class="direction-btn" data-dir="财运走势">💰 财运走势</button>
+<button class="direction-btn" data-dir="爱情运势">❤️ 爱情运势</button>
+</div>
+<div id="quickDirectionDouble" class="direction-btns direction-double" style="display:none">
+<button class="direction-btn" data-dir="吸引特质">🧲 吸引特质</button>
+<button class="direction-btn" data-dir="亲密关系">💕 亲密关系</button>
+<button class="direction-btn" data-dir="关系走向">🧭 关系走向</button>
+<button class="direction-btn" data-dir="情感矛盾">⚡ 情感矛盾</button>
+<button class="direction-btn" data-dir="真心解剖">🔍 真心解剖</button>
+<button class="direction-btn" data-dir="近期关系">📅 近期关系</button>
+<button class="direction-btn" data-dir="结婚匹配">💍 结婚匹配</button>
+</div>
 <div class="section-title">💬 观众提问（选填）</div>
 <textarea id="viewerQuestion" class="question-input" placeholder="输入观众的具体问题，如：他最近对我忽冷忽热是什么意思？" rows="2"></textarea>
 <div class="section-title" id="hotQuestionsTitle" style="display:none">🔥 高频问题</div>
@@ -2518,13 +2533,14 @@ function initQuickBirthSelects() {
 
 
 
-function generatePairAnalysis(maleZodiac, femaleZodiac, scenes, extra, style, question) {
+function generatePairAnalysis(maleZodiac, femaleZodiac, scenes, extra, style, question, directions) {
   const male = getZodiac(maleZodiac);
   const female = getZodiac(femaleZodiac);
   const maleElem = getElement(maleZodiac);
   const femaleElem = getElement(femaleZodiac);
   const maleMatrix = ELEMENT_MODE_MATRIX[maleZodiac];
   const femaleMatrix = ELEMENT_MODE_MATRIX[femaleZodiac];
+  const dirs = directions && directions.length > 0 ? directions : ['吸引特质', '亲密关系', '关系走向', '情感矛盾', '真心解剖', '近期关系', '结婚匹配'];
   
   
   const pairScore = calculatePairScore(maleZodiac, femaleZodiac);
@@ -2569,15 +2585,19 @@ function generatePairAnalysis(maleZodiac, femaleZodiac, scenes, extra, style, qu
   if(extra.maleBirth !== '年月日' || extra.femaleBirth !== '年月日') result += '\n';
   
   
-  result += `【元素配对：${maleMatrix?.element||maleElem}象 + ${femaleMatrix?.element||femaleElem}象】\n`;
-  result += getElementAnalysis(maleElem, femaleElem, maleZodiac, femaleZodiac);
-  result += '\n';
-  
-  
-  if(maleMatrix && femaleMatrix) {
-    result += `【模式互动：${maleMatrix.mode} + ${femaleMatrix.mode}】\n`;
-    result += getModeAnalysis(maleMatrix.mode, femaleMatrix.mode, maleZodiac, femaleZodiac);
+  if(dirs.includes('吸引特质')) {
+    result += `【元素配对：${maleMatrix?.element||maleElem}象 + ${femaleMatrix?.element||femaleElem}象】\n`;
+    result += getElementAnalysis(maleElem, femaleElem, maleZodiac, femaleZodiac);
     result += '\n';
+  }
+  
+  
+  if(dirs.includes('亲密关系') || dirs.includes('关系走向') || dirs.includes('情感矛盾') || dirs.includes('真心解剖') || dirs.includes('近期关系') || dirs.includes('结婚匹配')) {
+    if(maleMatrix && femaleMatrix) {
+      result += `【模式互动：${maleMatrix.mode} + ${femaleMatrix.mode}】\n`;
+      result += getModeAnalysis(maleMatrix.mode, femaleMatrix.mode, maleZodiac, femaleZodiac);
+      result += '\n';
+    }
   }
   
   
@@ -2591,10 +2611,11 @@ function generatePairAnalysis(maleZodiac, femaleZodiac, scenes, extra, style, qu
 }
 
 
-function generateSingleAnalysis(zodiac, gender, scenes, style, question) {
+function generateSingleAnalysis(zodiac, gender, scenes, style, question, directions) {
   const person = getPersonality(zodiac, gender);
   const genderText = gender === '女' ? '女生' : '男生';
   const matrixData = ELEMENT_MODE_MATRIX[zodiac];
+  const dirs = directions && directions.length > 0 ? directions : ['最近运势', '财运走势', '爱情运势'];
   
   let result = '';
   
@@ -2614,9 +2635,15 @@ function generateSingleAnalysis(zodiac, gender, scenes, style, question) {
     result += `✨ 性格特质：${person.desc}\n\n`;
   }
   
-  result += `🌟 近期运势：${person.energy}\n\n`;
-  result += `💰 财运走势：${person.fortune}\n\n`;
-  result += `💕 亲密关系：${person.love}\n`;
+  if(dirs.includes('最近运势')) {
+    result += `🌟 近期运势：${person.energy}\n\n`;
+  }
+  if(dirs.includes('财运走势')) {
+    result += `💰 财运走势：${person.fortune}\n\n`;
+  }
+  if(dirs.includes('爱情运势')) {
+    result += `💕 亲密关系：${person.love}\n`;
+  }
   
   
   if(scenes.length > 0) {
@@ -2682,6 +2709,22 @@ nameSpan.textContent=maleZ;
 hint.style.display='';
 }else{
 hint.style.display='none';
+}
+// 根据选择的星座数量切换分析方向按钮显示
+const quickSingle=document.getElementById('quickDirectionSingle');
+const quickDouble=document.getElementById('quickDirectionDouble');
+if(quickSingle && quickDouble){
+  if(maleZ && femaleZ){
+    // 两个都选了，显示双人合盘方向
+    quickSingle.style.display='none';
+    quickDouble.style.display='flex';
+  } else {
+    // 只选了一个或都没选，显示个人运势方向
+    quickSingle.style.display='flex';
+    quickDouble.style.display='none';
+  }
+  // 切换时清除之前的选择
+  document.querySelectorAll('#quickDirectionSingle .direction-btn.selected, #quickDirectionDouble .direction-btn.selected').forEach(b=>b.classList.remove('selected'));
 }
 }
 
@@ -3374,10 +3417,10 @@ if(hasKey || style === 'direct') {
               <div>🎯 <strong>关系走向精准预测</strong> — 值不值得继续</div>
             </div>
             <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px">已有 <strong style="color:var(--gold)">2,847</strong> 人解锁了完整深度分析</div>
-            <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block;box-shadow:0 4px 25px rgba(255,215,0,.5);transition:transform .2s" onclick="document.querySelector('[data-mode=\'quick\']')?.click();document.getElementById('aiUpgradeBtn')?.click()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block;box-shadow:0 4px 25px rgba(255,215,0,.5);transition:transform .2s" onclick="openAIUpgrade()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
               ✨ 立即解锁完整分析
             </div>
-            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系主播抢先解锁</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系客服抢先解锁</div>
           </div>
         `;
         aiContent.innerHTML = '<div class="result-text">' + transformed + '</div>' + hookHtml;
@@ -3402,10 +3445,10 @@ if(hasKey || style === 'direct') {
             <div>💬 可以直接用的沟通话术</div>
             <div>🎯 关系走向精准预测</div>
           </div>
-          <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block" onclick="document.querySelector('[data-mode=\'quick\']')?.click();document.getElementById('aiUpgradeBtn')?.click()">
+          <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;padding:14px 32px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:inline-block" onclick="openAIUpgrade()">
             ✨ 立即解锁完整分析
           </div>
-          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系主播抢先解锁</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:10px">限量Key发售中 · 联系客服抢先解锁</div>
         </div>
       `;
       aiContent.innerHTML = '<div class="result-text">' + fallbackText + '</div>' + hookHtml;
@@ -3443,6 +3486,11 @@ async function _generateQuickWithStyle(style) {
   if(question) trackQuestion(question);
   
   const scenes = [...document.querySelectorAll('.scene-tag.selected')].map(t => t.dataset.scene);
+  // 获取快速分析模式中当前显示的分析方向按钮的选择
+  const maleZ = document.querySelector('#zodiacGrid2 .zodiac-btn.selected')?.dataset.zodiac;
+  const femaleZ = document.querySelector('#zodiacGrid3 .zodiac-btn.selected')?.dataset.zodiac;
+  const directionContainer = (maleZ && femaleZ) ? 'quickDirectionDouble' : 'quickDirectionSingle';
+  const directions = [...document.querySelectorAll(`#${directionContainer} .direction-btn.selected`)].map(b => b.dataset.dir);
   
   let result = '';
   let historyLabel = '';
@@ -3455,19 +3503,19 @@ async function _generateQuickWithStyle(style) {
     const maleCity = document.getElementById('quickMaleCity')?.value||'';
     const femaleCity = document.getElementById('quickFemaleCity')?.value||'';
     
-    result = generatePairAnalysis(maleZodiac, femaleZodiac, scenes.length?scenes:['暧昧不确定'], {maleBirth, femaleBirth, maleCity, femaleCity}, style, question);
+    result = generatePairAnalysis(maleZodiac, femaleZodiac, scenes.length?scenes:['暧昧不确定'], {maleBirth, femaleBirth, maleCity, femaleCity}, style, question, directions);
     historyLabel = `${maleZodiac} × ${femaleZodiac}`;
-    inputData = {type:'pair', maleZodiac, femaleZodiac, scenes, maleBirth, femaleBirth, maleCity, femaleCity};
+    inputData = {type:'pair', maleZodiac, femaleZodiac, scenes, maleBirth, femaleBirth, maleCity, femaleCity, directions};
   } else if (maleZodiac) {
     
-    result = generateSingleAnalysis(maleZodiac, '男', scenes, style, question);
+    result = generateSingleAnalysis(maleZodiac, '男', scenes, style, question, directions);
     historyLabel = maleZodiac + '(男)';
-    inputData = {type:'personal', zodiac:maleZodiac, gender:'男', scenes};
+    inputData = {type:'personal', zodiac:maleZodiac, gender:'男', scenes, directions};
   } else {
     
-    result = generateSingleAnalysis(femaleZodiac, '女', scenes, style, question);
+    result = generateSingleAnalysis(femaleZodiac, '女', scenes, style, question, directions);
     historyLabel = femaleZodiac + '(女)';
-    inputData = {type:'personal', zodiac:femaleZodiac, gender:'女', scenes};
+    inputData = {type:'personal', zodiac:femaleZodiac, gender:'女', scenes, directions};
   }
   
   

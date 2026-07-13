@@ -223,11 +223,53 @@ select:focus{
 outline:none;
 border-color:var(--accent);
 }
-/* 省市区三级联动选择 */
-.region-select-group{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.region-select-group .region-select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(45,32,69,.5);color:var(--text-light);font-size:13px;outline:none;cursor:pointer;transition:border-color .3s;appearance:auto}
-.region-select-group .region-select:focus{border-color:var(--accent);background:rgba(45,32,69,.8)}
-.region-select-group .region-select option{background:#1a1033;color:var(--text-light)}
+/* 城市选择 */
+.city-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:8px;
+margin-bottom:15px;
+}
+.city-btn{
+padding:10px 8px;
+border:2px solid var(--border);
+border-radius:10px;
+background:rgba(45,32,69,.5);
+color:var(--text-light);
+cursor:pointer;
+font-size:13px;
+transition:all .3s;
+text-align:center;
+}
+.city-btn:hover{
+border-color:var(--accent-light);
+}
+.city-btn.selected{
+border-color:var(--accent);
+background:rgba(155,109,255,.25);
+}
+.city-more{
+grid-column:span 4;
+text-align:center;
+color:var(--accent);
+cursor:pointer;
+font-size:13px;
+padding:8px;
+border:1px dashed var(--border);
+border-radius:10px;
+transition:all .3s;
+}
+.city-more:hover{
+border-color:var(--accent);
+background:rgba(155,109,255,.1);
+}
+.city-more::before{
+content:'▶ ';
+font-size:10px;
+}
+.city-more.expanded::before{
+content:'▼ ';
+}
 /* 场景标签 */
 .scene-tags{
 display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;
@@ -557,10 +599,14 @@ flex-direction:column;
 .nickname-input::placeholder{color:var(--text-dim)}
 
 .birth-select{padding:8px 6px;border:1px solid var(--border);border-radius:8px;background:rgba(45,32,69,.5);color:var(--text-light);font-size:13px;outline:none;cursor:pointer}.birth-select:focus{border-color:var(--accent)}.birth-select option{background:#1a1033;color:var(--text-light)}
-.region-select-group{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}.region-select-group .region-select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(45,32,69,.5);color:var(--text-light);font-size:13px;outline:none;cursor:pointer;transition:border-color .3s}.region-select-group .region-select:focus{border-color:var(--accent)}.region-select-group .region-select option{background:#1a1033;color:var(--text-light)}
-
-
-@media(max-width:768px){.region-select-group{flex-direction:column}}
+.city-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.city-btn{padding:8px 4px;border:1px solid var(--border);border-radius:8px;background:rgba(45,32,69,.5);color:var(--text-light);font-size:12px;cursor:pointer;text-align:center;transition:all .3s}.city-btn:hover{border-color:var(--accent);background:rgba(155,109,255,.15)}.city-btn.selected{border-color:var(--accent);background:rgba(155,109,255,.3);color:var(--accent-light)}.city-more{grid-column:1/-1;text-align:center;padding:6px;color:var(--text-dim);font-size:12px;cursor:pointer;border:1px dashed var(--border);border-radius:8px}.city-more:hover{color:var(--accent);border-color:var(--accent)}
+.district-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px;padding:8px;background:rgba(155,109,255,.05);border-radius:8px;border:1px solid rgba(155,109,255,.2)}
+.district-btn{padding:5px 3px;border:1px solid var(--border);border-radius:6px;background:rgba(45,32,69,.4);color:var(--text-dim);font-size:11px;cursor:pointer;text-align:center;transition:all .3s}
+.district-btn:hover{border-color:var(--accent);color:var(--text-light);background:rgba(155,109,255,.1)}
+.district-btn.selected{border-color:var(--accent);background:rgba(155,109,255,.3);color:var(--accent-light)}
+.district-back{grid-column:1/-1;text-align:center;padding:4px;color:var(--text-dim);font-size:11px;cursor:pointer}
+.district-back:hover{color:var(--accent)}
+@media(max-width:768px){.district-grid{grid-template-columns:repeat(3,1fr)}}
 
 .same-zodiac-hint{text-align:center;padding:8px 16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,107,157,.1));border:1px solid rgba(255,215,0,.4);border-radius:10px;color:var(--gold);font-size:14px;font-weight:700;animation:pulse-glow 2s infinite}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 10px rgba(255,215,0,.2)}50%{box-shadow:0 0 20px rgba(255,215,0,.4)}}
@@ -1111,7 +1157,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
     <input type="text" id="deepMaleNickname" class="nickname-input" placeholder="✏️ 男方昵称（选填）" maxlength="20">
     <div class="card-label male-label">♂ 男方星座</div>
     <div class="zodiac-grid" id="zodiacGridMale"></div>
-    <div class="card-label male-label" style="margin-top:10px">📅 男方生辰（选填·阳历）</div>
+    <div class="card-label male-label" style="margin-top:10px">📅 男方生辰（选填）</div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <select id="deepMaleBirthYear" class="birth-select" style="flex:1"><option value="">年</option></select>
       <select id="deepMaleBirthMonth" class="birth-select" style="flex:1"><option value="">月</option></select>
@@ -1123,23 +1169,17 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
       <input type="time" id="deepMaleBirthExactTime" style="padding:5px 8px;border-radius:8px;border:1px solid rgba(155,109,255,.3);background:rgba(45,32,69,.5);color:var(--text-light);font-size:13px;outline:none;color-scheme:dark;flex:1;max-width:140px" title="精确到分钟，优先于上方选择">
     </div>
     <div class="card-label male-label">🏠 男方出生地（选填）</div>
-    <div class="region-select-group" id="deepMaleBirthRegionGroup">
-      <select class="region-select" id="deepMaleBirthProvince" data-region-prefix="deepMaleBirth" data-level="province" onchange="onProvinceChange('deepMaleBirth')"><option value="">省份</option></select>
-      <select class="region-select" id="deepMaleBirthCity" data-region-prefix="deepMaleBirth" data-level="city" onchange="onCityChange('deepMaleBirth')" disabled><option value="">城市</option></select>
-      <select class="region-select" id="deepMaleBirthDistrict" data-region-prefix="deepMaleBirth" data-level="district" disabled><option value="">区县</option></select>
-    </div>
+    <div class="city-grid" id="deepMaleBirthCity" style="margin-bottom:8px"></div>
+    <div class="district-grid" id="deepMaleBirthCityDistrict" style="display:none"></div>
     <div class="card-label male-label">📍 男方现居地（选填）</div>
-    <div class="region-select-group" id="deepMaleCurrentRegionGroup">
-      <select class="region-select" id="deepMaleCurrentProvince" data-region-prefix="deepMaleCurrent" data-level="province" onchange="onProvinceChange('deepMaleCurrent')"><option value="">省份</option></select>
-      <select class="region-select" id="deepMaleCurrentCity" data-region-prefix="deepMaleCurrent" data-level="city" onchange="onCityChange('deepMaleCurrent')" disabled><option value="">城市</option></select>
-      <select class="region-select" id="deepMaleCurrentDistrict" data-region-prefix="deepMaleCurrent" data-level="district" disabled><option value="">区县</option></select>
-    </div>
+    <div class="city-grid" id="deepMaleCurrentCity"></div>
+    <div class="district-grid" id="deepMaleCurrentCityDistrict" style="display:none"></div>
   </div>
   <div class="person-card card-female">
     <input type="text" id="deepFemaleNickname" class="nickname-input" placeholder="✏️ 女方昵称（选填）" maxlength="20">
     <div class="card-label female-label">♀ 女方星座</div>
     <div class="zodiac-grid" id="zodiacGridFemale"></div>
-    <div class="card-label female-label" style="margin-top:10px">📅 女方生辰（选填·阳历）</div>
+    <div class="card-label female-label" style="margin-top:10px">📅 女方生辰（选填）</div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <select id="deepFemaleBirthYear" class="birth-select" style="flex:1"><option value="">年</option></select>
       <select id="deepFemaleBirthMonth" class="birth-select" style="flex:1"><option value="">月</option></select>
@@ -1151,17 +1191,11 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
       <input type="time" id="deepFemaleBirthExactTime" style="padding:5px 8px;border-radius:8px;border:1px solid rgba(155,109,255,.3);background:rgba(45,32,69,.5);color:var(--text-light);font-size:13px;outline:none;color-scheme:dark;flex:1;max-width:140px" title="精确到分钟，优先于上方选择">
     </div>
     <div class="card-label female-label">🏠 女方出生地（选填）</div>
-    <div class="region-select-group" id="deepFemaleBirthRegionGroup">
-      <select class="region-select" id="deepFemaleBirthProvince" data-region-prefix="deepFemaleBirth" data-level="province" onchange="onProvinceChange('deepFemaleBirth')"><option value="">省份</option></select>
-      <select class="region-select" id="deepFemaleBirthCity" data-region-prefix="deepFemaleBirth" data-level="city" onchange="onCityChange('deepFemaleBirth')" disabled><option value="">城市</option></select>
-      <select class="region-select" id="deepFemaleBirthDistrict" data-region-prefix="deepFemaleBirth" data-level="district" disabled><option value="">区县</option></select>
-    </div>
+    <div class="city-grid" id="deepFemaleBirthCity" style="margin-bottom:8px"></div>
+    <div class="district-grid" id="deepFemaleBirthCityDistrict" style="display:none"></div>
     <div class="card-label female-label">📍 女方现居地（选填）</div>
-    <div class="region-select-group" id="deepFemaleCurrentRegionGroup">
-      <select class="region-select" id="deepFemaleCurrentProvince" data-region-prefix="deepFemaleCurrent" data-level="province" onchange="onProvinceChange('deepFemaleCurrent')"><option value="">省份</option></select>
-      <select class="region-select" id="deepFemaleCurrentCity" data-region-prefix="deepFemaleCurrent" data-level="city" onchange="onCityChange('deepFemaleCurrent')" disabled><option value="">城市</option></select>
-      <select class="region-select" id="deepFemaleCurrentDistrict" data-region-prefix="deepFemaleCurrent" data-level="district" disabled><option value="">区县</option></select>
-    </div>
+    <div class="city-grid" id="deepFemaleCurrentCity"></div>
+    <div class="district-grid" id="deepFemaleCurrentCityDistrict" style="display:none"></div>
   </div>
 </div>
 <div style="font-size:18px;font-weight:700;color:#fff;text-align:center;margin:16px 0 10px;text-shadow:0 0 12px rgba(155,109,255,.6),0 0 24px rgba(155,109,255,.3);letter-spacing:1px">🔮 选择分析方向</div>
@@ -1211,6 +1245,20 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 0%,100%{box-shadow:0 0 25px rgba(255,215,0,.7),0 0 50px rgba(255,107,0,.5),0 0 80px rgba(255,215,0,.3);transform:scale(1.05)}
 50%{box-shadow:0 0 40px rgba(255,215,0,1),0 0 80px rgba(255,107,0,.8),0 0 120px rgba(255,215,0,.5);transform:scale(1.1)}
 }
+
+/* Pay Modal */
+.pay-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.pay-card{background:#1a1028;border:1px solid rgba(155,109,255,.2);border-radius:16px;padding:28px;max-width:360px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.pay-close{position:absolute;top:12px;right:16px;background:none;border:none;color:#888;font-size:24px;cursor:pointer;line-height:1}
+.pay-close:hover{color:#fff}
+.pay-title{text-align:center;font-size:18px;font-weight:700;color:#c4a1ff;margin-bottom:20px}
+.pay-qr-wrap{text-align:center;margin-bottom:20px}
+.pay-qr-wrap img{max-width:220px;width:100%;border-radius:12px;background:#fff;padding:8px}
+.pay-steps{list-style:none;padding:0;margin:0 0 20px}
+.pay-steps li{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13px;color:#ccc;line-height:1.6}
+.pay-steps .step-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(155,109,255,.2);color:#c4a1ff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.pay-steps strong{color:#ffd700}
+.pay-disclaimer{font-size:10px;color:#555;line-height:1.6;text-align:center;border-top:1px solid rgba(255,255,255,.05);padding-top:14px}
 </style>
 <div class="version-btns">
   <button class="version-btn warm-btn" id="generateDeepWarm">📊 结果分析</button>
@@ -1388,9 +1436,49 @@ const ZODIACS = [
 {name:'双鱼座',symbol:'♓',element:'水',date:'2.19-3.20'}
 ];
 
-// 省市区数据通过阿里DataV API动态加载
+const CITIES_BASIC = ['北京','上海','广州','深圳','杭州','成都','南京','武汉','西安','重庆'];
+const CITIES_MORE = ['天津','苏州','长沙','郑州','济南','青岛','大连','沈阳','厦门','福州','宁波','无锡','哈尔滨','长春','石家庄','合肥','昆明','南昌','贵阳','南宁','太原','兰州','海口','呼和浩特','乌鲁木齐','拉萨','银川','西宁'];
 
-// CITY_DISTRICTS 已移除，改用API加载省市区数据
+const CITY_DISTRICTS = {
+'北京':['东城区','西城区','朝阳区','海淀区','丰台区','石景山区','通州区','顺义区','房山区','大兴区','昌平区','怀柔区','平谷区','密云区','延庆区','门头沟区'],
+'上海':['黄浦区','徐汇区','长宁区','静安区','普陀区','虹口区','杨浦区','闵行区','宝山区','嘉定区','浦东新区','金山区','松江区','青浦区','奉贤区','崇明区'],
+'广州':['越秀区','海珠区','荔湾区','天河区','白云区','黄埔区','花都区','番禺区','南沙区','从化区','增城区'],
+'深圳':['福田区','罗湖区','南山区','盐田区','宝安区','龙岗区','龙华区','坪山区','光明区'],
+'杭州':['上城区','拱墅区','西湖区','滨江区','萧山区','余杭区','临平区','钱塘区','富阳区','临安区','桐庐县','淳安县','建德市'],
+'成都':['锦江区','青羊区','金牛区','武侯区','成华区','龙泉驿区','青白江区','新都区','温江区','双流区','郫都区','新津区'],
+'南京':['玄武区','秦淮区','建邺区','鼓楼区','浦口区','栖霞区','雨花台区','江宁区','六合区','溧水区','高淳区'],
+'武汉':['江岸区','江汉区','硚口区','汉阳区','武昌区','青山区','洪山区','东西湖区','蔡甸区','江夏区','黄陂区','新洲区','汉南区'],
+'西安':['新城区','碑林区','莲湖区','灞桥区','未央区','雁塔区','阎良区','临潼区','长安区','高陵区','鄠邑区'],
+'重庆':['万州区','涪陵区','渝中区','大渡口区','江北区','沙坪坝区','九龙坡区','南岸区','北碚区','渝北区','巴南区','长寿区'],
+'天津':['和平区','河东区','河西区','南开区','河北区','红桥区','东丽区','西青区','津南区','北辰区','武清区','宝坻区'],
+'苏州':['姑苏区','虎丘区','吴中区','相城区','吴江区','昆山市','太仓市','常熟市','张家港市'],
+'长沙':['芙蓉区','天心区','岳麓区','开福区','雨花区','望城区','长沙县','浏阳市','宁乡市'],
+'郑州':['中原区','二七区','管城区','金水区','上街区','惠济区','中牟县','巩义市','荥阳市','新密市','新郑市','登封市'],
+'济南':['历下区','市中区','槐荫区','天桥区','历城区','长清区','章丘区','济阳区','莱芜区','钢城区'],
+'青岛':['市南区','市北区','黄岛区','崂山区','李沧区','城阳区','即墨区','胶州市','平度市','莱西市'],
+'大连':['中山区','西岗区','沙河口区','甘井子区','旅顺口区','金州区','普兰店区'],
+'沈阳':['和平区','沈河区','大东区','皇姑区','铁西区','苏家屯区','浑南区','沈北新区','于洪区'],
+'厦门':['思明区','湖里区','集美区','海沧区','同安区','翔安区'],
+'福州':['鼓楼区','台江区','仓山区','马尾区','晋安区','长乐区','闽侯县'],
+'宁波':['海曙区','江北区','北仑区','镇海区','鄞州区','奉化区'],
+'无锡':['锡山区','惠山区','滨湖区','梁溪区','新吴区','江阴市','宜兴市'],
+'哈尔滨':['道里区','南岗区','道外区','平房区','松北区','香坊区','呼兰区'],
+'长春':['南关区','宽城区','朝阳区','二道区','绿园区','双阳区','九台区'],
+'石家庄':['长安区','桥西区','新华区','井陉矿区','裕华区','藁城区','鹿泉区','栾城区'],
+'合肥':['瑶海区','庐阳区','蜀山区','包河区','长丰县','肥东县','肥西县','庐江县'],
+'昆明':['五华区','盘龙区','官渡区','西山区','东川区','呈贡区','晋宁区'],
+'南昌':['东湖区','西湖区','青云谱区','青山湖区','新建区','红谷滩区'],
+'贵阳':['南明区','云岩区','花溪区','乌当区','白云区','观山湖区'],
+'南宁':['兴宁区','青秀区','江南区','西乡塘区','良庆区','邕宁区','武鸣区'],
+'太原':['小店区','迎泽区','杏花岭区','尖草坪区','万柏林区','晋源区'],
+'兰州':['城关区','七里河区','西固区','安宁区','红古区'],
+'海口':['秀英区','龙华区','琼山区','美兰区'],
+'呼和浩特':['新城区','回民区','玉泉区','赛罕区'],
+'乌鲁木齐':['天山区','沙依巴克区','新市区','水磨沟区','头屯河区','米东区'],
+'拉萨':['城关区','堆龙德庆区','达孜区'],
+'银川':['兴庆区','西夏区','金凤区'],
+'西宁':['城东区','城中区','城西区','城北区']
+};
 
 const SCENES = [
 '忽冷忽热','冷战不回','吵架想分','暧昧不确定',
@@ -1726,6 +1814,7 @@ function openAIUpgrade() {
     document.getElementById('aiKeyMsg').textContent = '';
   }
   document.getElementById('aiUpgradeModal').style.display = 'flex';
+  if(typeof switchAITab==='function')switchAITab('have');
 }
 
 function closeAIUpgrade() {
@@ -1926,13 +2015,13 @@ function buildPairUserPrompt(data, style) {
 
 `;
   if(data.maleZodiac) prompt += `♂ ${data.maleNickname||'男方'}：${data.maleZodiac}`;
-  if(data.maleBirthDate) prompt += `，生辰（阳历）${data.maleBirthDate}`;
+  if(data.maleBirthDate) prompt += `，生辰${data.maleBirthDate}`;
   if(data.maleBirthCity) prompt += `，出生地${data.maleBirthCity}`;
   if(data.maleCurrentCity) prompt += `，现居${data.maleCurrentCity}`;
   prompt += '\n';
   
   if(data.femaleZodiac) prompt += `♀ ${data.femaleNickname||'女方'}：${data.femaleZodiac}`;
-  if(data.femaleBirthDate) prompt += `，生辰（阳历）${data.femaleBirthDate}`;
+  if(data.femaleBirthDate) prompt += `，生辰${data.femaleBirthDate}`;
   if(data.femaleBirthCity) prompt += `，出生地${data.femaleBirthCity}`;
   if(data.femaleCurrentCity) prompt += `，现居${data.femaleCurrentCity}`;
   prompt += '\n';
@@ -2033,7 +2122,7 @@ function buildSingleUserPrompt(data, style) {
 
 `;
   prompt += `${gender==='男'?'♂':'♀'} ${nickname||zodiac}：${zodiac}`;
-  if(data.maleBirthDate || data.femaleBirthDate) prompt += `，生辰（阳历）${data.maleBirthDate||data.femaleBirthDate}`;
+  if(data.maleBirthDate || data.femaleBirthDate) prompt += `，生辰${data.maleBirthDate||data.femaleBirthDate}`;
   if(data.maleBirthCity || data.femaleBirthCity) prompt += `，出生地${data.maleBirthCity||data.femaleBirthCity}`;
   if(data.maleCurrentCity || data.femaleCurrentCity) prompt += `，现居${data.maleCurrentCity||data.femaleCurrentCity}`;
   prompt += '\n';
@@ -2610,143 +2699,80 @@ hint.style.display='none';
 }
 }
 
-// 省市区三级联动 - 使用阿里DataV API + 内置兜底数据
-const REGION_CACHE = {};
+function initCities(){
+const basicCities=CITIES_BASIC.map(c=>`<button class="city-btn" data-city="${c}">${c}</button>`).join('');
+const moreCities=CITIES_MORE.map(c=>`<button class="city-btn" data-city="${c}" style="display:none">${c}</button>`).join('');
 
-// 内置省份数据（兜底，确保即使API失败也能用）
-const FALLBACK_PROVINCES = [
-  {adcode:110000,name:'北京市'},{adcode:120000,name:'天津市'},{adcode:130000,name:'河北省'},
-  {adcode:140000,name:'山西省'},{adcode:150000,name:'内蒙古自治区'},{adcode:210000,name:'辽宁省'},
-  {adcode:220000,name:'吉林省'},{adcode:230000,name:'黑龙江省'},{adcode:310000,name:'上海市'},
-  {adcode:320000,name:'江苏省'},{adcode:330000,name:'浙江省'},{adcode:340000,name:'安徽省'},
-  {adcode:350000,name:'福建省'},{adcode:360000,name:'江西省'},{adcode:370000,name:'山东省'},
-  {adcode:410000,name:'河南省'},{adcode:420000,name:'湖北省'},{adcode:430000,name:'湖南省'},
-  {adcode:440000,name:'广东省'},{adcode:450000,name:'广西壮族自治区'},{adcode:460000,name:'海南省'},
-  {adcode:500000,name:'重庆市'},{adcode:510000,name:'四川省'},{adcode:520000,name:'贵州省'},
-  {adcode:530000,name:'云南省'},{adcode:540000,name:'西藏自治区'},{adcode:610000,name:'陕西省'},
-  {adcode:620000,name:'甘肃省'},{adcode:630000,name:'青海省'},{adcode:640000,name:'宁夏回族自治区'},
-  {adcode:650000,name:'新疆维吾尔自治区'},{adcode:710000,name:'台湾省'},
-  {adcode:810000,name:'香港特别行政区'},{adcode:820000,name:'澳门特别行政区'}
-];
-
-async function loadRegionData(adcode) {
-  if (REGION_CACHE[adcode]) return REGION_CACHE[adcode];
-  
-  // 如果是加载全国省份，先用兜底数据
-  if (adcode === '100000') {
-    REGION_CACHE[adcode] = FALLBACK_PROVINCES;
-  }
-  
-  try {
-    const resp = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`, {
-      signal: AbortSignal.timeout(8000)
-    });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    const items = data.features.map(f => ({
-      name: f.properties.name,
-      adcode: f.properties.adcode
-    })).sort((a, b) => a.adcode - b.adcode);
-    REGION_CACHE[adcode] = items;
-    return items;
-  } catch (e) {
-    console.warn('API加载失败，使用缓存/兜底数据:', adcode, e.message);
-    return REGION_CACHE[adcode] || [];
-  }
+['birthCityGrid','currentCityGrid','deepMaleBirthCity','deepMaleCurrentCity','deepFemaleBirthCity','deepFemaleCurrentCity'].forEach(id=>{
+const grid=document.getElementById(id);
+if(!grid) return;
+grid.innerHTML=basicCities+moreCities+`<div class="city-more" onclick="toggleMoreCities(this)">展开更多城市</div>`;
+grid.querySelectorAll('.city-btn').forEach(btn=>{
+btn.onclick=()=>selectCity(id,btn.dataset.city);
+});
+});
 }
 
-async function initRegionSelectors() {
-  const prefixes = ['deepMaleBirth','deepMaleCurrent','deepFemaleBirth','deepFemaleCurrent'];
-  // 立即用兜底数据填充省份
-  prefixes.forEach(prefix => {
-    const sel = document.getElementById(prefix + 'Province');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">选择省份</option>' +
-      FALLBACK_PROVINCES.map(p => `<option value="${p.adcode}">${p.name}</option>`).join('');
-  });
-  // 后台尝试更新为API数据（可能更完整）
-  try {
-    const provinces = await loadRegionData('100000');
-    if (provinces.length > FALLBACK_PROVINCES.length) {
-      prefixes.forEach(prefix => {
-        const sel = document.getElementById(prefix + 'Province');
-        if (!sel) return;
-        const curVal = sel.value;
-        sel.innerHTML = '<option value="">选择省份</option>' +
-          provinces.map(p => `<option value="${p.adcode}">${p.name}</option>`).join('');
-        sel.value = curVal;
-      });
-    }
-  } catch(e) { console.warn('省份数据更新失败，使用内置数据'); }
+function toggleMoreCities(el){
+const hidden=el.previousElementSibling.previousElementSibling;
+const allCities=hidden.parentElement.querySelectorAll('.city-btn[data-city]');
+allCities.forEach(c=>c.style.display='');
+el.style.display='none';
 }
 
-async function onProvinceChange(prefix) {
-  const provSel = document.getElementById(prefix + 'Province');
-  const citySel = document.getElementById(prefix + 'City');
-  const distSel = document.getElementById(prefix + 'District');
-  const adcode = provSel.value;
-  // Reset city & district
-  citySel.innerHTML = '<option value="">选择城市</option>';
-  citySel.disabled = true;
-  distSel.innerHTML = '<option value="">区县</option>';
-  distSel.disabled = true;
-  if (!adcode) return;
-  const cities = await loadRegionData(adcode);
-  if (cities.length === 0) {
-    // 直辖市等没有下级城市，直接用区县填充城市列
-    citySel.innerHTML = '<option value="">选择区县</option>';
-    distSel.innerHTML = '<option value="">--</option>';
-    distSel.disabled = true;
-    // 尝试加载该省的区县（对于直辖市如北京110000）
-    const districts = await loadRegionData(adcode);
-    // 对于直辖市，API返回的就是区县
-    if (districts.length > 0 && cities.length === 0) {
-      citySel.innerHTML = '<option value="">选择区县</option>' +
-        districts.map(d => `<option value="${d.adcode}">${d.name}</option>`).join('');
-      citySel.disabled = false;
-    }
-    return;
-  }
-  citySel.innerHTML = '<option value="">选择城市</option>' +
-    cities.map(c => `<option value="${c.adcode}">${c.name}</option>`).join('');
-  citySel.disabled = false;
+function selectCity(gridId,cityName){
+const grid=document.getElementById(gridId);
+if(!grid) return;
+grid.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('selected'));
+const btn=grid.querySelector(`[data-city="${cityName}"]`);
+if(btn)btn.classList.add('selected');
+// Hide any previously shown district grid for this city group
+const districtGrid=document.getElementById(gridId+'District');
+if(districtGrid){
+const districts=CITY_DISTRICTS[cityName];
+if(districts&&districts.length>0){
+districtGrid.innerHTML=districts.map(d=>`<button class="district-btn" data-district="${d}">${d}</button>`).join('')+`<div class="district-back" onclick="resetDistrict('${gridId}')">↩ 重选城市</div>`;
+districtGrid.style.display='';
+districtGrid.querySelectorAll('.district-btn').forEach(db=>{
+db.onclick=()=>selectDistrict(gridId,db.dataset.district);
+});
+}else{
+districtGrid.innerHTML='';
+districtGrid.style.display='none';
+}
+}
 }
 
-async function onCityChange(prefix) {
-  const citySel = document.getElementById(prefix + 'City');
-  const distSel = document.getElementById(prefix + 'District');
-  const adcode = citySel.value;
-  distSel.innerHTML = '<option value="">区县</option>';
-  distSel.disabled = true;
-  if (!adcode) return;
-  const districts = await loadRegionData(adcode);
-  if (districts.length > 0) {
-    distSel.innerHTML = '<option value="">选择区县</option>' +
-      districts.map(d => `<option value="${d.adcode}">${d.name}</option>`).join('');
-    distSel.disabled = false;
-  }
+function selectDistrict(gridId,districtName){
+const districtGrid=document.getElementById(gridId+'District');
+if(!districtGrid) return;
+districtGrid.querySelectorAll('.district-btn').forEach(b=>b.classList.remove('selected'));
+const btn=districtGrid.querySelector(`[data-district="${districtName}"]`);
+if(btn)btn.classList.add('selected');
+}
+
+function resetDistrict(gridId){
+const grid=document.getElementById(gridId);
+if(grid)grid.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('selected'));
+const districtGrid=document.getElementById(gridId+'District');
+if(districtGrid){districtGrid.innerHTML='';districtGrid.style.display='none';}
 }
 
 
 
 
-
-
-
-function getSelectedCity(prefix) {
-  const provSel = document.getElementById(prefix + 'Province');
-  const citySel = document.getElementById(prefix + 'City');
-  const distSel = document.getElementById(prefix + 'District');
-  if (!provSel) return '';
-  const provText = provSel.options[provSel.selectedIndex]?.text || '';
-  const cityText = citySel?.options[citySel.selectedIndex]?.text || '';
-  const distText = distSel?.options[distSel.selectedIndex]?.text || '';
-  // Build location string
-  let parts = [];
-  if (provText && provText !== '选择省份') parts.push(provText);
-  if (cityText && cityText !== '选择城市' && cityText !== '选择区县') parts.push(cityText);
-  if (distText && distText !== '区县' && distText !== '选择区县') parts.push(distText);
-  return parts.join(' ');
+function getSelectedCity(gridId){
+const grid=document.getElementById(gridId);
+let city='';
+if(grid)city=grid.querySelector('.city-btn.selected')?.dataset.city||'';
+const districtGrid=document.getElementById(gridId+'District');
+let district='';
+if(districtGrid){
+const sel=districtGrid.querySelector('.district-btn.selected');
+if(sel)district=sel.dataset.district||'';
+}
+if(city&&district)return city+' '+district;
+return city;
 }
 
 function getBirthDate(prefix){
@@ -3295,10 +3321,10 @@ femaleNickname: document.getElementById('deepFemaleNickname')?.value?.trim() || 
 directions: directions.length ? directions : ['近期运势','财运走势','亲密关系'],
 maleBirthDate: getBirthDate('deepMale'),
 femaleBirthDate: getBirthDate('deepFemale'),
-maleBirthCity: getSelectedCity('deepMaleBirth'),
-femaleBirthCity: getSelectedCity('deepFemaleBirth'),
-maleCurrentCity: getSelectedCity('deepMaleCurrent'),
-femaleCurrentCity: getSelectedCity('deepFemaleCurrent'),
+maleBirthCity: getSelectedCity('deepMaleBirthCity'),
+femaleBirthCity: getSelectedCity('deepFemaleBirthCity'),
+maleCurrentCity: getSelectedCity('deepMaleCurrentCity'),
+femaleCurrentCity: getSelectedCity('deepFemaleCurrentCity'),
 notes: document.getElementById('deepNotes')?.value?.trim() || ''
 };
 const styleLabel = style === 'warm' ? '📊结果分析' : '🔮深度结果分析';
@@ -3583,7 +3609,7 @@ document.getElementById('copyBtn').style.display='block';
 
 initStars();
 initZodiacGrids();
-initRegionSelectors();
+initCities();
 initSelects();
 initScenes();
 initQuickBirthSelects();
@@ -3621,10 +3647,10 @@ document.getElementById('saveArchiveBtn').onclick = function() {
     femaleNickname: document.getElementById('deepFemaleNickname')?.value?.trim() || '',
     maleBirthDate: getBirthDate('deepMale'),
     femaleBirthDate: getBirthDate('deepFemale'),
-    maleBirthCity: getSelectedCity('deepMaleBirth'),
-    femaleBirthCity: getSelectedCity('deepFemaleBirth'),
-    maleCurrentCity: getSelectedCity('deepMaleCurrent'),
-    femaleCurrentCity: getSelectedCity('deepFemaleCurrent'),
+    maleBirthCity: getSelectedCity('deepMaleBirthCity'),
+    femaleBirthCity: getSelectedCity('deepFemaleBirthCity'),
+    maleCurrentCity: getSelectedCity('deepMaleCurrentCity'),
+    femaleCurrentCity: getSelectedCity('deepFemaleCurrentCity'),
     directions: [...document.querySelectorAll('.direction-btn.selected')].map(b => b.dataset.dir),
     notes: document.getElementById('deepNotes')?.value?.trim() || ''
   };
@@ -3796,6 +3822,41 @@ loadFeedbacks();
       <h3 style="font-size:18px;font-weight:700;color:var(--accent-light);margin:0">✨ AI大模型分析</h3>
       <button onclick="closeAIUpgrade()" style="background:none;border:none;color:var(--text-dim);font-size:24px;cursor:pointer;line-height:1">&times;</button>
     </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button id="tabHaveKey" onclick="switchAITab('have')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(155,109,255,.3);background:rgba(155,109,255,.15);color:#c4a1ff;font-size:13px;font-weight:600;cursor:pointer">&#x1F511; &#x6211;&#x6709;Key</button>
+      <button id="tabBuyKey" onclick="switchAITab('buy')" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(155,109,255,.15);background:transparent;color:#888;font-size:13px;font-weight:600;cursor:pointer">&#x1F6D2; &#x8D2D;&#x4E70;Key</button>
+    </div>
+    <div id="aiBuySection" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:16px;font-weight:700;color:#ffd700;margin-bottom:12px">扫码添加微信 · 购买Key</div>
+        <img src="qrcode_pay.jpg" alt="微信二维码" style="max-width:200px;width:100%;border-radius:12px;background:#fff;padding:8px" />
+      </div>
+      <div style="text-align:center;margin-bottom:16px;font-size:13px;color:#8b7aa8">微信号：hui_297652 <span onclick="navigator.clipboard.writeText('hui_297652');this.textContent='已复制✓';setTimeout(()=>this.textContent='复制',1500)" style="cursor:pointer;color:#4ade80;font-size:12px;margin-left:4px">复制</span></div>
+      <ol class="pay-steps">
+        <li><span class="step-num">①</span><span>打开微信扫一扫，扫描二维码添加好友</span></li>
+        <li><span class="step-num">②</span><span>微信转账 <strong>19.9 元</strong></span></li>
+        <li><span class="step-num">③</span><span>获取专属Key，输入网站即可解锁</span></li>
+      </ol>
+      <div style="text-align:center;font-size:20px;font-weight:700;color:#ffd700;margin-bottom:16px">¥19.9 <span style="font-size:13px;font-weight:400;color:#8b7aa8">/ 单站</span></div>
+      <div style="font-size:10px;color:#555;line-height:1.6;text-align:center;margin-top:14px">
+        本服务为AI数据分析工具，仅供学习研究参考<br>
+        不构成任何投资建议、投注建议或其他专业决策建议<br>
+        付费即视为同意服务协议，Key激活后不支持退款
+      </div>
+    </div>
+    <script>
+    // Reset tabs when modal opens
+    (function(){
+      var origOpen = window.openAIUpgrade;
+      if (typeof openAIUpgrade === 'function') {
+        var _orig = openAIUpgrade;
+        window.openAIUpgrade = function() {
+          document.getElementById('aiUpgradeModal').style.display = 'flex';
+          switchAITab('have');
+        };
+      }
+    })();
+    </script>
     <div id="aiKeyInput" style="display:block">
       <div style="background:rgba(155,109,255,.1);border:1px solid rgba(155,109,255,.2);border-radius:12px;padding:16px;margin-bottom:20px">
         <div style="color:var(--text-light);font-size:14px;line-height:1.6;margin-bottom:12px">
@@ -3913,5 +3974,69 @@ document.getElementById('generateQuickDirect').addEventListener('click', () => {
 });
 
 </script>
+
+<script>
+
+function showPayModal(productName) {
+  var modal = document.getElementById('payModal');
+  if (!modal) return;
+  var card = modal.querySelector('.pay-card');
+  card.innerHTML = '<button class="pay-close" onclick="closePayModal()">' + '&' + 'times;</button>' +
+    '<div class="pay-title">\u626b\u7801\u6dfb\u52a0\u5fae\u4fe1 \u00b7 \u8d2d\u4e70Key</div>' +
+    '<div class="pay-qr-wrap"><img src="qrcode_pay.jpg" alt="\u5fae\u4fe1\u4e8c\u7ef4\u7801" /></div>' +
+    '<div style="text-align:center;margin-bottom:16px;font-size:13px;color:#8b7aa8">\u5fae\u4fe1\u53f7\uff1ahui_297652 <span onclick="navigator.clipboard.writeText(\'hui_297652\');this.textContent=\'\u5df2\u590d\u5236\u2713\';setTimeout(()=>this.textContent=\'\u590d\u5236\',1500)" style="cursor:pointer;color:#4ade80;font-size:12px;margin-left:4px">\u590d\u5236</span></div>' +
+    '<ol class="pay-steps">' +
+    '<li><span class="step-num">\u2460</span><span>\u6253\u5f00\u5fae\u4fe1\u626b\u4e00\u626b\uff0c\u626b\u63cf\u4e8c\u7ef4\u7801\u6dfb\u52a0\u597d\u53cb</span></li>' +
+    '<li><span class="step-num">\u2461</span><span>\u5fae\u4fe1\u8f6c\u8d26 <strong>19.9 \u5143</strong></span></li>' +
+    '<li><span class="step-num">\u2462</span><span>\u83b7\u53d6\u4e13\u5c5eKey\uff0c\u8f93\u5165\u7f51\u7ad9\u5373\u53ef\u89e3\u9501</span></li>' +
+    '</ol>' +
+    '<div style="text-align:center;font-size:20px;font-weight:700;color:#ffd700;margin-bottom:16px">\u00a519.9 <span style="font-size:13px;font-weight:400;color:#8b7aa8">/ \u5355\u7ad9</span></div>' +
+    '<div class="pay-disclaimer">' +
+    '\u672c\u670d\u52a1\u4e3aAI\u6570\u636e\u5206\u6790\u5de5\u5177\uff0c\u4ec5\u4f9b\u5b66\u4e60\u7814\u7a76\u53c2\u8003<br>' +
+    '\u4e0d\u6784\u6210\u4efb\u4f55\u6295\u8d44\u5efa\u8bae\u3001\u6295\u6ce8\u5efa\u8bae\u6216\u5176\u4ed6\u4e13\u4e1a\u51b3\u7b56\u5efa\u8bae<br>' +
+    '\u4ed8\u8d39\u5373\u89c6\u4e3a\u540c\u610f\u670d\u52a1\u534f\u8bae\uff0cKey\u6fc0\u6d3b\u540e\u4e0d\u652f\u6301\u9000\u6b3e' +
+    '</div>';
+  modal.style.display = 'flex';
+}
+function closePayModal() {
+  var modal = document.getElementById('payModal');
+  if (modal) modal.style.display = 'none';
+}
+function switchAITab(tab) {
+  var haveSection = document.getElementById('aiKeyInput');
+  var buySection = document.getElementById('aiBuySection');
+  var tabHave = document.getElementById('tabHaveKey');
+  var tabBuy = document.getElementById('tabBuyKey');
+  if (tab === 'have') {
+    haveSection.style.display = 'block';
+    buySection.style.display = 'none';
+    tabHave.style.background = 'rgba(155,109,255,.15)';
+    tabHave.style.color = '#c4a1ff';
+    tabHave.style.borderColor = 'rgba(155,109,255,.3)';
+    tabBuy.style.background = 'transparent';
+    tabBuy.style.color = '#888';
+    tabBuy.style.borderColor = 'rgba(155,109,255,.15)';
+  } else {
+    haveSection.style.display = 'none';
+    buySection.style.display = 'block';
+    tabBuy.style.background = 'rgba(155,109,255,.15)';
+    tabBuy.style.color = '#c4a1ff';
+    tabBuy.style.borderColor = 'rgba(155,109,255,.3)';
+    tabHave.style.background = 'transparent';
+    tabHave.style.color = '#888';
+    tabHave.style.borderColor = 'rgba(155,109,255,.15)';
+  }
+}
+</script>
+
+<!-- Pay Modal -->
+<div id="payModal" class="pay-overlay" onclick="if(event.target===this)closePayModal()" style="display:none">
+  <div class="pay-card"></div>
+</div>
+<!-- Footer Disclaimer -->
+<div style="text-align:center;padding:20px 16px 30px;font-size:11px;color:#666;line-height:1.8">
+  &#x26A0;&#xFE0F; &#x514D;&#x8D23;&#x58F0;&#x660E;&#xFF1A;&#x672C;&#x7AD9;&#x4E3A;AI&#x6570;&#x636E;&#x5206;&#x6790;&#x5DE5;&#x5177;&#xFF0C;&#x6240;&#x6709;&#x5185;&#x5BB9;&#x4EC5;&#x4F9B;&#x5B66;&#x4E60;&#x7814;&#x7A76;&#x53C2;&#x8003;&#xFF0C;&#x4E0D;&#x6784;&#x6210;&#x4EFB;&#x4F55;&#x6295;&#x8D44;&#x5EFA;&#x8BAE;&#x3001;&#x6295;&#x6CE8;&#x5EFA;&#x8BAE;&#x6216;&#x5176;&#x4ED6;&#x4E13;&#x4E1A;&#x51B3;&#x7B56;&#x5EFA;&#x8BAE;&#x3002;
+  &#x6570;&#x636E;&#x6765;&#x6E90;&#x4E8E;&#x516C;&#x5F00;&#x4FE1;&#x606F;&#xFF0C;&#x5206;&#x6790;&#x7ED3;&#x679C;&#x4E0D;&#x4EE3;&#x8868;&#x672A;&#x6765;&#x8868;&#x73B0;&#x3002;&#x4ED8;&#x8D39;&#x5373;&#x89C6;&#x4E3A;&#x540C;&#x610F;&#x670D;&#x52A1;&#x534F;&#x8BAE;&#xFF0C;Key&#x6FC0;&#x6D3B;&#x540E;&#x4E0D;&#x652F;&#x6301;&#x9000;&#x6B3E;&#x3002;
+</div>
 </body>
 </html>

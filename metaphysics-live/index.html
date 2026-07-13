@@ -2115,18 +2115,22 @@ ${data.directions && data.directions.length ? (data.directions.length + 5) : 8}.
 
 function buildSingleUserPrompt(data, style) {
   const styleDesc = style === 'warm' ? '温柔鼓励风格（先共情再点醒，温暖但不含糊）' : '直白犀利风格（不绕弯子，直击核心问题）';
-  const zodiac = data.maleZodiac || data.femaleZodiac;
-  const gender = data.maleZodiac ? '男' : '女';
-  const nickname = data.maleNickname || data.femaleNickname || '';
+  
+  // 收集所有需要分析的人
+  const people = [];
+  if(data.maleZodiac) people.push({zodiac: data.maleZodiac, gender: '男', nickname: data.maleNickname || '', birthDate: data.maleBirthDate, birthCity: data.maleBirthCity, currentCity: data.maleCurrentCity});
+  if(data.femaleZodiac) people.push({zodiac: data.femaleZodiac, gender: '女', nickname: data.femaleNickname || '', birthDate: data.femaleBirthDate, birthCity: data.femaleBirthCity, currentCity: data.femaleCurrentCity});
   
   let prompt = `请为以下用户做详细的个人星座分析：
 
 `;
-  prompt += `${gender==='男'?'♂':'♀'} ${nickname||zodiac}：${zodiac}`;
-  if(data.maleBirthDate || data.femaleBirthDate) prompt += `，生辰${data.maleBirthDate||data.femaleBirthDate}`;
-  if(data.maleBirthCity || data.femaleBirthCity) prompt += `，出生地${data.maleBirthCity||data.femaleBirthCity}`;
-  if(data.maleCurrentCity || data.femaleCurrentCity) prompt += `，现居${data.maleCurrentCity||data.femaleCurrentCity}`;
-  prompt += '\n';
+  people.forEach(p => {
+    prompt += `${p.gender==='男'?'♂':'♀'} ${p.nickname||p.zodiac}：${p.zodiac}`;
+    if(p.birthDate) prompt += `，生辰${p.birthDate}`;
+    if(p.birthCity) prompt += `，出生地${p.birthCity}`;
+    if(p.currentCity) prompt += `，现居${p.currentCity}`;
+    prompt += '\n';
+  });
   
   if(data.directions && data.directions.length) prompt += `选择分析方向：${data.directions.join('、')}
 `;
@@ -2146,7 +2150,26 @@ function buildSingleUserPrompt(data, style) {
 
 让分析像讲故事一样，有画面感，有细节，让人读着就觉得"说的就是我"。
 `;
-  prompt += `
+
+  if(people.length > 1) {
+    prompt += `
+请按以下结构输出（每个人分别分析，每个人的每个部分至少2-3段）：
+`;
+    people.forEach((p, idx) => {
+      prompt += `
+--- ${p.gender==='男'?'♂':'♀'} ${p.nickname||p.zodiac}（${p.zodiac}）---
+1. 🌟 开场：点明这个星座的核心性格特质
+2. 🔑 深度性格解析（元素+模式结合分析）
+3. ⚠️ 成长课题（真诚但不伤人地指出）
+4. 💕 感情分析（恋爱观、相处模式、适合的伴侣类型）
+5. ✨ 近期运势走向
+6. 💰 财运走势分析
+7. 💡 具体建议（5条以上实操建议）
+`;
+    });
+    prompt += '\n内容要丰富详实，每个人每个部分详细展开。';
+  } else {
+    prompt += `
 请按以下结构输出（每个部分至少2-3段）：
 1. 🌟 开场：点明这个星座的核心性格特质
 2. 🔑 深度性格解析（元素+模式结合分析）
@@ -2157,6 +2180,7 @@ function buildSingleUserPrompt(data, style) {
 7. 💡 具体建议（5条以上实操建议）
 
 内容要丰富详实，每个部分详细展开。`;
+  }
 
   if(data.question) {
     prompt += `
@@ -2212,7 +2236,8 @@ async function generateAIAnalysis(data, style, mode='full') {
   const systemPrompt = buildMetaSystemPrompt();
   let userPrompt;
   
-  if(data.maleZodiac && data.femaleZodiac) {
+  // 以用户选择的Tab为准
+  if(data.isPairMode && data.maleZodiac && data.femaleZodiac) {
     userPrompt = buildPairUserPrompt(data, style);
   } else {
     userPrompt = buildSingleUserPrompt(data, style);
@@ -2240,11 +2265,12 @@ async function generateAIQuickAnalysis(userZodiac, taZodiac, gender, scenes, sty
 }
 
 function generateDeepAnalysis(data, style){
-const{maleZodiac,femaleZodiac,maleNickname,femaleNickname,directions,maleBirthDate,femaleBirthDate,maleBirthCity,femaleBirthCity,maleCurrentCity,femaleCurrentCity,notes}=data;
+const{maleZodiac,femaleZodiac,maleNickname,femaleNickname,directions,isPairMode,maleBirthDate,femaleBirthDate,maleBirthCity,femaleBirthCity,maleCurrentCity,femaleCurrentCity,notes}=data;
 let result='';
 
 
-if(maleZodiac && femaleZodiac) {
+// 以用户选择的Tab为准：双人合盘Tab且双方都选了→合盘分析；否则→个人运势分析
+if(isPairMode && maleZodiac && femaleZodiac) {
   const maleMatrix = ELEMENT_MODE_MATRIX[maleZodiac];
   const femaleMatrix = ELEMENT_MODE_MATRIX[femaleZodiac];
   const pairScore = calculatePairScore(maleZodiac, femaleZodiac);
@@ -2295,33 +2321,35 @@ if(maleZodiac && femaleZodiac) {
   }
   
 } else {
+  // 个人运势模式：为每个选中的星座生成个人分析
+  const people = [];
+  if(maleZodiac) people.push({zodiac: maleZodiac, gender: '男', nickname: maleNickname || '男方', label: '♂'});
+  if(femaleZodiac) people.push({zodiac: femaleZodiac, gender: '女', nickname: femaleNickname || '女方', label: '♀'});
   
-  const zodiac = maleZodiac || femaleZodiac;
-  const gender = maleZodiac ? '男' : '女';
-  const nickname = maleNickname || femaleNickname || '';
-  const matrix = ELEMENT_MODE_MATRIX[zodiac];
-  const label = gender === '男' ? '♂' : '♀';
-  
-  result += `${label} ${nickname || zodiac}的深度分析\n\n`;
-  result += `🔑 元素密码：${matrix.element}象·${matrix.mode}型——${matrix.keywords}\n`;
-  result += `${matrix.deep}\n\n`;
-  result += `⚠️ 成长课题：${matrix.trap}\n\n`;
-  
-  if(directions.includes('近期运势') || directions.length===0) {
-    const person = getPersonality(zodiac, gender);
-    result += `✨ 近期运势：${generatePeriod()}的整体运势${getRandomPhrase(['相当不错哦','比较活跃','稳步上升','比较平稳'])}。\n`;
-    result += `${person.energy}\n\n`;
-  }
-  if(directions.includes('财运走势') || directions.length===0) {
-    const person = getPersonality(zodiac, gender);
-    result += `💰 财运走势：${generatePeriod()}${getRandomPhrase(['有一个小高峰正在靠近','有些新机会在酝酿','好运在慢慢积累'])}。\n`;
-    result += `${person.fortune}\n\n`;
-  }
-  if(directions.includes('亲密关系') || directions.length===0) {
-    const person = getPersonality(zodiac, gender);
-    result += `💕 亲密关系：${generatePeriod()}${getRandomPhrase(['桃花运在上升','感情状态在调整中','人际关系运不错'])}。\n`;
-    result += `${person.love}\n`;
-  }
+  people.forEach((person, idx) => {
+    const matrix = ELEMENT_MODE_MATRIX[person.zodiac];
+    if(idx > 0) result += '\n---\n\n';
+    result += `${person.label} ${person.nickname}（${person.zodiac}）的深度分析\n\n`;
+    result += `🔑 元素密码：${matrix.element}象·${matrix.mode}型——${matrix.keywords}\n`;
+    result += `${matrix.deep}\n\n`;
+    result += `⚠️ 成长课题：${matrix.trap}\n\n`;
+    
+    if(directions.includes('近期运势') || directions.length===0) {
+      const p = getPersonality(person.zodiac, person.gender);
+      result += `✨ 近期运势：${generatePeriod()}的整体运势${getRandomPhrase(['相当不错哦','比较活跃','稳步上升','比较平稳'])}。\n`;
+      result += `${p.energy}\n\n`;
+    }
+    if(directions.includes('财运走势') || directions.length===0) {
+      const p = getPersonality(person.zodiac, person.gender);
+      result += `💰 财运走势：${generatePeriod()}${getRandomPhrase(['有一个小高峰正在靠近','有些新机会在酝酿','好运在慢慢积累'])}。\n`;
+      result += `${p.fortune}\n\n`;
+    }
+    if(directions.includes('爱情运势') || directions.length===0) {
+      const p = getPersonality(person.zodiac, person.gender);
+      result += `💕 爱情运势：${generatePeriod()}${getRandomPhrase(['桃花运在上升','感情状态在调整中','人际关系运不错'])}。\n`;
+      result += `${p.love}\n`;
+    }
+  });
 }
 
 result = style ? applyStyle(result, style) : result;
@@ -2615,7 +2643,7 @@ function generateSingleAnalysis(zodiac, gender, scenes, style, question, directi
   const person = getPersonality(zodiac, gender);
   const genderText = gender === '女' ? '女生' : '男生';
   const matrixData = ELEMENT_MODE_MATRIX[zodiac];
-  const dirs = directions && directions.length > 0 ? directions : ['最近运势', '财运走势', '爱情运势'];
+  const dirs = directions && directions.length > 0 ? directions : ['近期运势', '财运走势', '爱情运势'];
   
   let result = '';
   
@@ -2635,14 +2663,14 @@ function generateSingleAnalysis(zodiac, gender, scenes, style, question, directi
     result += `✨ 性格特质：${person.desc}\n\n`;
   }
   
-  if(dirs.includes('最近运势')) {
+  if(dirs.includes('近期运势')) {
     result += `🌟 近期运势：${person.energy}\n\n`;
   }
   if(dirs.includes('财运走势')) {
     result += `💰 财运走势：${person.fortune}\n\n`;
   }
   if(dirs.includes('爱情运势')) {
-    result += `💕 亲密关系：${person.love}\n`;
+    result += `💕 爱情运势：${person.love}\n`;
   }
   
   
@@ -3341,15 +3369,16 @@ if(!maleZodiac && !femaleZodiac){
 alert('请至少选择一方的星座~');
 return;
 }
-// 根据实际选择的星座数量决定使用哪组方向按钮
-const isPairMode = maleZodiac && femaleZodiac;
+// 以用户实际选择的Tab为准（个人运势 vs 双人合盘）
+const isPairMode = document.getElementById('modeTabDouble')?.classList.contains('active');
 const directionContainer = isPairMode ? 'directionDouble' : 'directionSingle';
 const directions=[...document.querySelectorAll(`#${directionContainer} .direction-btn.selected`)].map(b=>b.dataset.dir);
 // 默认方向也根据模式区分
-const defaultDirections = isPairMode ? ['吸引特质','亲密关系','关系走向'] : ['近期运势','财运走势','爱情运势'];
+const defaultDirections = isPairMode ? ['吸引特质','亲密关系','关系走向','情感矛盾','真心解剖','近期关系','结婚匹配'] : ['近期运势','财运走势','爱情运势'];
 const data={
 maleZodiac: maleZodiac || '',
 femaleZodiac: femaleZodiac || '',
+isPairMode: isPairMode,
 maleNickname: document.getElementById('deepMaleNickname')?.value?.trim() || '',
 femaleNickname: document.getElementById('deepFemaleNickname')?.value?.trim() || '',
 directions: directions.length ? directions : defaultDirections,

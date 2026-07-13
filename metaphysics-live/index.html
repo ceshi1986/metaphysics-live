@@ -1082,6 +1082,11 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
   .step-item { font-size: 12px; }
   .step-arrow { margin: 0 4px; }
 }
+
+@keyframes btn-glow{
+0%,100%{box-shadow:0 0 25px rgba(255,215,0,.7),0 0 50px rgba(255,107,0,.5),0 0 80px rgba(255,215,0,.3);transform:scale(1.05)}
+50%{box-shadow:0 0 40px rgba(255,215,0,1),0 0 80px rgba(255,107,0,.8),0 0 120px rgba(255,215,0,.5);transform:scale(1.1)}
+}
 </style>
 </head>
 <body>
@@ -1115,7 +1120,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button class="tab-btn active" data-mode="deep">深度分析</button>
 <button class="tab-btn" data-mode="quick">快速问答</button>
 </nav>
-<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,rgba(168,85,247,.25),rgba(219,39,119,.15));border:2px solid rgba(168,85,247,.6);color:#fff;padding:10px 24px;border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 0 20px rgba(168,85,247,.3),inset 0 0 12px rgba(168,85,247,.1);transition:all .3s;margin-right:12px;letter-spacing:1px" title="升级为AI大模型分析">解锁AI深度解析</button>
+<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,#FFD700,#FF6B00);border:2.5px solid #FFD700;color:#000;padding:16px 36px;border-radius:35px;cursor:pointer;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;box-shadow:0 0 25px rgba(255,215,0,.7),0 0 50px rgba(255,107,0,.5),0 0 80px rgba(255,215,0,.3);transition:all .3s;margin-right:12px;letter-spacing:2px;animation:btn-glow 1.5s ease-in-out infinite;text-shadow:0 1px 3px rgba(255,255,255,.5);transform:scale(1.05)" title="升级为AI大模型分析">🔥 AI深度解析</button>
 <button class="sidebar-toggle" id="toggleArchive" style="margin-right:8px">📁 咨询档案</button>
 <button class="sidebar-toggle" id="toggleSidebar">📋 历史记录</button>
 </header>
@@ -1234,6 +1239,11 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 @keyframes glow-pulse{
 0%,100%{opacity:1;transform:scale(1)}
 50%{opacity:.6;transform:scale(1.3)}
+}
+
+@keyframes btn-glow{
+0%,100%{box-shadow:0 0 25px rgba(255,215,0,.7),0 0 50px rgba(255,107,0,.5),0 0 80px rgba(255,215,0,.3);transform:scale(1.05)}
+50%{box-shadow:0 0 40px rgba(255,215,0,1),0 0 80px rgba(255,107,0,.8),0 0 120px rgba(255,215,0,.5);transform:scale(1.1)}
 }
 </style>
 <div class="version-btns">

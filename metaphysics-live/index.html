@@ -1743,8 +1743,7 @@ function fillQuestion(text) {
 
 // ========== AI授权分析模块 ==========
 const AI_BASE = 'https://metaphyai-api-v-cwpuwzgtdx.cn-shanghai.fcapp.run';
-const AI_VERIFY_API = AI_BASE + '/verify-key';
-const AI_ANALYZE_API = AI_BASE + '/analyze';
+const AI_API_URL = AI_BASE + '/';
 const AI_COST_LIMIT = 1000;
 const AI_COST_PER_CALL = 1;
 
@@ -1795,14 +1794,14 @@ async function submitAIKey() {
   msg.style.color = 'var(--accent-light)';
   
   try {
-    const resp = await fetch(AI_VERIFY_API, {
+    const resp = await fetch(AI_API_URL, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ key })
+      body: JSON.stringify({ action:'key_validate', key })
     });
     const data = await resp.json();
     if(data.valid) {
-      saveAIAuth({ key, valid:true, remaining: data.credit_remaining||AI_COST_LIMIT, used: data.used||0 });
+      saveAIAuth({ key, valid:true, remaining: data.remaining||AI_COST_LIMIT, used: 0 });
       msg.textContent = '✅ 验证成功！AI分析已激活';
       msg.style.color = '#4caf50';
       setTimeout(() => { openAIUpgrade(); updateAIButton(); }, 1500);
@@ -2147,7 +2146,7 @@ async function callAIAnalysis(systemPrompt, userPrompt, mode='full') {
     payload.key = auth.key;
   }
   
-  const resp = await fetch(AI_ANALYZE_API, {
+  const resp = await fetch(AI_API_URL, {
     method: 'POST',
     headers: { 'Content-Type':'application/json' },
     body: JSON.stringify(payload)
@@ -2160,9 +2159,9 @@ async function callAIAnalysis(systemPrompt, userPrompt, mode='full') {
   const json = await resp.json();
   
   // 完整模式：更新本地key余额
-  if(json.mode === 'full' && json.credit_remaining !== undefined) {
+  if(json.mode === 'full' && json.token_remaining !== undefined) {
     const auth = getAIAuth();
-    saveAIAuth({ ...auth, remaining: json.credit_remaining, used: (auth.used||0) + 1 });
+    saveAIAuth({ ...auth, remaining: json.token_remaining, used: (auth.used||0) + 1 });
   }
   
   return json.analysis || json.content || null;

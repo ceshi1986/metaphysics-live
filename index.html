@@ -154,31 +154,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hira
   
   <div id="aiKeyArea">
     <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-      💡 AI分析基于「价值投机」框架，结合大盘择时、赛道选择、个股决策三层体系，给出趋势判断与操作建议。需要配置API Key才能使用。
+      💡 AI分析基于「价值投机」框架，结合大盘择时、赛道选择、个股决策三层体系，给出趋势判断与操作建议。输入您的Key激活AI分析。
     </div>
     <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
-      <select id="aiProvider" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:13px;outline:none;min-width:130px">
-        <option value="deepseek">DeepSeek</option>
-        <option value="volcengine">火山引擎</option>
-        <option value="custom">自定义API</option>
-      </select>
-      <input id="aiKeyInput" type="password" placeholder="输入API Key" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
-    </div>
-    <div id="customApiArea" style="display:none;margin-bottom:10px">
-      <input id="customApiUrl" type="text" placeholder="自定义API地址，如 https://your-api.com/v1/chat/completions" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;margin-bottom:8px">
-      <input id="customModel" type="text" placeholder="模型名称，如 gpt-4o-mini" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
+      <input id="aiKeyInput" type="password" placeholder="输入Key激活AI分析" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')verifyAiKey()">
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn" style="background:#7c3aed;flex:1" onclick="saveAiKey()">保存Key并开始分析</button>
+      <button class="btn" style="background:#7c3aed;flex:1" onclick="verifyAiKey()">验证并激活</button>
     </div>
+    <div id="aiVerifyMsg" style="display:none;margin-top:8px;font-size:12px;padding:8px 12px;border-radius:6px"></div>
   </div>
 
   <div id="aiReadyArea" style="display:none">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
       <div style="width:8px;height:8px;background:#22c55e;border-radius:50%"></div>
-      <span style="font-size:12px;color:var(--text2)">AI已就绪 · <span id="aiProviderLabel">DeepSeek</span></span>
-      <button onclick="showAiKeyConfig()" style="background:none;border:none;color:var(--accent2);font-size:12px;cursor:pointer;margin-left:auto">修改Key</button>
+      <span style="font-size:12px;color:var(--text2)">AI已激活</span>
+      <span id="aiRemainLabel" style="font-size:12px;color:#a78bfa;margin-left:4px"></span>
+      <button onclick="showAiKeyConfig()" style="background:none;border:none;color:var(--accent2);font-size:12px;cursor:pointer;margin-left:auto">更换Key</button>
     </div>
+    <div id="aiUsageInfo" style="font-size:11px;color:var(--text2);margin-bottom:12px"></div>
     <button id="aiAnalyzeBtn" class="btn" style="width:100%;background:linear-gradient(135deg,#7c3aed,#3b82f6);padding:12px;font-size:14px;font-weight:600" onclick="runAiAnalysis()">🤖 AI深度分析</button>
   </div>
 
@@ -400,14 +394,12 @@ function fetchQuote(code){
 async function fetchViaProxy(code){
   // Primary: proxy.cors.sh (verified working)
   const proxies=[
-    url=>'https://proxy.cors.sh/'+encodeURIComponent(url),
-    url=>'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
-    url=>'https://corsproxy.io/?'+encodeURIComponent(url)
+    (url) => 'https://proxy.cors.sh/' + encodeURIComponent(url)
   ];
   const targetUrl='https://qt.gtimg.cn/q='+code;
   for(const mkProxy of proxies){
     try{
-      const res=await fetch(mkProxy(targetUrl),{headers:{'x-cors-api-key':'temp'}});
+      const res=await fetch(mkProxy(targetUrl));
       if(!res.ok) continue;
       const text=await res.text();
       const match=text.match(/="(.+)"/);
@@ -430,7 +422,7 @@ async function fetchViaProxy(code){
   const sinaTarget='https://hq.sinajs.cn/list='+code;
   for(const mkProxy of proxies){
     try{
-      const res=await fetch(mkProxy(sinaTarget),{headers:{'x-cors-api-key':'temp'}});
+      const res=await fetch(mkProxy(sinaTarget));
       if(!res.ok) continue;
       const text=await res.text();
       const m=text.match(/="(.+)"/);
@@ -719,129 +711,147 @@ function refreshAll(){
 renderPortfolio();
 
 
-// ===== AI Investment Advisor =====
-const AI_SYSTEM_PROMPT = `你是一位资深A股投资顾问，核心理念是"价值投机"——在正确方向上的投机。
+// ===== AI Investment Advisor (Backend Key System) =====
+const AI_BASE = 'https://metaphyai-api-v-cwpuwzgtdx.cn-shanghai.fcapp.run';
+const AI_VERIFY_API = AI_BASE + '/verify-key';
+const AI_ANALYZE_API = AI_BASE + '/analyze';
+const AI_COST_LIMIT = 100;
+const AI_STORAGE_KEY = 'stock_strategy_ai_auth';
 
-## 三层决策体系
-1. 大盘择时 → 现在能不能做？决定仓位上限
-2. 赛道选择 → 做什么方向？决定产业链布局
-3. 个股选择 → 买哪个？决定具体标的和买卖时点
+function getAIAuth() {
+  try {
+    const auth = JSON.parse(localStorage.getItem(AI_STORAGE_KEY) || '{}');
+    return { key: auth.key||'', valid: auth.valid||false, remaining: auth.remaining||0, used: auth.used||0 };
+  } catch(e) { return {key:'',valid:false,remaining:0,used:0}; }
+}
 
-## 核心原则
-- 大盘环境不安全时，不重仓；方向不对时，不选股
+function saveAIAuth(auth) {
+  localStorage.setItem(AI_STORAGE_KEY, JSON.stringify(auth));
+}
+
+const AI_SYSTEM_PROMPT = `你是一位资深A股投资顾问，核心理念是"价值投机"。
+
+三层决策体系：
+1. 大盘择时 → 决定仓位上限（趋势向上80-100%，震荡50-60%，向下20%以下）
+2. 赛道选择 → 决定产业链布局
+3. 个股选择 → 决定具体标的和买卖时点
+
+核心原则：
+- 大盘不安全不重仓，方向不对不选股
 - 下跌趋势绝对不买（MA20>MA60>MA120才算多头排列）
 - 感觉不对就卖（保住利润比追求更多利润更重要）
-- 资金使用效率最大化：趋势在就拿着，效率下降就走
+- 资金使用效率最大化
 
-## 选股三要素
-1. 趋势方向（最重要）：未来1-3年确定性高的产业趋势
-2. 龙头企业：同赛道只买龙头，市值/营收前3
-3. 主力资金活跃：板块成交额持续放大，资金净流入
+止损体系：
+- 高手级：-3%
+- 标准级：-10%
+- 强趋势票：-15%
+- 到价无条件执行
 
-## 止损体系（分级）
-- 高手级：-3%（入场极精准）
-- 标准级：-10%（容错空间合理）
-- 强趋势票：-15%（给趋势留呼吸空间）
-- 到价无条件执行，不抱幻想
+选股三要素：趋势方向（最重要）+ 龙头企业 + 主力资金活跃
 
-## 操作SOP
-Step1: 趋势扫描→哪些产业处于上升周期
-Step2: 板块筛选→确定性高的方向中，资金流入最强的板块
-Step3: 个股确认→龙头均线多头排列+放量突破+机构增持
-Step4: 择时入场→等右侧信号，分批建仓（50%→30%→20%）
-Step5: 持仓管理→每日检查趋势和资金，每周复盘基本面
-Step6: 离场→止损条件触发就卖，趋势未破不止盈
+操作SOP：趋势扫描→板块筛选→个股确认→择时入场（分批建仓50%→30%→20%）→持仓管理→离场
 
-## 大盘仓位控制
-- 趋势向上→80-100%
-- 震荡→50-60%
-- 趋势向下→20%以下或空仓`;
+请基于以上框架分析用户提供的股票数据，给出：趋势判断、仓位建议、止损位、操作建议。`;
 
-let lastStrategyData = null; // Store last analysis data for AI
+let lastStrategyData = null;
 
-// Initialize AI section visibility
-function initAiSection(){
-  const section = document.getElementById('aiSection');
-  section.style.display = 'block';
-  const savedKey = localStorage.getItem('ai_api_key');
-  const savedProvider = localStorage.getItem('ai_provider') || 'deepseek';
-  if(savedKey){
-    document.getElementById('aiKeyArea').style.display = 'none';
-    document.getElementById('aiReadyArea').style.display = 'block';
-    const labels = {deepseek:'DeepSeek', volcengine:'火山引擎', custom:'自定义API'};
-    document.getElementById('aiProviderLabel').textContent = labels[savedProvider] || savedProvider;
+async function verifyAiKey() {
+  const keyInput = document.getElementById('aiKeyInput');
+  const msgEl = document.getElementById('aiVerifyMsg');
+  const key = keyInput.value.trim();
+  if(!key) { showToast('请输入Key'); return; }
+  
+  msgEl.style.display = 'block';
+  msgEl.style.background = 'rgba(59,130,246,0.1)';
+  msgEl.style.color = 'var(--accent2)';
+  msgEl.textContent = '正在验证...';
+  
+  try {
+    const resp = await fetch(AI_VERIFY_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key })
+    });
+    const json = await resp.json();
+    if(json.success) {
+      const auth = { key: key, valid: true, remaining: json.remaining || AI_COST_LIMIT, used: json.used || 0 };
+      saveAIAuth(auth);
+      msgEl.style.display = 'none';
+      showAiReady(auth);
+      showToast('✅ AI已激活');
+    } else {
+      msgEl.style.background = 'rgba(231,76,60,0.1)';
+      msgEl.style.color = 'var(--up)';
+      msgEl.textContent = '❌ Key无效或已过期，请检查后重试';
+    }
+  } catch(e) {
+    msgEl.style.background = 'rgba(231,76,60,0.1)';
+    msgEl.style.color = 'var(--up)';
+    msgEl.textContent = '❌ 验证失败，请检查网络连接';
   }
-  document.getElementById('aiProvider').value = savedProvider;
-  document.getElementById('aiProvider').addEventListener('change', function(){
-    document.getElementById('customApiArea').style.display = this.value === 'custom' ? 'block' : 'none';
-  });
 }
 
-function saveAiKey(){
-  const key = document.getElementById('aiKeyInput').value.trim();
-  const provider = document.getElementById('aiProvider').value;
-  if(!key){showToast('请输入API Key');return}
-  if(provider === 'custom'){
-    const url = document.getElementById('customApiUrl').value.trim();
-    const model = document.getElementById('customModel').value.trim();
-    if(!url || !model){showToast('请填写API地址和模型名称');return}
-    localStorage.setItem('ai_custom_url', url);
-    localStorage.setItem('ai_custom_model', model);
-  }
-  localStorage.setItem('ai_api_key', key);
-  localStorage.setItem('ai_provider', provider);
-  const labels = {deepseek:'DeepSeek', volcengine:'火山引擎', custom:'自定义API'};
-  document.getElementById('aiProviderLabel').textContent = labels[provider] || provider;
+function showAiReady(auth) {
   document.getElementById('aiKeyArea').style.display = 'none';
   document.getElementById('aiReadyArea').style.display = 'block';
-  showToast('✅ AI配置已保存');
+  document.getElementById('aiRemainLabel').textContent = '剩余 ' + auth.remaining + ' 次';
+  document.getElementById('aiUsageInfo').textContent = '已使用 ' + auth.used + ' 次 / 总额度 ' + AI_COST_LIMIT + ' 次';
 }
 
-function showAiKeyConfig(){
+function initAiSection() {
+  const section = document.getElementById('aiSection');
+  section.style.display = 'block';
+  const auth = getAIAuth();
+  if(auth.valid && auth.remaining > 0) {
+    showAiReady(auth);
+  }
+}
+
+function showAiKeyConfig() {
   document.getElementById('aiKeyArea').style.display = 'block';
   document.getElementById('aiReadyArea').style.display = 'none';
-  document.getElementById('aiKeyInput').value = localStorage.getItem('ai_api_key') || '';
-  document.getElementById('aiProvider').value = localStorage.getItem('ai_provider') || 'deepseek';
-  const savedUrl = localStorage.getItem('ai_custom_url') || '';
-  const savedModel = localStorage.getItem('ai_custom_model') || '';
-  document.getElementById('customApiUrl').value = savedUrl;
-  document.getElementById('customModel').value = savedModel;
-  document.getElementById('customApiArea').style.display = document.getElementById('aiProvider').value === 'custom' ? 'block' : 'none';
+  document.getElementById('aiKeyInput').value = '';
+  document.getElementById('aiVerifyMsg').style.display = 'none';
 }
 
-function getAiApiConfig(){
-  const provider = localStorage.getItem('ai_provider') || 'deepseek';
-  const key = localStorage.getItem('ai_api_key');
-  if(!key) return null;
-  let apiUrl, model;
-  if(provider === 'deepseek'){
-    apiUrl = 'https://api.deepseek.com/v1/chat/completions';
-    model = 'deepseek-chat';
-  } else if(provider === 'volcengine'){
-    apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
-    model = 'doubao-pro-32k';
-  } else {
-    apiUrl = localStorage.getItem('ai_custom_url') || '';
-    model = localStorage.getItem('ai_custom_model') || '';
+async function callStockAI(userPrompt) {
+  const auth = getAIAuth();
+  if(!auth.valid || auth.remaining <= 0) throw new Error('Key未授权或额度已用完');
+  
+  const resp = await fetch(AI_ANALYZE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      key: auth.key,
+      system_prompt: AI_SYSTEM_PROMPT,
+      user_prompt: userPrompt
+    })
+  });
+  
+  const json = await resp.json();
+  if(json.remaining !== undefined) {
+    saveAIAuth({ ...auth, remaining: json.remaining, used: (auth.used||0) + 1 });
   }
-  return {apiUrl, model, key};
+  return json.content || null;
 }
 
 async function runAiAnalysis(){
-  const config = getAiApiConfig();
-  if(!config || !config.apiUrl){showToast('请先配置AI API');showAiKeyConfig();return}
+  const auth = getAIAuth();
+  if(!auth.valid || auth.remaining <= 0){
+    showToast('Key未授权或额度已用完');
+    showAiKeyConfig();
+    return;
+  }
   
-  // Get stock data from last strategy analysis
   const stockInput = document.getElementById('strategyInput').value.trim();
   const code = resolveStockInput(stockInput);
   if(!code){showToast('请先在策略分析中查询股票');return}
 
-  // Show loading
   document.getElementById('aiAnalyzeBtn').style.display = 'none';
   document.getElementById('aiLoading').style.display = 'block';
   document.getElementById('aiResult').style.display = 'none';
 
-  // Fetch fresh data
   try {
     const data = await fetchViaProxy(code);
     if(!data){
@@ -858,7 +868,6 @@ async function runAiAnalysis(){
     const costPrice = pos ? pos.costPrice : null;
     const pnlPct = costPrice ? ((price - costPrice) / costPrice * 100) : null;
 
-    // Build user prompt
     let userData = `## 当前股票数据
 - 股票：${data.name}（${code}）
 - 当前价格：¥${price.toFixed(2)}
@@ -900,38 +909,18 @@ ${lastStrategyData ? lastStrategyData.summary : '暂无评分数据'}`;
 
 注意：分析要接地气，像投资人在跟朋友聊天一样，不要太学术化。结论要明确，不要模棱两可。`;
 
-    // Call AI API
-    const response = await fetch(config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + config.key
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [
-          {role: 'system', content: AI_SYSTEM_PROMPT},
-          {role: 'user', content: userData}
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-        stream: false
-      })
-    });
+    const aiText = await callStockAI(userData);
+    if(!aiText) throw new Error('未获取到AI分析结果');
 
-    if(!response.ok){
-      const errText = await response.text();
-      throw new Error('API返回错误: ' + response.status + ' ' + errText.substring(0, 200));
-    }
-
-    const result = await response.json();
-    const aiText = result.choices?.[0]?.message?.content || '未能获取AI分析结果';
-
-    // Render result
     document.getElementById('aiLoading').style.display = 'none';
     document.getElementById('aiResult').style.display = 'block';
     document.getElementById('aiAnalyzeBtn').style.display = 'block';
     document.getElementById('aiResultContent').innerHTML = renderMarkdown(aiText);
+    
+    // Update remaining display
+    const newAuth = getAIAuth();
+    document.getElementById('aiRemainLabel').textContent = '剩余 ' + newAuth.remaining + ' 次';
+    document.getElementById('aiUsageInfo').textContent = '已使用 ' + newAuth.used + ' 次 / 总额度 ' + AI_COST_LIMIT + ' 次';
 
   } catch(err){
     document.getElementById('aiLoading').style.display = 'none';
@@ -942,9 +931,6 @@ ${lastStrategyData ? lastStrategyData.summary : '暂无评分数据'}`;
         <div style="font-size:32px;margin-bottom:12px">😔</div>
         <div style="color:var(--up);font-size:14px;margin-bottom:8px">AI分析请求失败</div>
         <div style="color:var(--text2);font-size:12px;line-height:1.6">${err.message}</div>
-        <div style="margin-top:12px;font-size:12px;color:var(--text2)">
-          请检查：API Key是否正确、网络连接是否正常、API额度是否充足
-        </div>
       </div>`;
   }
 }

@@ -1111,7 +1111,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
     <input type="text" id="deepMaleNickname" class="nickname-input" placeholder="✏️ 男方昵称（选填）" maxlength="20">
     <div class="card-label male-label">♂ 男方星座</div>
     <div class="zodiac-grid" id="zodiacGridMale"></div>
-    <div class="card-label male-label" style="margin-top:10px">📅 男方生辰（选填）</div>
+    <div class="card-label male-label" style="margin-top:10px">📅 男方生辰（选填·阳历）</div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <select id="deepMaleBirthYear" class="birth-select" style="flex:1"><option value="">年</option></select>
       <select id="deepMaleBirthMonth" class="birth-select" style="flex:1"><option value="">月</option></select>
@@ -1139,7 +1139,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
     <input type="text" id="deepFemaleNickname" class="nickname-input" placeholder="✏️ 女方昵称（选填）" maxlength="20">
     <div class="card-label female-label">♀ 女方星座</div>
     <div class="zodiac-grid" id="zodiacGridFemale"></div>
-    <div class="card-label female-label" style="margin-top:10px">📅 女方生辰（选填）</div>
+    <div class="card-label female-label" style="margin-top:10px">📅 女方生辰（选填·阳历）</div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <select id="deepFemaleBirthYear" class="birth-select" style="flex:1"><option value="">年</option></select>
       <select id="deepFemaleBirthMonth" class="birth-select" style="flex:1"><option value="">月</option></select>
@@ -1926,13 +1926,13 @@ function buildPairUserPrompt(data, style) {
 
 `;
   if(data.maleZodiac) prompt += `♂ ${data.maleNickname||'男方'}：${data.maleZodiac}`;
-  if(data.maleBirthDate) prompt += `，生辰${data.maleBirthDate}`;
+  if(data.maleBirthDate) prompt += `，生辰（阳历）${data.maleBirthDate}`;
   if(data.maleBirthCity) prompt += `，出生地${data.maleBirthCity}`;
   if(data.maleCurrentCity) prompt += `，现居${data.maleCurrentCity}`;
   prompt += '\n';
   
   if(data.femaleZodiac) prompt += `♀ ${data.femaleNickname||'女方'}：${data.femaleZodiac}`;
-  if(data.femaleBirthDate) prompt += `，生辰${data.femaleBirthDate}`;
+  if(data.femaleBirthDate) prompt += `，生辰（阳历）${data.femaleBirthDate}`;
   if(data.femaleBirthCity) prompt += `，出生地${data.femaleBirthCity}`;
   if(data.femaleCurrentCity) prompt += `，现居${data.femaleCurrentCity}`;
   prompt += '\n';
@@ -2033,7 +2033,7 @@ function buildSingleUserPrompt(data, style) {
 
 `;
   prompt += `${gender==='男'?'♂':'♀'} ${nickname||zodiac}：${zodiac}`;
-  if(data.maleBirthDate || data.femaleBirthDate) prompt += `，生辰${data.maleBirthDate||data.femaleBirthDate}`;
+  if(data.maleBirthDate || data.femaleBirthDate) prompt += `，生辰（阳历）${data.maleBirthDate||data.femaleBirthDate}`;
   if(data.maleBirthCity || data.femaleBirthCity) prompt += `，出生地${data.maleBirthCity||data.femaleBirthCity}`;
   if(data.maleCurrentCity || data.femaleCurrentCity) prompt += `，现居${data.maleCurrentCity||data.femaleCurrentCity}`;
   prompt += '\n';

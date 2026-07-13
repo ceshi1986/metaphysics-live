@@ -1214,8 +1214,8 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 }
 </style>
 <div class="version-btns">
-  <button class="version-btn warm-btn" id="generateDeepWarm">💖 温柔鼓励版分析</button>
-  <button class="version-btn direct-btn" id="generateDeepDirect">⚡ 直白犀利版分析</button>
+  <button class="version-btn warm-btn" id="generateDeepWarm">📊 结果分析</button>
+  <button class="version-btn direct-btn" id="generateDeepDirect">🔮 深度结果分析</button>
 </div>
 </div>
 
@@ -1243,8 +1243,8 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <div class="section-title">🎯 场景标签（可多选）</div>
 <div class="scene-tags" id="sceneTags"></div>
 <div class="version-btns">
-  <button class="version-btn warm-btn" id="generateQuickWarm">💖 温柔版·原因与解决方案</button>
-  <button class="version-btn direct-btn" id="generateQuickDirect">⚡ 犀利版·原因与解决方案</button>
+  <button class="version-btn warm-btn" id="generateQuickWarm">📊 结果分析</button>
+  <button class="version-btn direct-btn" id="generateQuickDirect">🔮 深度结果分析</button>
 </div>
 </div>
 
@@ -1930,7 +1930,7 @@ function buildMetaSystemPrompt() {
 }
 
 function buildPairUserPrompt(data, style) {
-  const styleDesc = style === 'warm' ? '温柔鼓励风格（共情+鼓励，但核心分析依然要一针见血，先说准问题再给温暖）' : '直白犀利风格（开头直接下结论，不铺垫不客套，每句话都要戳中要害）';
+  const styleDesc = style === 'warm' ? '专业分析风格（完整呈现结果，语气客观但有温度）' : '深度分析风格（揭示核心痛点，制造悬念钩子，引导付费深度解读）';
   
   let prompt = `请为以下配对做详细的星座分析：
 
@@ -1956,6 +1956,14 @@ function buildPairUserPrompt(data, style) {
   
   prompt += `
 输出风格：${styleDesc}
+
+【重要：场景共情要求】
+每个分析点都要带入具体的生活场景，让用户产生强烈的代入感和情感共鸣。例如：
+- 不要只说"你们容易有沟通问题"，要说"你是不是经常发了一条消息给他，等半天没回复，然后开始胡思乱想：他是不是不在乎我了？但其实他可能只是在忙..."
+- 不要只说"你财运不错"，要说"最近你可能会遇到一个机会，比如朋友介绍一个项目，或者突然有人找你合作..."
+- 不要只说"你最近感情有波动"，要说"这几天你可能会因为一些小事和对方吵架，比如他忘了回你消息，或者约会时心不在焉..."
+
+让分析像讲故事一样，有画面感，有细节，让人读着就觉得"说的就是我"。
 `;
   let structure = `
 请按以下结构输出（每个部分至少2-3段）：
@@ -2047,6 +2055,14 @@ function buildSingleUserPrompt(data, style) {
   
   prompt += `
 输出风格：${styleDesc}
+
+【重要：场景共情要求】
+每个分析点都要带入具体的生活场景，让用户产生强烈的代入感和情感共鸣。例如：
+- 不要只说"你容易焦虑"，要说"你是不是经常晚上躺在床上翻来覆去睡不着，脑子里全是明天要做的事..."
+- 不要只说"你财运不错"，要说"最近你可能会遇到一个机会，比如朋友介绍一个项目，或者突然有人找你合作..."
+- 不要只说"你感情有桃花"，要说"最近你在社交场合可能会遇到一个让你眼前一亮的人..."
+
+让分析像讲故事一样，有画面感，有细节，让人读着就觉得"说的就是我"。
 `;
   prompt += `
 请按以下结构输出（每个部分至少2-3段）：
@@ -3228,13 +3244,43 @@ if(aiAuth.valid && aiAuth.remaining > 0) {
     const aiResult = await generateAIAnalysis(data, style);
     if(aiResult) {
       const transformed = filterWord(empowerTransform(aiResult));
-      aiContent.innerHTML = '<div class="result-text">' + transformed + '</div>';
-      copyAiBtn.style.display = 'block';
-      copyAiBtn.onclick = () => {
-        navigator.clipboard.writeText(transformed);
-        copyAiBtn.textContent = '✅ 已复制';
-        setTimeout(() => { copyAiBtn.textContent = '📋 复制AI分析'; }, 2000);
-      };
+      
+      // 深度结果分析模式：只显示1/3内容+钩子引导
+      if(style === 'direct') {
+        const totalLength = transformed.length;
+        const cutPoint = Math.floor(totalLength / 3);
+        // 在cutPoint附近找最后一个段落结束符
+        let displayEnd = cutPoint;
+        const lastPara = transformed.lastIndexOf('\n\n', cutPoint);
+        if(lastPara > cutPoint * 0.5) displayEnd = lastPara;
+        
+        const previewText = transformed.substring(0, displayEnd);
+        const hookHtml = `
+          <div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(155,109,255,.2));border:2px solid rgba(255,215,0,.5);border-radius:16px;text-align:center">
+            <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:12px">🔮 深度解读已解锁 1/3</div>
+            <div style="color:var(--text-light);font-size:14px;line-height:1.8;margin-bottom:16px">
+              以上内容揭示了核心问题，但完整的深度分析还包括：<br>
+              ✨ <strong>具体解决方案</strong> — 针对你的情况量身定制的行动建议<br>
+              💕 <strong>关系走向预测</strong> — 未来3个月的关键时间节点<br>
+              🎯 <strong>实操话术指南</strong> — 可以直接使用的沟通话术
+            </div>
+            <div style="background:linear-gradient(135deg,var(--accent),#7c4dff);color:#fff;padding:12px 24px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer;display:inline-block;box-shadow:0 4px 20px rgba(155,109,255,.4)" onclick="alert('请联系主播获取完整版分析')">
+              💎 解锁完整深度分析
+            </div>
+          </div>
+        `;
+        aiContent.innerHTML = '<div class="result-text">' + previewText + '</div>' + hookHtml;
+        copyAiBtn.style.display = 'none';
+      } else {
+        // 普通结果分析：完整显示
+        aiContent.innerHTML = '<div class="result-text">' + transformed + '</div>';
+        copyAiBtn.style.display = 'block';
+        copyAiBtn.onclick = () => {
+          navigator.clipboard.writeText(transformed);
+          copyAiBtn.textContent = '✅ 已复制';
+          setTimeout(() => { copyAiBtn.textContent = '📋 复制AI分析'; }, 2000);
+        };
+      }
     } else {
       aiContent.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-dim)">⚠️ AI生成失败</div>';
     }
@@ -3316,7 +3362,19 @@ async function _generateQuickWithStyle(style) {
       const otherZ = maleZodiac && femaleZodiac ? femaleZodiac : null;
       const g = maleZodiac ? '男' : '女';
       const aiResult = await generateAIQuickAnalysis(mainZ, otherZ, g, scenes, style, question);
-      if(aiResult) result = filterWord(empowerTransform(aiResult));
+      if(aiResult) {
+        result = filterWord(empowerTransform(aiResult));
+        // 深度结果分析模式：只显示1/3内容+钩子引导
+        if(style === 'direct') {
+          const totalLength = result.length;
+          const cutPoint = Math.floor(totalLength / 3);
+          let displayEnd = cutPoint;
+          const lastPara = result.lastIndexOf('\n\n', cutPoint);
+          if(lastPara > cutPoint * 0.5) displayEnd = lastPara;
+          const previewText = result.substring(0, displayEnd);
+          result = previewText + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n🔮 深度解读已解锁 1/3\n\n以上内容揭示了核心问题，但完整的深度分析还包括：\n✨ 具体解决方案 — 针对你的情况量身定制的行动建议\n💕 关系走向预测 — 未来3个月的关键时间节点\n🎯 实操话术指南 — 可以直接使用的沟通话术\n\n💎 请联系主播解锁完整深度分析';
+        }
+      }
     } catch(e) { /* AI失败保留模板结果 */ }
   }
   showResult(result);

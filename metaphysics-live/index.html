@@ -1115,7 +1115,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button class="tab-btn active" data-mode="deep">深度分析</button>
 <button class="tab-btn" data-mode="quick">快速问答</button>
 </nav>
-<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,#ff6b9d,#c44dff);border:2px solid #ff6b9d;color:#fff;padding:10px 20px;border-radius:25px;cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 4px 20px rgba(255,107,157,.5);transition:all .3s;margin-right:12px;animation:pulse 2s infinite" title="升级为AI大模型分析">🔓 点击解锁更高级版本（AI深度解析）</button>
+<button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,rgba(168,85,247,.25),rgba(219,39,119,.15));border:2px solid rgba(168,85,247,.6);color:#fff;padding:10px 24px;border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 0 20px rgba(168,85,247,.3),inset 0 0 12px rgba(168,85,247,.1);transition:all .3s;margin-right:12px;letter-spacing:1px" title="升级为AI大模型分析">解锁AI深度解析</button>
 <button class="sidebar-toggle" id="toggleArchive" style="margin-right:8px">📁 咨询档案</button>
 <button class="sidebar-toggle" id="toggleSidebar">📋 历史记录</button>
 </header>
@@ -1230,6 +1230,10 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 @keyframes previewGlow{
 0%,100%{box-shadow:0 0 20px rgba(255,215,0,.15),inset 0 0 15px rgba(155,109,255,.1)}
 50%{box-shadow:0 0 30px rgba(255,215,0,.3),inset 0 0 20px rgba(155,109,255,.2)}
+}
+@keyframes glow-pulse{
+0%,100%{opacity:1;transform:scale(1)}
+50%{opacity:.6;transform:scale(1.3)}
 }
 </style>
 <div class="version-btns">
@@ -1834,13 +1838,18 @@ function updateAIButton() {
   const btn = document.getElementById('aiUpgradeBtn');
   if(!btn) return;
   if(auth.valid && auth.remaining > 0) {
-    btn.innerHTML = '✨ AI可用';
-    btn.style.background = 'linear-gradient(135deg,rgba(76,175,80,.3),rgba(139,233,157,.3))';
-    btn.style.borderColor = 'rgba(76,175,80,.5)';
+    btn.innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;margin-right:8px;animation:glow-pulse 1.5s ease-in-out infinite"></span>智能分析已就绪';
+    btn.style.background = 'linear-gradient(135deg,rgba(16,185,129,.25),rgba(52,211,153,.15))';
+    btn.style.borderColor = 'rgba(52,211,153,.6)';
+    btn.style.boxShadow = '0 0 20px rgba(52,211,153,.3), inset 0 0 12px rgba(52,211,153,.1)';
+    btn.style.letterSpacing = '1px';
+    btn.style.animation = 'none';
   } else {
-    btn.innerHTML = '🔓 点击解锁更高级版本（AI深度解析）';
-    btn.style.background = 'linear-gradient(135deg,rgba(155,109,255,.3),rgba(255,107,157,.3))';
-    btn.style.borderColor = 'rgba(155,109,255,.5)';
+    btn.innerHTML = '<span style="font-size:16px;margin-right:4px"></span>解锁AI深度解析';
+    btn.style.background = 'linear-gradient(135deg,rgba(168,85,247,.25),rgba(219,39,119,.15))';
+    btn.style.borderColor = 'rgba(168,85,247,.6)';
+    btn.style.boxShadow = '0 0 20px rgba(168,85,247,.3), inset 0 0 12px rgba(168,85,247,.1)';
+    btn.style.letterSpacing = '1px';
   }
 }
 

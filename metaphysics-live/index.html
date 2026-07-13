@@ -1204,7 +1204,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button id="modeTabDouble" class="mode-tab" data-mode="double">👥 双人合盘</button>
 </div>
 <div id="directionSingle" class="direction-btns direction-single">
-<button class="direction-btn" data-dir="最近运势">✨ 最近运势</button>
+<button class="direction-btn" data-dir="近期运势">✨ 近期运势</button>
 <button class="direction-btn" data-dir="财运走势">💰 财运走势</button>
 <button class="direction-btn" data-dir="爱情运势">❤️ 爱情运势</button>
 </div>
@@ -1271,7 +1271,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 </div>
 <div style="font-size:18px;font-weight:700;color:#fff;text-align:center;margin:16px 0 10px;text-shadow:0 0 12px rgba(155,109,255,.6),0 0 24px rgba(155,109,255,.3);letter-spacing:1px">🔮 选择分析方向</div>
 <div id="quickDirectionSingle" class="direction-btns direction-single">
-<button class="direction-btn" data-dir="最近运势">✨ 最近运势</button>
+<button class="direction-btn" data-dir="近期运势">✨ 近期运势</button>
 <button class="direction-btn" data-dir="财运走势">💰 财运走势</button>
 <button class="direction-btn" data-dir="爱情运势">❤️ 爱情运势</button>
 </div>
@@ -3341,13 +3341,18 @@ if(!maleZodiac && !femaleZodiac){
 alert('请至少选择一方的星座~');
 return;
 }
-const directions=[...document.querySelectorAll('.direction-btn.selected')].map(b=>b.dataset.dir);
+// 根据实际选择的星座数量决定使用哪组方向按钮
+const isPairMode = maleZodiac && femaleZodiac;
+const directionContainer = isPairMode ? 'directionDouble' : 'directionSingle';
+const directions=[...document.querySelectorAll(`#${directionContainer} .direction-btn.selected`)].map(b=>b.dataset.dir);
+// 默认方向也根据模式区分
+const defaultDirections = isPairMode ? ['吸引特质','亲密关系','关系走向'] : ['近期运势','财运走势','爱情运势'];
 const data={
 maleZodiac: maleZodiac || '',
 femaleZodiac: femaleZodiac || '',
 maleNickname: document.getElementById('deepMaleNickname')?.value?.trim() || '',
 femaleNickname: document.getElementById('deepFemaleNickname')?.value?.trim() || '',
-directions: directions.length ? directions : ['近期运势','财运走势','亲密关系'],
+directions: directions.length ? directions : defaultDirections,
 maleBirthDate: getBirthDate('deepMale'),
 femaleBirthDate: getBirthDate('deepFemale'),
 maleBirthCity: getSelectedCity('deepMaleBirthCity'),

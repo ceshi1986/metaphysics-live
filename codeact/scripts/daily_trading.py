@@ -246,7 +246,19 @@ def check_stop_loss(position: Dict[str, Any], quote: Dict[str, Any]) -> Optional
                 "pnl_pct": pnl_pct,
             }
         else:
-            # 非趋势股或从未盈利就跌破止损 → 清仓
+            # 非趋势股或从未盈利就跌破止损 → 清仓或保留10%底仓（资金要灵活调动）
+            # 如果持仓量足够（>=300股），保留10%底仓观察；否则全清
+            if position["shares"] >= 300:
+                keep_shares = int(position["shares"] * 0.1) // LOT_SIZE * LOT_SIZE
+                if keep_shares >= LOT_SIZE:
+                    sell_shares = position["shares"] - keep_shares
+                    return {
+                        "action": "sell",
+                        "shares": sell_shares,
+                        "reason": f"止损减仓：非趋势股，现亏{pnl_pct*100:.2f}%，保留{keep_shares}股底仓观察",
+                        "pnl_pct": pnl_pct,
+                    }
+            # 持仓量小或计算后不足100股，全清
             sell_shares = position["shares"] // LOT_SIZE * LOT_SIZE
             if sell_shares < LOT_SIZE:
                 sell_shares = position["shares"]

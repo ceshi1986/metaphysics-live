@@ -10,13 +10,24 @@
 5. 记录今日快照到 dailySnapshots
 6. 更新 portfolio.json 并推送 GitHub
 
-交易规则：
-- 止损线：持仓亏损 > 10% → 全部卖出
+交易规则（投资人核心策略：1-3成总仓位控制）：
+- 止损逻辑：
+  - 趋势股 → 减仓70%保留30%（轻仓保留等企稳）
+  - 非趋势股或刚买入就跌破止损 → 全部卖出（果断清仓等企稳）
+- 趋势股定义（三维度任一满足）：
+  - 技术趋势：历史最高价 > 成本价*1.02（曾有过浮盈）
+  - 赛道趋势：属于未来趋势行业（新能源、半导体、AI等）
+  - 龙头长期看好：买入时标记为赛道龙头，强者恒强
 - 止盈线：持仓盈利 > 15% → 卖出一半
 - 买入条件：涨幅 > 3% 且振幅 > 4% 且成交额 > 1 亿 → 用可用资金的 30% 买入
 - 每次最多持 3 只股票
 - 买入单位为 100 股整数倍
 - 候选买入池：贵州茅台/宁德时代/中国平安/比亚迪/招商银行/长江电力/美的集团/中国中免
+
+仓位管理原则：
+- 趋势向下：保持1-3成轻仓，减仓但绝不清仓
+- 趋势企稳：观察站稳后逐步加仓
+- 趋势向上：顺势重仓
 
 参数（codeact_args）：result_mode, github_repo, initial_capital
 - result_mode: auto / display_only / notify / no_reply；auto 时始终 display_only
@@ -196,18 +207,55 @@ def push_portfolio_to_github(repo: str, token: str, portfolio: Dict[str, Any], s
 # ===== 交易逻辑 =====
 
 def check_stop_loss(position: Dict[str, Any], quote: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """检查止损条件：亏损 > 10% → 全部卖出"""
+    """检查止损条件：
+    - 趋势股（行业趋势 / 长期看好龙头 / 技术趋势）→ 轻仓保留30%
+    - 非趋势股或刚买入就跌破止损 → 果断清仓，等企稳
+    """
     cost = position["costPrice"]
     current = quote["price"]
     pnl_pct = (current - cost) / cost
 
     if pnl_pct < STOP_LOSS_PCT:
-        return {
-            "action": "sell",
-            "shares": position["shares"],
-            "reason": f"止损卖出：亏损{pnl_pct*100:.2f}% < {STOP_LOSS_PCT*100:.0f}%",
-            "pnl_pct": pnl_pct,
-        }
+        # 判断是否是趋势股（三个维度任一满足即可）
+        highest_price = position.get("highestPrice", cost)
+        tech_trend = highest_price > cost * 1.02  # 技术趋势：曾有超过2%的浮盈
+        sector_trend = _is_future_trend_sector(position.get("sector", ""))  # 行业趋势：未来趋势赛道
+        company_trend = position.get("longTermBullish", False)  # 公司趋势：长期看好的龙头股
+
+        if tech_trend or sector_trend or company_trend:
+            # 趋势股短期回调 → 轻仓保留30%
+            keep_shares = (position["shares"] * 0.3) // LOT_SIZE * LOT_SIZE
+            if keep_shares < LOT_SIZE:
+                keep_shares = LOT_SIZE
+            if keep_shares >= position["shares"]:
+                keep_shares = position["shares"]
+            sell_shares = position["shares"] - keep_shares
+
+            trend_type = []
+            if tech_trend:
+                trend_type.append(f"技术趋势(曾最高{highest_price:.2f},浮盈{(highest_price-cost)/cost*100:.1f}%)")
+            if sector_trend:
+                trend_type.append(f"赛道趋势({position.get('sector', '未知')}行业)")
+            if company_trend:
+                trend_type.append("龙头长期看好")
+
+            return {
+                "action": "sell",
+                "shares": sell_shares,
+                "reason": f"趋势股止损减仓：{' + '.join(trend_type)}，现跌{pnl_pct*100:.1f}%，保留{keep_shares}股",
+                "pnl_pct": pnl_pct,
+            }
+        else:
+            # 非趋势股或从未盈利就跌破止损 → 清仓
+            sell_shares = position["shares"] // LOT_SIZE * LOT_SIZE
+            if sell_shares < LOT_SIZE:
+                sell_shares = position["shares"]
+            return {
+                "action": "sell",
+                "shares": sell_shares,
+                "reason": f"止损清仓：非趋势股，现亏{pnl_pct*100:.2f}% < {STOP_LOSS_PCT*100:.0f}%",
+                "pnl_pct": pnl_pct,
+            }
     return None
 
 
@@ -355,6 +403,13 @@ async def main() -> None:
                 continue
 
             quote = quotes[code]
+            current_price = quote["price"]
+
+            # 更新最高价（用于判断技术趋势）
+            prev_highest = pos.get("highestPrice", pos["costPrice"])
+            if current_price > prev_highest:
+                pos["highestPrice"] = current_price
+                print(f"  [更新] {pos['name']}({code}) 最高价: {prev_highest:.2f} → {current_price:.2f}")
 
             # 先检查止损
             stop_loss = check_stop_loss(pos, quote)
@@ -479,6 +534,7 @@ async def main() -> None:
                 "name": buy["name"],
                 "shares": buy["shares"],
                 "costPrice": buy["price"],
+                "highestPrice": buy["price"],  # 初始最高价=买入价
                 "buyDate": today_str,
                 "sector": _guess_sector(buy["code"]),
             }
@@ -657,6 +713,19 @@ def _guess_sector(code: str) -> str:
         "sz000333": "家电", "sh601888": "消费",
     }
     return sector_map.get(code, "其他")
+
+
+# 未来趋势行业（符合长期发展方向的板块）
+FUTURE_TREND_SECTORS = {
+    "新能源", "半导体", "芯片", "人工智能", "AI", "新能源车",
+    "光伏", "储能", "生物医药", "创新药", "军工", "航空航天",
+    "数字经济", "云计算", "5G", "物联网", "机器人",
+}
+
+
+def _is_future_trend_sector(sector: str) -> bool:
+    """判断是否是未来趋势行业（长期看好的板块）"""
+    return sector in FUTURE_TREND_SECTORS
 
 
 if __name__ == "__main__":

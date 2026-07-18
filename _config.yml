@@ -1,0 +1,15 @@
+# Minimal Jekyll config
+exclude:
+  - ".skills"
+  - ".tmp"
+  - "codeact"
+  - "recent_memory"
+  - "基础设定"
+  - "用户上传"
+  - ".git"
+  - ".github"
+  - "HEARTBEAT.md"
+  - "MEMORY.md"
+  - "index.html.bak"
+  - "metaphysics-live"
+  - "qrcode_pay.jpg"

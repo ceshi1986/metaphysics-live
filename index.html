@@ -1821,7 +1821,6 @@ function openAIUpgrade() {
     document.getElementById('aiKeyMsg').textContent = '';
   }
   document.getElementById('aiUpgradeModal').style.display = 'flex';
-  if(typeof switchAITab==='function')switchAITab('buy');
 }
 
 function closeAIUpgrade() {
@@ -3903,7 +3902,7 @@ loadFeedbacks();
         </div>
         <div style="color:var(--text-dim);font-size:13px;line-height:1.6">
           💡 每个Key可使用约1000次分析，有效期30天<br>
-          📝 如需获取Key，请<button onclick="switchAITab('buy')" style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;border:none;padding:4px 14px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-left:4px;vertical-align:middle">联系客服</button>
+          📝 如需获取Key，请<button onclick="showContactModal()" style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;border:none;padding:4px 14px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-left:4px;vertical-align:middle">联系客服</button>
         </div>
       </div>
       <div style="margin-bottom:16px">
@@ -3916,8 +3915,34 @@ loadFeedbacks();
     <div id="aiKeyStatus" style="display:none"></div>
   </div>
 </div>
+<div id="contactModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:10001;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.5);text-align:center">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="font-size:18px;font-weight:700;color:var(--gold);margin:0">📱 联系客服</h3>
+      <button onclick="closeContactModal()" style="background:none;border:none;color:var(--text-dim);font-size:24px;cursor:pointer;line-height:1">&times;</button>
+    </div>
+    <div style="color:var(--text-dim);font-size:14px;margin-bottom:16px">扫码添加微信，获取Key或咨询问题</div>
+    <div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:16px">
+      <img src="qrcode_pay.jpg" alt="微信二维码" style="width:200px;height:200px;display:block;border-radius:8px">
+    </div>
+    <div style="margin-bottom:12px">
+      <span style="color:var(--text-dim);font-size:13px">微信号：</span>
+      <span id="wechatIdText" style="color:var(--gold);font-size:15px;font-weight:600;letter-spacing:1px">hui_297652</span>
+      <button onclick="copyWechatId()" style="background:linear-gradient(135deg,var(--accent),var(--accent-pink));border:none;color:#fff;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:8px;vertical-align:middle">复制</button>
+    </div>
+    <div id="copyWechatMsg" style="color:#4caf50;font-size:12px;min-height:18px"></div>
+  </div>
+</div>
 <script>document.addEventListener("DOMContentLoaded",function(){updateAIButton()});
 
+function showContactModal(){document.getElementById('contactModal').style.display='flex'}
+function closeContactModal(){document.getElementById('contactModal').style.display='none'}
+function copyWechatId(){
+  var id='hui_297652';
+  if(navigator.clipboard){navigator.clipboard.writeText(id).then(function(){document.getElementById('copyWechatMsg').textContent='✅ 已复制微信号'})}
+  else{var t=document.createElement('textarea');t.value=id;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);document.getElementById('copyWechatMsg').textContent='✅ 已复制微信号'}
+  setTimeout(function(){document.getElementById('copyWechatMsg').textContent=''},2000);
+}
 
 // ========== 步骤引导系统 ==========
 function updateStepGuide() {

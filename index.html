@@ -375,9 +375,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="key-bar" id="fp-key-bar">
   <div class="key-bar-inner">
     <span class="key-icon">🔑</span>
-    <span class="key-hint" id="fp-key-hint">🎁 免费查看基础预测 | 验证Key解锁完整分析+AI预测+购买建议</span>
+    <span class="key-hint" id="fp-key-hint">🎁 免费查看基础预测 | 验证Key解锁完整分析+AI预测+投注建议</span>
     <input type="text" id="fp-key-input" placeholder="输入Key解锁完整内容" />
-    <button class="key-verify-btn" onclick="fpVerifyKey()">验证</button><button class="fp-buy-btn" onclick="showPayModal('football')">&#x8D2D;&#x4E70;Key</button>
+    <button class="key-verify-btn" onclick="fpVerifyKey()">验证</button><button class="fp-buy-btn" onclick="showPayModal('football')">&#x83B7;&#x53D6;Key</button>
     <span class="key-status" id="fp-key-status"></span>
     <button class="fp-logout-btn" id="fp-logout-btn" onclick="fpLogoutKey()">退出</button>
   </div>
@@ -447,7 +447,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 <div class="cd" id="an"></div>
 <div class="buy-advice" id="ba" style="display:none">
-<div class="ba-title">💰 购买建议</div>
+<div class="ba-title">💰 投注建议</div>
 <div class="ba-content" id="bac"></div>
 </div>
 </div>
@@ -483,7 +483,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="ai-acc-row"><span>推荐命中</span><span class="v" id="acc-recommend">0/0 (0%)</span></div>
 <div class="ai-acc-row"><span>近10场命中</span><span class="v flat" id="acc-rolling">0%</span></div>
 <div class="ai-acc-row"><span>趋势</span><span class="v flat" id="acc-trend">→ 持平</span></div>
-<div class="ai-acc-note">综合命中=全部比赛；推荐命中=仅建议购买场次</div>
+<div class="ai-acc-note">综合命中=全部比赛；推荐命中=仅建议投注场次</div>
 </div>
 
 
@@ -1456,7 +1456,7 @@ function _calc(){
     var freeCount=fpGetManualPredictCount();
     if(freeCount>=3){
       showPayModal('足球预测');
-      showToast('免费预测次数已用完，请购买Key解锁完整功能');
+      showToast('免费预测次数已用完，请获取Key解锁完整功能');
       return;
     }
   }
@@ -1607,7 +1607,7 @@ document.getElementById("cf").textContent="置信度 "+ct+"%";
 var an="综合"+p+"%倾向"+(r==="胜"?"主胜":r==="平"?"平局":"客胜");
 if(hB)an+=" · 盘口信号一致↑";
 document.getElementById("an").textContent=an;
-// 购买建议逻辑
+// 投注建议逻辑
 var ba=document.getElementById("ba");
 var bac=document.getElementById("bac");
 var adviceHtml="";
@@ -1624,7 +1624,7 @@ var isStrongFav=simOdds>1.25&&simOdds<=1.7;
 var isMediumFav=simOdds>1.7&&simOdds<=2.2;
 var isUncertain=simOdds>2.2;
 if(isExtremeFav){
-  adviceHtml='<div class="ba-skip">⚠️ 建议放弃购买</div>';
+  adviceHtml='<div class="ba-skip">⚠️ 建议放弃投注</div>';
   adviceHtml+='<div>赔率过低（约'+simOdds.toFixed(2)+(isRealOdds?' 竞彩':' 估算')+'），虽然胜率高达'+Math.round(maxProb*100)+'%，但此类比赛平局概率异常偏高（约15-20%），投注价值极低。</div>';
   adviceHtml+='<div class="ba-detail">数据支撑：回测中赔率≤1.2的比赛，平局率是正常比赛的2倍以上</div>';
 }else if(isStrongFav&&probDiff>0.35){
@@ -1641,7 +1641,7 @@ if(isExtremeFav){
   }
   adviceHtml+='<div class="ba-detail">数据支撑：此类比赛冷门率约25-30%，双选可显著提升命中率</div>';
 }else{
-  adviceHtml='<div class="ba-skip">⚠️ 建议放弃购买</div>';
+  adviceHtml='<div class="ba-skip">⚠️ 建议放弃投注</div>';
   adviceHtml+='<div>比赛结果不确定性高（赔率约'+simOdds.toFixed(2)+'），任何结果都有可能，投注风险过大。</div>';
   adviceHtml+='<div class="ba-detail">数据支撑：赔率>2.2的比赛，预测准确率降至60%以下</div>';
 }
@@ -2321,7 +2321,7 @@ function _renderUpcoming(){
     if(rec){
       var predClass=rec.type==="single"?"single":"double";
       var predText=rec.type==="single"?rec.prediction:rec.prediction+"（双选）";
-      var skipTag=rec.skip?'<span class="upcoming-skip">（不建议购买）</span>':'';
+      var skipTag=rec.skip?'<span class="upcoming-skip">（不建议投注）</span>':'';
       h+='<span class="upcoming-pick '+predClass+'">🎯 '+predText+skipTag+'</span>';
       h+='<span class="upcoming-info">置信度'+rec.confidence+'%</span>';
     }else{
@@ -2456,7 +2456,7 @@ function _renderAICard(rec){
   
   var predText=rec.type==="single"?rec.prediction:rec.prediction+"（双选）";
   
-  var skipTag=rec.skip?'<span class="ai-skip-tag">（不建议购买）</span>':'';
+  var skipTag=rec.skip?'<span class="ai-skip-tag">（不建议投注）</span>':'';
   
   var verifiedClass=rec.verified?' verified':'';
   var resultBadge='';
@@ -2672,7 +2672,7 @@ function fpGetActiveKey(){
 
 function fpShowLoggedInUI(){var statusEl=document.getElementById('fp-key-status');var hintEl=document.getElementById('fp-key-hint');var inputEl=document.getElementById('fp-key-input');var verifyBtn=document.querySelector('.key-verify-btn');var buyBtn=document.querySelector('.fp-buy-btn');var logoutBtn=document.getElementById('fp-logout-btn');if(statusEl){statusEl.textContent='\u2705 已解锁 ('+fpKeyState.remaining+' tokens)';statusEl.style.color='#4ade80'}if(hintEl)hintEl.textContent='\ud83d\udd13 Key已验证 \u00b7 完整内容已解锁';if(inputEl)inputEl.style.display='none';if(verifyBtn)verifyBtn.style.display='none';if(buyBtn)buyBtn.style.display='none';if(logoutBtn)logoutBtn.style.display='inline-block';fpUpdateFreeCountHint()}
 
-function fpHideLoggedInUI(){var statusEl=document.getElementById('fp-key-status');var hintEl=document.getElementById('fp-key-hint');var inputEl=document.getElementById('fp-key-input');var verifyBtn=document.querySelector('.key-verify-btn');var buyBtn=document.querySelector('.fp-buy-btn');var logoutBtn=document.getElementById('fp-logout-btn');if(statusEl){statusEl.textContent='';statusEl.style.color='#9ca3af'}if(hintEl)hintEl.textContent='\ud83c\udf81 免费查看基础预测 | 验证Key解锁完整分析+AI预测+购买建议';if(inputEl){inputEl.style.display='';inputEl.value=''}if(verifyBtn)verifyBtn.style.display='';if(buyBtn)buyBtn.style.display='';if(logoutBtn)logoutBtn.style.display='none';fpUpdateFreeCountHint()}
+function fpHideLoggedInUI(){var statusEl=document.getElementById('fp-key-status');var hintEl=document.getElementById('fp-key-hint');var inputEl=document.getElementById('fp-key-input');var verifyBtn=document.querySelector('.key-verify-btn');var buyBtn=document.querySelector('.fp-buy-btn');var logoutBtn=document.getElementById('fp-logout-btn');if(statusEl){statusEl.textContent='';statusEl.style.color='#9ca3af'}if(hintEl)hintEl.textContent='\ud83c\udf81 免费查看基础预测 | 验证Key解锁完整分析+AI预测+投注建议';if(inputEl){inputEl.style.display='';inputEl.value=''}if(verifyBtn)verifyBtn.style.display='';if(buyBtn)buyBtn.style.display='';if(logoutBtn)logoutBtn.style.display='none';fpUpdateFreeCountHint()}
 
 function fpVerifyKey(){var input=document.getElementById('fp-key-input');var key=input.value.trim();if(!key){showToast('请输入Key');return}var statusEl=document.getElementById('fp-key-status');statusEl.textContent='验证中...';statusEl.style.color='#9ca3af';fetch('https://metaphyai-api-v-cwpuwzgtdx.cn-shanghai.fcapp.run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'key_validate',key:key})}).then(function(r){return r.json()}).then(function(data){if(data.success&&data.valid){fpKeyState.key=key;fpKeyState.valid=true;fpKeyState.remaining=data.remaining||data.token_remaining||0;localStorage.setItem('fp_paid_key',key);localStorage.setItem('fp_paid_remaining',String(fpKeyState.remaining));fpShowLoggedInUI();showToast('\ud83c\udf89 Key验证成功，完整内容已解锁！');if(typeof fpUpdateLockState==='function')fpUpdateLockState();if(typeof closePayModal==='function')closePayModal()}else{statusEl.textContent='\u274c Key无效';statusEl.style.color='#ef4444'}}).catch(function(){statusEl.textContent='\u274c 网络错误';statusEl.style.color='#ef4444'})}
 
@@ -2697,7 +2697,7 @@ function fpUpdateLockState(){
 
 (function fpInitKey(){var savedKey=localStorage.getItem('fp_paid_key');if(savedKey){fpKeyState.key=savedKey;fpKeyState.remaining=parseInt(localStorage.getItem('fp_paid_remaining')||'0');fpKeyState.valid=fpKeyState.remaining>0;if(fpKeyState.valid)fpShowLoggedInUI();else{var input=document.getElementById('fp-key-input');if(input)input.value=savedKey}}if(typeof fpUpdateLockState==='function')setTimeout(function(){fpUpdateLockState()},1000);fpUpdateFreeCountHint()})();
 
-(function(){var SUB_BASE=52,el=document.getElementById("fp-sub-count");if(!el)return;var s=localStorage.getItem("fp_sub_count"),d=localStorage.getItem("fp_sub_date"),today=new Date().toDateString();if(!s||d!==today){s=String(SUB_BASE+Math.floor(Math.random()*3)+1);localStorage.setItem("fp_sub_count",s);localStorage.setItem("fp_sub_date",today)}el.textContent="已有 "+s+" 人购买订阅"})();
+(function(){var SUB_BASE=52,el=document.getElementById("fp-sub-count");if(!el)return;var s=localStorage.getItem("fp_sub_count"),d=localStorage.getItem("fp_sub_date"),today=new Date().toDateString();if(!s||d!==today){s=String(SUB_BASE+Math.floor(Math.random()*3)+1);localStorage.setItem("fp_sub_count",s);localStorage.setItem("fp_sub_date",today)}el.textContent="已有 "+s+" 人获取订阅"})();
 
 
 
@@ -2709,19 +2709,18 @@ function showPayModal(productName) {
   if (!modal) return;
   var card = modal.querySelector('.pay-card');
   card.innerHTML = '<button class="pay-close" onclick="closePayModal()">' + '&' + 'times;</button>' +
-    '<div class="pay-title">\u626b\u7801\u6dfb\u52a0\u5fae\u4fe1 \u00b7 \u8d2d\u4e70Key</div>' +
+    '<div class="pay-title">\u626b\u7801\u6dfb\u52a0\u5fae\u4fe1 \u00b7 \u83b7\u53d6Key</div>' +
     '<div class="pay-qr-wrap"><img src="qrcode_pay.jpg" alt="\u5fae\u4fe1\u4e8c\u7ef4\u7801" /></div>' +
     '<div style="text-align:center;margin-bottom:16px;font-size:13px;color:#9ca3af">\u5fae\u4fe1\u53f7\uff1ahui_297652 <span onclick="navigator.clipboard.writeText(\'hui_297652\');this.textContent=\'\u5df2\u590d\u5236\u2713\';setTimeout(()=>this.textContent=\'\u590d\u5236\',1500)" style="cursor:pointer;color:#4ade80;font-size:12px;margin-left:4px">\u590d\u5236</span></div>' +
     '<ol class="pay-steps">' +
     '<li><span class="step-num">\u2460</span><span>\u6253\u5f00\u5fae\u4fe1\u626b\u4e00\u626b\uff0c\u626b\u63cf\u4e8c\u7ef4\u7801\u6dfb\u52a0\u597d\u53cb</span></li>' +
-    '<li><span class="step-num">\u2461</span><span>\u5fae\u4fe1\u8f6c\u8d26 <strong>19.9 \u5143</strong></span></li>' +
+    '<li><span class="step-num">\u2461</span><span>\u8bf4\u660e\u9700\u6c42\uff0c\u5546\u5b9a\u83b7\u53d6\u65b9\u6848</span></li>' +
     '<li><span class="step-num">\u2462</span><span>\u83b7\u53d6\u4e13\u5c5eKey\uff0c\u8f93\u5165\u7f51\u7ad9\u5373\u53ef\u89e3\u9501</span></li>' +
     '</ol>' +
-    '<div style="text-align:center;font-size:20px;font-weight:700;color:#58a6ff;margin-bottom:16px">\u00a519.9 <span style="font-size:13px;font-weight:400;color:#9ca3af">/ \u5355\u7ad9</span></div>' +
     '<div class="pay-disclaimer">' +
     '\u672c\u670d\u52a1\u4e3aAI\u6570\u636e\u5206\u6790\u5de5\u5177\uff0c\u4ec5\u4f9b\u5b66\u4e60\u7814\u7a76\u53c2\u8003<br>' +
     '\u4e0d\u6784\u6210\u4efb\u4f55\u6295\u8d44\u5efa\u8bae\u3001\u6295\u6ce8\u5efa\u8bae\u6216\u5176\u4ed6\u4e13\u4e1a\u51b3\u7b56\u5efa\u8bae<br>' +
-    '\u4ed8\u8d39\u5373\u89c6\u4e3a\u540c\u610f\u670d\u52a1\u534f\u8bae\uff0cKey\u6fc0\u6d3b\u540e\u4e0d\u652f\u6301\u9000\u6b3e' +
+    '\u83b7\u53d6\u5373\u89c6\u4e3a\u540c\u610f\u670d\u52a1\u534f\u8bae\uff0cKey\u6fc0\u6d3b\u540e\u4e0d\u652f\u6301\u9000\u6362' +
     '</div>';
   modal.style.display = 'flex';
 }
@@ -2737,7 +2736,7 @@ function closePayModal() {
 <!-- Footer Disclaimer -->
 <div style="text-align:center;padding:20px 16px 30px;font-size:11px;color:#666;line-height:1.8">
   &#x26A0;&#xFE0F; &#x514D;&#x8D23;&#x58F0;&#x660E;&#xFF1A;&#x672C;&#x7AD9;&#x4E3A;AI&#x6570;&#x636E;&#x5206;&#x6790;&#x5DE5;&#x5177;&#xFF0C;&#x6240;&#x6709;&#x5185;&#x5BB9;&#x4EC5;&#x4F9B;&#x5B66;&#x4E60;&#x7814;&#x7A76;&#x53C2;&#x8003;&#xFF0C;&#x4E0D;&#x6784;&#x6210;&#x4EFB;&#x4F55;&#x6295;&#x8D44;&#x5EFA;&#x8BAE;&#x3001;&#x6295;&#x6CE8;&#x5EFA;&#x8BAE;&#x6216;&#x5176;&#x4ED6;&#x4E13;&#x4E1A;&#x51B3;&#x7B56;&#x5EFA;&#x8BAE;&#x3002;
-  &#x6570;&#x636E;&#x6765;&#x6E90;&#x4E8E;&#x516C;&#x5F00;&#x4FE1;&#x606F;&#xFF0C;&#x5206;&#x6790;&#x7ED3;&#x679C;&#x4E0D;&#x4EE3;&#x8868;&#x672A;&#x6765;&#x8868;&#x73B0;&#x3002;&#x4ED8;&#x8D39;&#x5373;&#x89C6;&#x4E3A;&#x540C;&#x610F;&#x670D;&#x52A1;&#x534F;&#x8BAE;&#xFF0C;Key&#x6FC0;&#x6D3B;&#x540E;&#x4E0D;&#x652F;&#x6301;&#x9000;&#x6B3E;&#x3002;
+  &#x6570;&#x636E;&#x6765;&#x6E90;&#x4E8E;&#x516C;&#x5F00;&#x4FE1;&#x606F;&#xFF0C;&#x5206;&#x6790;&#x7ED3;&#x679C;&#x4E0D;&#x4EE3;&#x8868;&#x672A;&#x6765;&#x8868;&#x73B0;&#x3002;&#x83B7;&#x53D6;&#x5373;&#x89C6;&#x4E3A;&#x540C;&#x610F;&#x670D;&#x52A1;&#x534F;&#x8BAE;&#xFF0C;Key&#x6FC0;&#x6D3B;&#x540E;&#x4E0D;&#x652F;&#x6301;&#x9000;&#x6362;&#x3002;
 </div>
 </body>
 </html>

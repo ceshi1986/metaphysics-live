@@ -2030,7 +2030,7 @@ document.body.appendChild(overlay);
 document.getElementById("_share-copy").onclick=function(){
 var btn=this;
 if(navigator.clipboard&&navigator.clipboard.writeText){
-navigator.clipboard.writeText(url).then(function(){
+navigator.clipboard.writeText(text+"\n"+url).then(function(){
 btn.textContent="✅ 已复制！";
 setTimeout(function(){btn.textContent="📋 点击复制链接"},2000);
 }).catch(function(){
@@ -2038,7 +2038,7 @@ btn.textContent="❌ 复制失败，请手动长按复制上方链接";
 });
 }else{
 var ta=document.createElement("textarea");
-ta.value=url;ta.style.cssText="position:fixed;left:-9999px";
+ta.value=text+"\n"+url;ta.style.cssText="position:fixed;left:-9999px";
 document.body.appendChild(ta);ta.select();
 try{document.execCommand("copy");btn.textContent="✅ 已复制！";setTimeout(function(){btn.textContent="📋 点击复制链接"},2000)}
 catch(e){btn.textContent="❌ 请手动长按复制上方链接"}
@@ -2684,19 +2684,49 @@ function fpVerifyKey(){var input=document.getElementById('fp-key-input');var key
 function fpLogoutKey(){if(!confirm('确定退出Key？退出后部分内容将被锁定'))return;localStorage.removeItem('fp_paid_key');localStorage.removeItem('fp_paid_remaining');fpKeyState={key:'',remaining:0,valid:false};fpHideLoggedInUI();if(typeof fpUpdateLockState==='function')fpUpdateLockState();showToast('已退出Key')}
 
 function fpUpdateLockState(){
-  var allCards=document.querySelectorAll('#ai-rec-body .ai-card');
-  for(var i=0;i<allCards.length;i++){allCards[i].style.display=''}
+  // 先清除之前的锁定状态
+  var oldWrappers=document.querySelectorAll('#ai-rec-body .fp-lock-wrapper');
+  for(var w=0;w<oldWrappers.length;w++){
+    var wr=oldWrappers[w];
+    var card=wr.querySelector('.ai-card');
+    if(card){
+      card.classList.remove('fp-locked');
+      wr.parentNode.insertBefore(card,wr);
+    }
+    wr.parentNode.removeChild(wr);
+  }
   var oldCta=document.getElementById('fp-upgrade-cta');
   if(oldCta&&oldCta.parentNode) oldCta.parentNode.removeChild(oldCta);
+  // 清除所有残留的 fp-locked
+  var lockedCards=document.querySelectorAll('#ai-rec-body .ai-card.fp-locked');
+  for(var l=0;l<lockedCards.length;l++){lockedCards[l].classList.remove('fp-locked')}
+
   var key=fpGetActiveKey();
-  if(key) return;
-  if(allCards.length<=3) return;
-  for(var i=3;i<allCards.length;i++){allCards[i].style.display='none'}
+  if(key) return; // 有Key，不锁定
+
+  var cards=document.querySelectorAll('#ai-rec-body .ai-card');
+  if(cards.length<=3) return; // 不超过3场，不锁定
+
+  // 第4场开始：用 fp-lock-wrapper 包裹，加 .fp-locked，添加覆盖层
+  for(var i=3;i<cards.length;i++){
+    var card=cards[i];
+    var wrapper=document.createElement('div');
+    wrapper.className='fp-lock-wrapper';
+    card.parentNode.insertBefore(wrapper,card);
+    wrapper.appendChild(card);
+    card.classList.add('fp-locked');
+    var overlay=document.createElement('div');
+    overlay.className='fp-lock-overlay';
+    overlay.innerHTML='<div class="fp-lock-icon">🔒</div><div class="fp-lock-text">验证Key查看完整预测</div><button class="fp-upgrade-btn" onclick="showPayModal(\'足球预测\')">立即解锁</button>';
+    wrapper.appendChild(overlay);
+  }
+
+  // 末尾添加升级CTA
   var cta=document.createElement('div');
   cta.id='fp-upgrade-cta';
-  var lockedCount=allCards.length-3;
-  cta.innerHTML='\ud83d\udd12 还有 '+lockedCount+' 场预测待解锁 \u00b7 <button onclick="showPayModal(\'足球预测\')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border:none;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-left:4px">验证Key解锁</button>';
-  cta.style.cssText='margin-top:12px;padding:12px 16px;text-align:center;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#d1d5db;font-size:14px';
+  cta.style.cssText='margin-top:16px;padding:20px 16px;text-align:center;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:12px;color:#f59e0b;font-size:15px;font-weight:700';
+  var lockedCount=cards.length-3;
+  cta.innerHTML='🔒 还有 '+lockedCount+' 场比赛预测被锁定 | <button onclick="showPayModal(\'足球预测\')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border:none;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-left:8px">验证Key全部解锁 →</button>';
   document.getElementById('ai-rec-body').appendChild(cta);
 }
 

@@ -1123,6 +1123,7 @@ white-space:pre-wrap;max-height:400px;overflow-y:auto;
 <button id="aiUpgradeBtn" onclick="openAIUpgrade()" style="background:linear-gradient(135deg,#FFD700,#FF6B00);border:2.5px solid #FFD700;color:#000;padding:16px 36px;border-radius:35px;cursor:pointer;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;box-shadow:0 0 25px rgba(255,215,0,.7),0 0 50px rgba(255,107,0,.5),0 0 80px rgba(255,215,0,.3);transition:all .3s;margin-right:12px;letter-spacing:2px;animation:btn-glow 1.5s ease-in-out infinite;text-shadow:0 1px 3px rgba(255,255,255,.5);transform:scale(1.05)" title="升级为AI大模型分析">🔥 AI深度解析</button>
 <button class="sidebar-toggle" id="toggleArchive" style="margin-right:8px">📁 咨询档案</button>
 <button class="sidebar-toggle" id="toggleSidebar">📋 历史记录</button>
+<button onclick="_shareSite()" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(168,85,247,0.3);white-space:nowrap">📤 分享</button>
 </header>
 <div style="text-align:center;margin:12px auto 0;padding:0 16px">
   <div id="fp-sub-count" style="display:inline-block;padding:8px 20px;background:linear-gradient(135deg,rgba(74,222,128,0.12),rgba(34,197,94,0.06));border:1px solid rgba(74,222,128,0.25);border-radius:20px;font-size:13px;color:#4ade80;font-weight:700;text-shadow:0 0 8px rgba(74,222,128,0.3)"></div>
@@ -4011,6 +4012,48 @@ document.getElementById('generateQuickDirect').addEventListener('click', () => {
   document.getElementById('step3').className = 'step-item active';
 });
 
+// 分享给好友
+function _shareSite(){
+var url=location.href;
+var title="仙仙星语助手 - AI玄学直播分析";
+var text="推荐一个AI玄学直播分析工具，星座命理+直播辅助，超准超好用！\n\n👉 复制链接在电脑或手机浏览器打开，部分wifi下可能屏蔽网址";
+var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+if(isMobile&&!/MicroMessenger/i.test(navigator.userAgent)&&navigator.share){
+navigator.share({title:title,text:text,url:url}).catch(function(){});
+}else{
+var overlay=document.createElement("div");
+overlay.id="_share-overlay";
+overlay.style.cssText="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;";
+overlay.onclick=function(e){if(e.target===overlay)overlay.remove()};
+var card=document.createElement("div");
+card.style.cssText="background:#1a1035;border-radius:16px;padding:24px;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.4);";
+card.innerHTML='<div style="font-size:18px;font-weight:700;color:#a855f7;margin-bottom:12px">✨ 分享给好友</div>'
++'<div style="font-size:13px;color:#9ca3af;margin-bottom:16px;line-height:1.5">'+text+'</div>'
++'<div style="background:#0d0a17;border-radius:8px;padding:10px;margin-bottom:16px;word-break:break-all;font-size:12px;color:#60a5fa;border:1px solid #2a2055;user-select:all">'+url+'</div>'
++'<button id="_share-copy" style="width:100%;padding:12px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">📋 点击复制链接</button>'
++'<button onclick="document.getElementById(\'_share-overlay\').remove()" style="width:100%;padding:10px;background:transparent;color:#6b7280;border:1px solid #2a2055;border-radius:10px;font-size:13px;cursor:pointer">关闭</button>';
+overlay.appendChild(card);
+document.body.appendChild(overlay);
+document.getElementById("_share-copy").onclick=function(){
+var btn=this;
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(text+"\n"+url).then(function(){
+btn.textContent="✅ 已复制！";
+setTimeout(function(){btn.textContent="📋 点击复制链接"},2000);
+}).catch(function(){
+btn.textContent="❌ 复制失败，请手动长按复制上方链接";
+});
+}else{
+var ta=document.createElement("textarea");
+ta.value=text+"\n"+url;ta.style.cssText="position:fixed;left:-9999px";
+document.body.appendChild(ta);ta.select();
+try{document.execCommand("copy");btn.textContent="✅ 已复制！";setTimeout(function(){btn.textContent="📋 点击复制链接"},2000)}
+catch(e){btn.textContent="❌ 请手动长按复制上方链接"}
+document.body.removeChild(ta);
+}
+};
+}
+}
 </script>
 </body>
 </html>

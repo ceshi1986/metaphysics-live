@@ -295,13 +295,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .fp-logout-btn{background:rgba(255,82,82,.15);border:1px solid rgba(255,82,82,.3);color:#ff5252;padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;display:none;margin-left:4px}
 .fp-logout-btn:hover{background:rgba(255,82,82,.25)}
 /* Lock styles */
-.fp-locked{filter:blur(5px);user-select:none;pointer-events:none}
-.fp-lock-wrapper{position:relative;overflow:hidden;border-radius:8px}
-.fp-lock-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(13,17,23,0.3) 0%,rgba(13,17,23,0.7) 40%,rgba(13,17,23,0.95) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;gap:8px}
-.fp-lock-icon{font-size:32px}
-.fp-lock-text{color:#9ca3af;font-size:12px}
-.fp-upgrade-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
-.fp-upgrade-btn:hover{opacity:0.9;transform:scale(1.02)}
 
 /* Pay Modal */
 .pay-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -2686,49 +2679,19 @@ function fpVerifyKey(){var input=document.getElementById('fp-key-input');var key
 function fpLogoutKey(){if(!confirm('确定退出Key？退出后部分内容将被锁定'))return;localStorage.removeItem('fp_paid_key');localStorage.removeItem('fp_paid_remaining');fpKeyState={key:'',remaining:0,valid:false};fpHideLoggedInUI();if(typeof fpUpdateLockState==='function')fpUpdateLockState();showToast('已退出Key')}
 
 function fpUpdateLockState(){
-  // 先清除之前的锁定状态
-  var oldWrappers=document.querySelectorAll('#ai-rec-body .fp-lock-wrapper');
-  for(var w=0;w<oldWrappers.length;w++){
-    var wr=oldWrappers[w];
-    var card=wr.querySelector('.ai-card');
-    if(card){
-      card.classList.remove('fp-locked');
-      wr.parentNode.insertBefore(card,wr);
-    }
-    wr.parentNode.removeChild(wr);
-  }
+  var allCards=document.querySelectorAll('#ai-rec-body .ai-card');
+  for(var i=0;i<allCards.length;i++){allCards[i].style.display=''}
   var oldCta=document.getElementById('fp-upgrade-cta');
   if(oldCta&&oldCta.parentNode) oldCta.parentNode.removeChild(oldCta);
-  // 清除所有残留的 fp-locked
-  var lockedCards=document.querySelectorAll('#ai-rec-body .ai-card.fp-locked');
-  for(var l=0;l<lockedCards.length;l++){lockedCards[l].classList.remove('fp-locked')}
-
   var key=fpGetActiveKey();
-  if(key) return; // 有Key，不锁定
-
-  var cards=document.querySelectorAll('#ai-rec-body .ai-card');
-  if(cards.length<=3) return; // 不超过3场，不锁定
-
-  // 第4场开始：用 fp-lock-wrapper 包裹，加 .fp-locked，添加覆盖层
-  for(var i=3;i<cards.length;i++){
-    var card=cards[i];
-    var wrapper=document.createElement('div');
-    wrapper.className='fp-lock-wrapper';
-    card.parentNode.insertBefore(wrapper,card);
-    wrapper.appendChild(card);
-    card.classList.add('fp-locked');
-    var overlay=document.createElement('div');
-    overlay.className='fp-lock-overlay';
-    overlay.innerHTML='<div class="fp-lock-icon">🔒</div><div class="fp-lock-text">验证Key查看完整预测</div><button class="fp-upgrade-btn" onclick="showPayModal(\'足球预测\')">立即解锁</button>';
-    wrapper.appendChild(overlay);
-  }
-
-  // 末尾添加升级CTA
+  if(key) return;
+  if(allCards.length<=3) return;
+  for(var i=3;i<allCards.length;i++){allCards[i].style.display='none'}
   var cta=document.createElement('div');
   cta.id='fp-upgrade-cta';
-  cta.style.cssText='margin-top:16px;padding:20px 16px;text-align:center;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:12px;color:#f59e0b;font-size:15px;font-weight:700';
-  var lockedCount=cards.length-3;
-  cta.innerHTML='🔒 还有 '+lockedCount+' 场比赛预测被锁定 | <button onclick="showPayModal(\'足球预测\')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border:none;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-left:8px">验证Key全部解锁 →</button>';
+  var lockedCount=allCards.length-3;
+  cta.innerHTML='\ud83d\udd12 还有 '+lockedCount+' 场预测待解锁 \u00b7 <button onclick="showPayModal('足球预测')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;border:none;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-left:4px">验证Key解锁</button>';
+  cta.style.cssText='margin-top:12px;padding:12px 16px;text-align:center;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#d1d5db;font-size:14px';
   document.getElementById('ai-rec-body').appendChild(cta);
 }
 

@@ -2031,7 +2031,7 @@ document.body.appendChild(overlay);
 document.getElementById("_share-copy").onclick=function(){
 var btn=this;
 if(navigator.clipboard&&navigator.clipboard.writeText){
-navigator.clipboard.writeText(url).then(function(){
+navigator.clipboard.writeText(text+"\n"+url).then(function(){
 btn.textContent="✅ 已复制！";
 setTimeout(function(){btn.textContent="📋 点击复制链接"},2000);
 }).catch(function(){
@@ -2039,7 +2039,7 @@ btn.textContent="❌ 复制失败，请手动长按复制上方链接";
 });
 }else{
 var ta=document.createElement("textarea");
-ta.value=url;ta.style.cssText="position:fixed;left:-9999px";
+ta.value=text+"\n"+url;ta.style.cssText="position:fixed;left:-9999px";
 document.body.appendChild(ta);ta.select();
 try{document.execCommand("copy");btn.textContent="✅ 已复制！";setTimeout(function(){btn.textContent="📋 点击复制链接"},2000)}
 catch(e){btn.textContent="❌ 请手动长按复制上方链接"}
@@ -2732,8 +2732,6 @@ function fpUpdateLockState(){
 }
 
 (function fpInitKey(){var savedKey=localStorage.getItem('fp_paid_key');if(savedKey){fpKeyState.key=savedKey;fpKeyState.remaining=parseInt(localStorage.getItem('fp_paid_remaining')||'0');fpKeyState.valid=fpKeyState.remaining>0;if(fpKeyState.valid)fpShowLoggedInUI();else{var input=document.getElementById('fp-key-input');if(input)input.value=savedKey}}if(typeof fpUpdateLockState==='function')setTimeout(function(){fpUpdateLockState()},1000);fpUpdateFreeCountHint()})();
-
-(function(){var SUB_BASE=52,el=document.getElementById("fp-sub-count");if(!el)return;var s=localStorage.getItem("fp_sub_count"),d=localStorage.getItem("fp_sub_date"),today=new Date().toDateString();if(!s||d!==today){s=String(SUB_BASE+Math.floor(Math.random()*3)+1);localStorage.setItem("fp_sub_count",s);localStorage.setItem("fp_sub_date",today)}el.textContent="已有 "+s+" 人购买订阅"})();
 
 
 

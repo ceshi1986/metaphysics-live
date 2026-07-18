@@ -2002,7 +2002,7 @@ function _ch(){
 }
 
 function _sh(){
-if(navigator.share){navigator.share({title:"AI足球预测",text:_last?_last.h+" 对阵 "+_last.a+" → "+_last.r:"AI足球预测",url:location.href}).catch(function(){})}
+var isMob=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);if(isMob&&navigator.share){navigator.share({title:"AI足球预测",text:_last?_last.h+" 对阵 "+_last.a+" → "+_last.r:"AI足球预测",url:location.href}).catch(function(){})}
 else if(/MicroMessenger/i.test(navigator.userAgent)){document.getElementById("so").style.display="flex"}
 else{var i=document.createElement("input");i.value=location.href;document.body.appendChild(i);i.select();document.execCommand("copy");document.body.removeChild(i);alert("链接已复制")}
 }

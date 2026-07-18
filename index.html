@@ -2011,7 +2011,8 @@ function _shareSite(){
 var url=location.href;
 var title="AI足球预测 - 智能赛事分析";
 var text="推荐一个超准的AI足球预测网站，基于凯利指数+多源数据，世界杯回测命中率81.6%！";
-if(navigator.share){
+var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+if(isMobile&&navigator.share){
 navigator.share({title:title,text:text,url:url}).catch(function(){});
 }else{
 var overlay=document.createElement("div");
@@ -2731,8 +2732,6 @@ function fpUpdateLockState(){
 }
 
 (function fpInitKey(){var savedKey=localStorage.getItem('fp_paid_key');if(savedKey){fpKeyState.key=savedKey;fpKeyState.remaining=parseInt(localStorage.getItem('fp_paid_remaining')||'0');fpKeyState.valid=fpKeyState.remaining>0;if(fpKeyState.valid)fpShowLoggedInUI();else{var input=document.getElementById('fp-key-input');if(input)input.value=savedKey}}if(typeof fpUpdateLockState==='function')setTimeout(function(){fpUpdateLockState()},1000);fpUpdateFreeCountHint()})();
-
-(function(){var SUB_BASE=52,el=document.getElementById("fp-sub-count");if(!el)return;var s=localStorage.getItem("fp_sub_count"),d=localStorage.getItem("fp_sub_date"),today=new Date().toDateString();if(!s||d!==today){s=String(SUB_BASE+Math.floor(Math.random()*3)+1);localStorage.setItem("fp_sub_count",s);localStorage.setItem("fp_sub_date",today)}el.textContent="已有 "+s+" 人购买订阅"})();
 
 
 

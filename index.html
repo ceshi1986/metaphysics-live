@@ -2733,6 +2733,8 @@ function fpUpdateLockState(){
 
 (function fpInitKey(){var savedKey=localStorage.getItem('fp_paid_key');if(savedKey){fpKeyState.key=savedKey;fpKeyState.remaining=parseInt(localStorage.getItem('fp_paid_remaining')||'0');fpKeyState.valid=fpKeyState.remaining>0;if(fpKeyState.valid)fpShowLoggedInUI();else{var input=document.getElementById('fp-key-input');if(input)input.value=savedKey}}if(typeof fpUpdateLockState==='function')setTimeout(function(){fpUpdateLockState()},1000);fpUpdateFreeCountHint()})();
 
+(function(){var SUB_BASE=52,el=document.getElementById("fp-sub-count");if(!el)return;var s=localStorage.getItem("fp_sub_count"),d=localStorage.getItem("fp_sub_date"),today=new Date().toDateString();if(!s||d!==today){s=String(SUB_BASE+Math.floor(Math.random()*3)+1);localStorage.setItem("fp_sub_count",s);localStorage.setItem("fp_sub_date",today)}el.textContent="已有 "+s+" 人购买订阅"})();
+
 
 
 </script>
